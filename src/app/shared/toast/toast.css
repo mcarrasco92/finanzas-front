@@ -1,0 +1,8 @@
+
+.toast{
+    --bs-toast-max-width: 100%;
+    --bs-toast-width: 100%;
+}
+.toast-container {
+    width: 100%;
+}

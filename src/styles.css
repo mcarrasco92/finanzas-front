@@ -1,0 +1,12 @@
+/* Eliminé las directivas SCSS y convertí las reglas a CSS estándar */
+@import "tailwindcss";
+
+.fondo{
+  /*background-color: rgb(240	228	214	);*/
+  background-color: rgb(237	233	225);
+}
+
+body{
+  /*background-color: rgb(240	228	214	);*/
+  background-color: rgb(237	233	225);
+}
