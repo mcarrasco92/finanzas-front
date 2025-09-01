@@ -72,13 +72,46 @@ export class Auth {
 
   loginGoogle(): Observable<any> {
 
-    return from(signInWithPopup(this.auth, new GoogleAuthProvider()).then((result) => {
+    return from(signInWithPopup(this.auth, new GoogleAuthProvider()).then(async (result) => {
       // This gives you a Google Access Token. You can use it to access the Google API.
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential?.accessToken;
       // The signed-in user info.
       const user = result.user;
       console.log(user)
+
+
+      // Obtén el ID Token de Firebase
+      const firebaseToken = await user.getIdToken();
+  
+      // Envía el token de Firebase al backend
+      return this.http.post<{ coderr: string; message: string; data: string }>(this.baseUrl + '/api/users/validate-token', { firebaseToken })
+        .toPromise()
+        .then((response) => {
+
+          if (!response) {
+            throw new Error('La respuesta del backend es undefined');
+          }
+
+          if (response.coderr === '0000') {
+            // Guarda el token JWT en localStorage
+            const jwtToken = response.data;
+            localStorage.setItem('jwtToken', jwtToken); // O usa sessionStorage si prefieres
+
+            return {
+              coderr: response.coderr,
+              message: response.message,
+            };
+          } else {
+            return {
+              coderr: response.coderr,
+              message: 'Error al validar el token en el backend.',
+            };
+          }
+        });
+
+
+
       const resp = {
         coderr: "0000",
         message: "Ingreso exitoso"
@@ -101,6 +134,11 @@ export class Auth {
       return resp
 
     }));
+  }
+
+  isAuthenticated(): boolean {
+    const token = localStorage.getItem('jwtToken'); // O usa sessionStorage si prefieres
+    return !!token; // Devuelve true si el token existe, false si no
   }
 
 };

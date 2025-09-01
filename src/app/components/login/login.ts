@@ -8,12 +8,13 @@ import { ToastService, TypeToast } from '../../shared/toast/service/toast-servic
 import { Toast } from '../../shared/toast/toast';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Loading } from '../../shared/loading/loading';
 
 
 
 @Component({
   selector: 'app-login',
-  imports: [MatCardModule, MatDividerModule, RouterLink, FormsModule, Toast, CommonModule],
+  imports: [MatCardModule, MatDividerModule, RouterLink, FormsModule, Toast, CommonModule, Loading],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -27,6 +28,7 @@ export class Login {
   email: string = ''; // Almacena el email 
   valEmail: boolean = false;
   valPassword: boolean = false;
+  isLoading: boolean = false;
 
   validaFormulario(): boolean {
 
@@ -42,19 +44,21 @@ export class Login {
   }
 
   loginGoogle(): void {
+
+    this.isLoading = true;
     this.authService.loginGoogle().subscribe(
       response => {
-        console.log(response)
-
         if (response.coderr === "0000") {
-          this.toastService.show("Operación exitosa", response.message, TypeToast.success);
           this.router.navigate(['/dashboard']);
         } else {
-          this.toastService.show("Error", response.message, TypeToast.danger);
+          this.toastService.show("Error al iniciar sesión", response.message, TypeToast.danger);
         }
       },
       error => {
-        this.toastService.show("Error", "Error al iniciar sesión", TypeToast.danger);
+        this.toastService.show("Error al iniciar sesión", "Error desconocido", TypeToast.danger);
+      },
+      () => {
+        this.isLoading = false;
       }
 
 
@@ -69,7 +73,7 @@ export class Login {
       email: this.email,
       password: this.password
     };
-
+    this.isLoading = true
     this.authService.loginUsuario(datos).subscribe(
       response => {
         console.log(response)
@@ -78,11 +82,13 @@ export class Login {
           this.toastService.show("Operación exitosa", response.message, TypeToast.success);
           this.router.navigate(['/dashboard']);
         } else {
-          this.toastService.show("Error", response.message, TypeToast.danger);
+          this.toastService.show("Error al iniciar sesión", response.message, TypeToast.danger);
         }
       },
       error => {
-        this.toastService.show("Error", "Error al iniciar sesión", TypeToast.danger);
+        this.toastService.show("Error al iniciar sesión", "Error desconocido", TypeToast.danger);
+      },() => {
+        this.isLoading = false;
       }
 
 

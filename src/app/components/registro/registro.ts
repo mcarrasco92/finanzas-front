@@ -5,11 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { Auth } from '../../services/auth';
 import { ToastService, TypeToast } from '../../shared/toast/service/toast-service';
 import { Toast } from '../../shared/toast/toast';
+import { Router } from '@angular/router';
+import { Loading } from '../../shared/loading/loading';
 
 
 @Component({
   selector: 'app-registro',
-  imports: [RouterLink, CommonModule, FormsModule, Toast],
+  imports: [RouterLink, CommonModule, FormsModule, Toast, Loading],
   templateUrl: './registro.html',
   styleUrl: './registro.css'
 })
@@ -19,19 +21,44 @@ export class Registro {
   confirmPassword: string = ''; // Almacena la confirmación de la contraseña
   email: string = ''; // Almacena el email
   name: string = ''; // Almacena el nombre
-  birthdate: string = ''; // Almacena la fecha de nacimiento
 
   valName: boolean = false;
   valEmail: boolean = false;
+  valEmailChar: boolean = false;
   valPassword: boolean = false;
   valConfirmPassword: boolean = false;
-  valBirthdate: boolean = false;
 
   lenPassword: boolean = false;
 
+  isLoading: boolean = false;
+
   constructor(private authService: Auth,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private router: Router
   ) { }
+
+  validaCaracteres(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+    this.name = input.value;
+  }
+
+  validaCorreo(): void {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if(this.email.trim() === ''){
+      this.valEmailChar = false; // Oculta el mensaje de error si el campo está vacío
+      return;
+    } 
+
+    // Verifica si el correo es válido
+    if (!emailRegex.test(this.email)) {
+      this.valEmailChar = true; // Muestra el mensaje de error
+    } else {
+      this.valEmailChar = false; // Oculta el mensaje de error
+    }
+  } 
 
 
   verificarContrasenas(): void {
@@ -48,9 +75,8 @@ export class Registro {
     if(!this.email || this.email.trim() === '') { this.valEmail = true} else { this.valEmail = false; }
     if(!this.password || this.password.trim() === '') { this.valPassword = true } else { this.valPassword = false; }
     if(!this.confirmPassword || this.confirmPassword.trim() === '') { this.valConfirmPassword = true } else { this.valConfirmPassword = false; }
-    if(!this.birthdate || this.birthdate.trim() === '') { this.valBirthdate = true } else { this.valBirthdate = false; }
 
-    if(this.valName || this.valEmail || this.valPassword || this.valBirthdate, this.valConfirmPassword) {
+    if(this.valName || this.valEmail || this.valPassword || this.valConfirmPassword) {
       return false;
     }
 
@@ -59,6 +85,10 @@ export class Registro {
       return false;
     } else {
       this.lenPassword = false;
+    }
+
+    if(this.valEmailChar){
+      return false;
     }
 
     return true;
@@ -74,23 +104,27 @@ export class Registro {
     const datos = {
       email: this.email,
       name: this.name,
-      password: this.password,
-      birthdate: this.birthdate
+      password: this.password
 
     };
 
+    this.isLoading = true;
+
     this.authService.registrarUsuario(datos).subscribe(
       response => {
-        console.log(response)
 
         if(response.coderr === "0000"){
           this.toastService.show("Operación exitosa",response.message, TypeToast.success);
+          this.router.navigate(['/login']);
         }else{
-          this.toastService.show("Error",response.message, TypeToast.danger);
+          this.toastService.show("No se pudo realizar el registro",response.message, TypeToast.danger);
         }
       },
       error => {
-        this.toastService.show("Error","Error al registrar el usuario", TypeToast.danger);
+        this.toastService.show("No se pudo realizar el registro","Error al registrar el usuario", TypeToast.danger);
+      },
+      () => {
+        this.isLoading = false;
       }
 
 

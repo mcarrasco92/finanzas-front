@@ -16,7 +16,7 @@
           <div>
             <label for="name" class="block text-sm/6 font-medium text-gray-900">Nombre completo</label>
             <div class="mt-1">
-              <input id="name" type="text" name="name" required autocomplete [(ngModel)]="name"
+              <input id="name" type="text" name="name" required autocomplete [(ngModel)]="name" (input)="validaCaracteres($event)"
                 class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
             </div>
             <p *ngIf="valName" class="text-sm text-red-600">Este campo es obligatorio</p>
@@ -27,10 +27,11 @@
             <label for="email" class="block text-sm/6 font-medium text-gray-900">Correo
               electrónico</label>
             <div class="mt-1">
-              <input id="email" type="text" name="email" required autocomplete [(ngModel)]="email"
+              <input id="email" type="text" name="email" required autocomplete [(ngModel)]="email" (blur)="validaCorreo()"
                 class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
             </div>
             <p *ngIf="valEmail" class="text-sm text-red-600">Este campo es obligatorio</p>
+            <p *ngIf="valEmailChar" class="text-sm text-red-600">Correo inválido</p>
           </div>
 
 
@@ -57,30 +58,12 @@
             <p *ngIf="mostrarEtiqueta" id="confirm-password-error" class="text-sm text-red-600">Las contraseñas no coinciden</p>
           </div>
 
-          <div class="mt-4">
-            <label for="birthdate" class="block text-sm/6 font-medium text-gray-900">Fecha de
-              nacimiento</label>
-            <div class="mt-1">
-              <input id="birthdate" type="date" name="birthdate" required [(ngModel)]="birthdate"
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500" />
-            </div>
-            <p *ngIf="valBirthdate" class="text-sm text-red-600">Este campo es obligatorio</p>
-          </div>
-
-
-
           <div class="mt-5">
-            <!--
-            <button type="submit"
-              class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:shadow-none dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500">Registrarme</button>
-            -->
-
             <button type="submit"
               class="flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 bg-gray-700 text-white hover:bg-gray-500">Registrarme</button>
           </div>
         </form>
         <p class="mt-5 text-center text-sm/6 text-gray-500">
-          <!--<a routerLink="login" class="font-semibold text-indigo-600 hover:text-indigo-500">Regresar</a>-->
           <a routerLink="login" class="font-semibold">Regresar</a>
         </p>
       </div>
@@ -88,3 +71,4 @@
   </div>
 </div>
 
+<app-loading *ngIf="isLoading"></app-loading>
