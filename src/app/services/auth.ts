@@ -141,6 +141,15 @@ export class Auth {
     return !!token; // Devuelve true si el token existe, false si no
   }
 
+  cerrarSesion() {
+    localStorage.removeItem('jwtToken'); // O usa sessionStorage si prefieres
+    this.auth.signOut().then(() => {
+      console.log('Usuario desconectado de Firebase');
+    }).catch((error) => {
+      console.error('Error al desconectar el usuario de Firebase:', error);
+    });
+  }
+
 };
 
 
