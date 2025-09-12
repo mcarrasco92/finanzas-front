@@ -5,16 +5,17 @@
     institucion: string;
     saldo: number;
     inversion: boolean;
-    tasa: number;
-    periodicidad: string;
+    vista: boolean;
+    orden: number;
+    activa: boolean;
 }
 
 export interface ListaCuentasResponse{
     coderr: string;
     message: string;
     cuentas: Cuenta[];
-    saldoPagar: number;
-    saldoRestante: number;
+    saldoDisponible: number;
+    saldoInvertido: number;
     saldoTotal: number;   
 }
 

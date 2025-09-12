@@ -8,44 +8,44 @@ import { ToastService, TypeToast, typToast } from '../../shared/toast/service/to
 import { Loading } from '../../shared/loading/loading';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
+import { DataService } from './debito/service/data-service';
 
 @Component({
   selector: 'app-cuentas',
-  imports: [CommonModule, Toast, Loading, FormsModule],
+  imports: [CommonModule, Toast, Loading, FormsModule, RouterOutlet, RouterLink],
   templateUrl: './cuentas.html',
   styleUrl: './cuentas.css'
 })
 export class Cuentas {
 
-  constructor(private cuentasService: CuentasService, private toast: ToastService, private cdr: ChangeDetectorRef) { }
+  constructor(private cuentasService: CuentasService, 
+    private toast: ToastService, 
+    private cdr: ChangeDetectorRef,
+  private dataService: DataService,
+private router: Router) { }
 
   isLoading: boolean = false;
-  cuentas: ListaCuentasResponse = {} as ListaCuentasResponse;
+  agregaCuenta: boolean = true;
 
-  ngOnInit() {
-
-    this.isLoading = true;
-
-    this.cuentasService.getCuentas().subscribe(response => {
-      console.log(response.data);
-
-      this.cuentas = response.data;;
-      console.log('Cuentas cargadas correctamente', this.cuentas);
-    }, error => {
-      this.toast.show('Error al consultar las cuentas', 'Error: ' + error.status, TypeToast.danger);
-      this.isLoading = false;
-      this.cdr.detectChanges();
-    }, () => {
-      this.isLoading = false;
-      this.cdr.detectChanges();
-    }
-
-    );
+  ngOnInit(): void {
+    this.agregaCuenta = true;
+    
+    this.cdr.detectChanges();
   }
 
-  verDetalle(id: string) {
-    console.log('Ver detalle de la cuenta con ID:', id);
+
+  toggleAgregaCuenta(): void {
+    this.agregaCuenta = !this.agregaCuenta;
   }
+
+
+  nuevaCuenta() {
+    this.dataService.setData(null);
+    this.router.navigate(['/dashboard/cuentas/debitof']);
+  }
+
 
 
 

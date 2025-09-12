@@ -1,4 +1,4 @@
-<div class="toast-container top-0 left-0 mt-5 me-5 fixed w-full p-3 z-50">
+<div class="toast-container top-0 left-0 mt-5 me-5 fixed w-full z-50">
   <ngb-toast *ngFor="let toast of toasts" (hidden)="toastService.remove(toast)"
     class="border-0 shadow-none w-full max-w-full mb-2">
 
@@ -23,7 +23,7 @@
               </div>
               <div class="ml-4 flex shrink-0">
                 <button type="button" (click)="toastService.remove(toast)"
-                  class="inline-flex rounded-md text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600">
+                  class="inline-flex rounded-md text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 cursor-pointer">
                   <span class="sr-only">Close</span>
                   <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
                     <path
@@ -57,7 +57,7 @@
               </div>
               <div class="ml-4 flex shrink-0">
                 <button type="button" (click)="toastService.remove(toast)"
-                  class="inline-flex rounded-md text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600">
+                  class="inline-flex rounded-md text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 cursor-pointer">
                   <span class="sr-only">Close</span>
                   <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
                     <path
