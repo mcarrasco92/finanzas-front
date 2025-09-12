@@ -7,6 +7,7 @@ import { DataService } from '../service/data-service';
 import { Subscription } from 'rxjs';
 import { CuentasService } from '../../../../services/cuentas/cuentas';
 import { Loading } from '../../../../shared/loading/loading';
+import { Cuenta } from '../../../../models/cuenta';
 
 @Component({
   selector: 'app-form-debito',
@@ -31,19 +32,15 @@ export class FormDebito {
   valInstitucion: boolean = false;
   valSaldo: boolean = false;
 
-  idCuenta: string = '';
-  nombreCuenta: string = '';
-  descripcion: string = '';
-  institucion: string = '';
   saldo: string = '';
-  vista: boolean = false;
-  activa: boolean = false;
+
+  cuenta: Cuenta = new Cuenta();
+  cuentaOriginal: Cuenta = new Cuenta();
 
   private dataSubscription!: Subscription; // Variable para almacenar la suscripción
 
 
   ngOnInit() {
-
 
 
     this.dataSubscription = this.dataService.data$.subscribe(data => {
@@ -59,29 +56,19 @@ export class FormDebito {
             this.cdr.detectChanges();
             return; 
           }
-          
 
-          this.idCuenta = response.data.id;
-          this.nombreCuenta = response.data.nombre;
-          this.descripcion = response.data.descripcion;
-          this.institucion = response.data.institucion;
-          this.saldo =  this.formatearSaldoDirecto(response.data.saldo.toString());
-          this.vista = response.data.vista;
-          this.inversion = response.data.inversion;
-          this.activa = response.data.activa;
+          this.cuenta = Object.assign(new Cuenta(), response.data);
+          this.cuentaOriginal = Object.assign(new Cuenta(), response.data);
+
+          this.saldo = this.cuenta.getSaldo();
 
           this.cdr.detectChanges();
 
 
         });
       } else {
-        this.idCuenta = '';
-        this.nombreCuenta = '';
-        this.descripcion = '';
-        this.institucion = '';
+        this.cuenta.limpiar();
         this.saldo = '';
-        this.vista = false;
-        this.inversion = false;
 
         this.editar = true;
         this.cdr.detectChanges();
@@ -97,17 +84,16 @@ export class FormDebito {
   }
 
   activaDesactivaCuenta(): void {
-    if (!this.idCuenta) {
+    if (!this.cuenta.id) {
       return;
     }
 
     this.isLoading = true;
 
-    this.cuentasService.activaDesactivaCuenta(this.idCuenta, !this.activa).subscribe(response => {
+    this.cuentasService.activaDesactivaCuenta(this.cuenta.id, !this.cuenta.activa).subscribe(response => {
 
-      console.log(response);
-
-      this.activa = response.data;
+      this.cuenta.activa = response.data;
+      this.cuentaOriginal.activa = response.data;
 
       this.cdr.detectChanges();
 
@@ -123,8 +109,7 @@ export class FormDebito {
 
   enviaDatos(): void {
 
-
-    this.valNombre = this.nombreCuenta.trim() === '';
+    this.valNombre = this.cuenta.nombre.trim() === '';
 
     if (this.valNombre) {
       return;
@@ -132,36 +117,30 @@ export class FormDebito {
 
     this.editar = false;
 
-    if (this.idCuenta) {
+    if (this.cuenta.id) {
       //Actualizar cuenta
 
       this.isLoading = true;
 
-      this.cuentasService.updateCuenta(this.idCuenta, {
-        nombre: this.nombreCuenta,
-        descripcion: this.descripcion,
-        institucion: this.institucion,
-        saldo: this.saldo.replace(/,/g, ''),
-        vista: this.vista,
+      this.cuentasService.updateCuenta(this.cuenta.id, {
+        nombre: this.cuenta.nombre,
+        descripcion: this.cuenta.descripcion,
+        institucion: this.cuenta.institucion,
+        saldo: this.cuenta.saldo,
+        vista: this.cuenta.vista,
         inversion: this.inversion
 
       }).subscribe(response => {
 
-        console.log(response);
         this.toast.show('Cuenta actualizada exitosamente', "", TypeToast.success);
 
         this.isLoading = false;
 
         if (response.data && response.data.id) {
 
-          this.idCuenta = response.data.id;
-          this.nombreCuenta = response.data.nombre;
-          this.descripcion = response.data.descripcion;
-          this.institucion = response.data.institucion;
-          this.saldo = response.data.saldo;
-          this.vista = response.data.vista;
-          this.inversion = response.data.inversion;
-          this.activa = response.data.activa;
+          this.cuenta = Object.assign(new Cuenta(), response.data);
+          this.cuentaOriginal = Object.assign(new Cuenta(), response.data);
+          this.saldo = this.cuenta.getSaldo();
 
           this.cdr.detectChanges();
         }
@@ -177,31 +156,17 @@ export class FormDebito {
 
       this.isLoading = true;
 
-      this.cuentasService.addCuenta({
-        nombre: this.nombreCuenta,
-        descripcion: this.descripcion,
-        institucion: this.institucion,
-        saldo: this.saldo.replace(/,/g, ''),
-        vista: this.vista,
-        inversion: this.inversion,
-        activa: true
-      }).subscribe(response => {
+      this.cuentasService.addCuenta(this.cuenta).subscribe(response => {
 
-        console.log(response);
         this.toast.show('Cuenta creada exitosamente', "", TypeToast.success);
 
         this.isLoading = false;
 
         if (response.data && response.data.id) {
 
-          this.idCuenta = response.data.id;
-          this.nombreCuenta = response.data.nombre;
-          this.descripcion = response.data.descripcion;
-          this.institucion = response.data.institucion;
-          this.saldo = response.data.saldo;
-          this.vista = response.data.vista;
-          this.inversion = response.data.inversion;
-          this.activa = response.data.activa;
+          this.cuenta = Object.assign(new Cuenta(), response.data);
+          this.cuentaOriginal = Object.assign(new Cuenta(), response.data);
+          this.saldo = this.cuenta.getSaldo();
 
           this.cdr.detectChanges();
         }
@@ -212,6 +177,16 @@ export class FormDebito {
       });
     }
 
+  }
+
+  actualizaSaldo(): void {
+    this.cuenta.setSaldo(this.saldo);
+  }
+
+  cancelaEdicion(): void {
+    this.cuenta = Object.assign(new Cuenta(), this.cuentaOriginal);
+    this.saldo = this.cuenta.getSaldo();
+    this.editar = false;
   }
 
   esBorrado: boolean = false; // Variable para rastrear si se presionó una tecla de borrado

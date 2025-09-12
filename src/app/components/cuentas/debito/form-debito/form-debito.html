@@ -3,27 +3,27 @@
 
 <div class="px-4 py-6 bg-white shadow-sm">
     
-    <h1 class="text-lg font-medium leading-6 text-gray-900 mb-10 w-full text-center border-b border-gray-900/10 pb-4" >{{idCuenta ? "Consulta" : "Alta"}} de cuenta</h1>
+    <h1 class="text-lg font-medium leading-6 text-gray-900 mb-10 w-full text-center border-b border-gray-900/10 pb-4" >{{cuenta.id ? "Consulta" : "Alta"}} de cuenta</h1>
     <form (ngSubmit)="enviaDatos()" method="POST" class="space-y-8">
 
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
             
             <div class="input-form-text">
                 <label for="nombreCuenta">Nombre</label>
-                <input [(ngModel)]="nombreCuenta" id="nombreCuenta" type="text" name="nombreCuenta" autocomplete="off" [disabled]="!editar && idCuenta" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" />
+                <input [(ngModel)]="cuenta.nombre" id="nombreCuenta" type="text" name="nombreCuenta" autocomplete="off" [disabled]="!editar && cuenta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" />
                 <p *ngIf="valNombre">Este campo es obligatorio</p>
             </div>
             
 
             <div class="input-form-text">
                 <label for="descipcion">Descripción</label>
-                <input [(ngModel)]="descripcion" id="descipcion" type="text" name="descipcion" autocomplete="off" [disabled]="!editar && idCuenta" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" />
+                <input [(ngModel)]="cuenta.descripcion" id="descipcion" type="text" name="descipcion" autocomplete="off" [disabled]="!editar && cuenta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" />
                 <p *ngIf="valDescripcion">Este campo es obligatorio</p>
             </div>
 
             <div class="input-form-text">
                 <label for="institucion">Institución</label>
-                <input [(ngModel)]="institucion" id="institucion" type="text" name="institucion" autocomplete="off" [disabled]="!editar && idCuenta" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"/>
+                <input [(ngModel)]="cuenta.institucion" id="institucion" type="text" name="institucion" autocomplete="off" [disabled]="!editar && cuenta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"/>
                 <p *ngIf="valInstitucion">Este campo es obligatorio</p>
             </div>
 
@@ -32,7 +32,7 @@
               <div>$</div>
 
               <label for="saldo">Saldo</label>
-              <input [(ngModel)]="saldo" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" [disabled]="idCuenta !== ''" [ngClass]="{'bg-gray-100': idCuenta}" />
+              <input [(ngModel)]="saldo" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" (blur)="actualizaSaldo()" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" [disabled]="cuenta.id !== ''" [ngClass]="{'bg-gray-100': cuenta.id}" />
               <p *ngIf="valSaldo">Este campo es obligatorio</p>
             </div>
             
@@ -49,29 +49,29 @@
                 <div class="check-switch group"
                     [ngClass]="{'has-checked:bg-indigo-900 bg-gray-300': !editar, 'has-checked:bg-indigo-600 bg-gray-200': editar}">
                     <span class="span-border"></span>
-                    <input [(ngModel)]="inversion" id="inversion" type="checkbox" name="inversion" [disabled]="!editar && idCuenta" aria-labelledby="inversion-label"/>
+                    <input [(ngModel)]="cuenta.inversion" id="inversion" type="checkbox" name="inversion" [disabled]="!editar && cuenta.id" aria-labelledby="inversion-label"/>
                 </div>
             </div>
 
 
-            <div class="input-form-check" *ngIf="inversion">
+            <div class="input-form-check" *ngIf="cuenta.inversion">
                 <span class="span-label">
                     <label id="vista-label">A la vista</label>
                 </span>
                 <div class="check-switch group"
                     [ngClass]="{'has-checked:bg-indigo-900 bg-gray-400': !editar, 'has-checked:bg-indigo-600 bg-gray-200': editar}">
                     <span class="span-border"></span>
-                    <input [(ngModel)]="vista" id="vista" type="checkbox" name="vista" aria-labelledby="vista-label" [disabled]="!editar && idCuenta"/>
+                    <input [(ngModel)]="cuenta.vista" id="vista" type="checkbox" name="vista" aria-labelledby="vista-label" [disabled]="!editar && cuenta.id"/>
                 </div>
             </div>
 
         </div>
 
         <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10">
-            <button *ngIf="idCuenta" (click)="activaDesactivaCuenta()" type="button" class="btn-danger absolute left-0">{{activa ? "Desactivar cuenta" : "Activar cuenta"}}</button>
-            <button *ngIf="editar && idCuenta" (click)="editar = false" type="button" class="btn-secondary">Cancelar</button>
-            <button *ngIf="editar || !idCuenta" type="submit" class="btn-primary">Guardar</button>
-            <button *ngIf="!editar && idCuenta && activa" (click)="editar=true" type="button" class="btn-primary">Editar</button>
+            <button *ngIf="cuenta.id" (click)="activaDesactivaCuenta()" type="button" class="btn-danger absolute left-0">{{cuenta.activa ? "Desactivar cuenta" : "Activar cuenta"}}</button>
+            <button *ngIf="editar && cuenta.id" (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
+            <button *ngIf="editar || !cuenta.id" type="submit" class="btn-primary">Guardar</button>
+            <button *ngIf="!editar && cuenta.id && cuenta.activa" (click)="editar=true" type="button" class="btn-primary">Editar</button>
           </div>
     </form>
 </div>

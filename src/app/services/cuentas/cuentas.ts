@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
-import { ListaCuentasResponse } from '../../components/interfaces/cuentas';
 
 @Injectable({
   providedIn: 'root'

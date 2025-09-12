@@ -60,6 +60,10 @@ body{
     @apply ml-3 relative inline-flex w-11 shrink-0 rounded-full p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-indigo-600 transition-colors duration-200 ease-in-out has-focus-visible:outline-2;
   }
 
+  .check-switch.check-default{
+    @apply has-checked:bg-indigo-600 bg-gray-200;
+  }
+
   .span-border{
     @apply size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5;
   }
@@ -80,4 +84,25 @@ body{
 
 .btn-danger{
   @apply rounded-md text-red-600 px-3 py-2 text-sm font-semibold shadow-xs hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+}
+
+
+.general-table{
+  @apply relative min-w-full divide-y divide-gray-300;
+
+  th{
+    @apply px-3 py-3.5 text-sm font-semibold text-gray-900
+  }
+
+  tbody{
+    @apply divide-y divide-gray-200;
+  }
+
+  tr{
+    @apply hover:bg-gray-50 duration-500 ease-in-out transition-all
+  }
+
+  td{
+    @apply px-3 py-4 text-sm whitespace-nowrap
+  }
 }

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CuentasService } from '../../../../services/cuentas/cuentas';
 import { CommonModule } from '@angular/common';
-import { ListaCuentasResponse } from '../../../interfaces/cuentas';
 import { Toast } from '../../../../shared/toast/toast';
 import { ToastService, TypeToast, typToast } from '../../../../shared/toast/service/toast-service';
 import { Loading } from '../../../../shared/loading/loading';
@@ -9,10 +8,13 @@ import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../service/data-service';
+import { Cuenta } from '../../../../models/cuenta';
+import { DragIcon } from '../../../../shared/icons/drag-icon/drag-icon';
+
 
 @Component({
   selector: 'app-lista-debito',
-  imports: [CommonModule, Toast, Loading, FormsModule],
+  imports: [CommonModule, Toast, Loading, FormsModule, DragIcon],
   templateUrl: './lista-debito.html',
   styleUrl: './lista-debito.css'
 })
@@ -24,9 +26,14 @@ export class ListaDebito {
   private router: Router) { }
 
   isLoading: boolean = false;
-  cuentas: ListaCuentasResponse = {} as ListaCuentasResponse;
+  cuentas: Cuenta[] = [];
+  saldoDisponible: number = 0;
+  saldoInvertido: number = 0;
+  saldoTotal: number = 0;
+
   porcentajeInvertido: number = 0;
   cuentasDesactivadas: boolean = false;
+  
 
   ngOnInit() {
 
@@ -34,11 +41,22 @@ export class ListaDebito {
 
     this.cuentasService.getCuentas().subscribe(response => {
 
+      if(response.coderr !== '0000') {
+        this.toast.show('Error al consultar las cuentas', response.message, TypeToast.danger);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+        return;
+      }
+
+      this.saldoDisponible = response.data.saldoDisponible;
+      this.saldoInvertido = response.data.saldoInvertido;
+      this.saldoTotal = response.data.saldoTotal;
+
       this.porcentajeInvertido = response.data.saldoTotal > 0 ? (response.data.saldoInvertido / response.data.saldoTotal) * 100 : 0;
 
-      this.cuentas = response.data;
+      this.cuentas = response.data.cuentas;
 
-      this.cuentas.cuentas.sort((a, b) => a.orden - b.orden);
+      this.cuentas.sort((a, b) => a.orden - b.orden);
 
 
 
@@ -64,7 +82,7 @@ export class ListaDebito {
 
     const cuentasOrdenadas: { id: string; orden: number }[] = [];
 
-    this.cuentas.cuentas.forEach((cuenta, index) => {
+    this.cuentas.forEach((cuenta, index) => {
       cuentasOrdenadas.push({
         id: cuenta.id, // Asume que cada cuenta tiene un campo `id`
         orden: index + 1 // La posición en el arreglo original (1 basado)
@@ -94,9 +112,9 @@ export class ListaDebito {
 
     if (this.draggedIndex !== null && this.draggedIndex !== targetIndex) {
       // Reordenar el array
-      const draggedItem = this.cuentas.cuentas[this.draggedIndex];
-      this.cuentas.cuentas.splice(this.draggedIndex, 1); // Eliminar el elemento arrastrado
-      this.cuentas.cuentas.splice(targetIndex, 0, draggedItem); // Insertar en la nueva posición
+      const draggedItem = this.cuentas[this.draggedIndex];
+      this.cuentas.splice(this.draggedIndex, 1); // Eliminar el elemento arrastrado
+      this.cuentas.splice(targetIndex, 0, draggedItem); // Insertar en la nueva posición
     }
 
     this.ordenarCuentas();
@@ -112,7 +130,6 @@ export class ListaDebito {
   onMouseUp(): void {
     this.isDraggable = false;
   }
-
   
 
 

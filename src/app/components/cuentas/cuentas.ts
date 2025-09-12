@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { CuentasService } from '../../services/cuentas/cuentas';
 import { CommonModule } from '@angular/common';
-import { ListaCuentasResponse } from '../interfaces/cuentas';
-import { error } from 'console';
 import { Toast } from '../../shared/toast/toast';
 import { ToastService, TypeToast, typToast } from '../../shared/toast/service/toast-service';
 import { Loading } from '../../shared/loading/loading';

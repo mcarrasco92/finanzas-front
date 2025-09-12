@@ -19,7 +19,7 @@
         <p class="ml-16 truncate text-sm font-medium text-gray-500">Total a la vista</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900">$ {{cuentas.saldoDisponible | number:'1.2-2'}}</p>
+        <p class="text-2xl font-semibold text-gray-900">$ {{saldoDisponible | number:'1.2-2'}}</p>
       </dd>
     </div>
 
@@ -38,7 +38,7 @@
         <p class="ml-16 truncate text-sm font-medium text-gray-500">Total invertido</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900">$ {{cuentas.saldoInvertido| number:'1.2-2'}}</p>
+        <p class="text-2xl font-semibold text-gray-900">$ {{saldoInvertido| number:'1.2-2'}}</p>
       </dd>
     </div>
 
@@ -57,7 +57,7 @@
         <p class="ml-16 truncate text-sm font-medium text-gray-500">Saldo total</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900">$ {{cuentas.saldoTotal| number:'1.2-2'}}</p>
+        <p class="text-2xl font-semibold text-gray-900">$ {{saldoTotal| number:'1.2-2'}}</p>
         <div class="absolute inset-x-0 bottom-1 px-4 py-0 sm:px-6">
           <div aria-hidden="true">
             <div class="overflow-hidden rounded-full bg-gray-200">
@@ -75,16 +75,13 @@
 
 
 <div class="flex justify-end mb-4 mr-15">
-  <div class="flex items-center">
-    <span class="flex flex-col">
-      <label id="vista-label" class="text-sm/6 font-medium text-gray-900">Mostrar cuentas desactivadas</label>
+  <div class="input-form-check">
+    <span class="span-label">
+        <label id="inversion-label">Mostrar cuentas desactivadas</label>
     </span>
-    <div
-      class=" ml-3 group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-indigo-600 transition-colors duration-200 ease-in-out has-checked:bg-indigo-600 has-focus-visible:outline-2">
-      <span
-        class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
-      <input id="vista" type="checkbox" name="vista" aria-labelledby="vista-label" [(ngModel)]="cuentasDesactivadas"
-        class="absolute inset-0 appearance-none focus:outline-hidden" />
+    <div class="check-switch check-default group">
+        <span class="span-border"></span>
+        <input type="checkbox" [(ngModel)]="cuentasDesactivadas"/>
     </div>
   </div>
 </div>
@@ -95,46 +92,34 @@
     <div class="mt-1 flow-root">
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <table class="relative min-w-full divide-y divide-gray-300">
+          <table class="general-table">
             <thead>
               <tr>
-                <th scope="col" class="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-0">Nombre
-                </th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Institución</th>
-                <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Inversión</th>
-                <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">A la vista</th>
-                <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Saldo actual</th>
+                <th scope="col" class="text-left font-semibold">Nombre</th>
+                <th scope="col" class="text-left">Institución</th>
+                <th scope="col" class="text-center">Inversión</th>
+                <th scope="col" class="text-center">A la vista</th>
+                <th scope="col" class="text-center">Saldo actual</th>
 
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
-              <ng-container *ngFor="let cuenta of cuentas.cuentas; let i = index" >
-                <tr *ngIf="cuentasDesactivadas || cuenta.activa" (dragstart)="onDragStart($event, i)"
-                  (dragover)="onDragOver($event)" (drop)="onDrop($event, i)" [draggable]="isDraggable"
-                  class="hover:bg-gray-50 duration-500 ease-in-out transition-all"
-                  [ngClass]="{ 'hover:bg-gray-200': isDraggable, 'opacity-50': !cuenta.activa }">
+            <tbody>
+              <ng-container *ngFor="let cuenta of cuentas; let i = index" >
+                <tr *ngIf="cuentasDesactivadas || cuenta.activa" 
+                  (dragstart)="onDragStart($event, i)"
+                  (dragover)="onDragOver($event)" 
+                  (drop)="onDrop($event, i)" 
+                  [draggable]="isDraggable"
+                  [ngClass]="{ 'hover:bg-gray-200': isDraggable, 'opacity-50': !cuenta.activa }"
+                  (click)="consultaCuenta(cuenta.id)">
 
-
-                  <td (click)="consultaCuenta(cuenta.id)"
-                    class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0">{{cuenta.nombre}}
-                  </td>
-                  <td (click)="consultaCuenta(cuenta.id)" class="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
-                    {{cuenta.institucion}}</td>
-                  <td (click)="consultaCuenta(cuenta.id)"
-                    class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">{{ cuenta.inversion ? "Si" :
-                    "No" }}</td>
-                  <td (click)="consultaCuenta(cuenta.id)"
-                    class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">{{cuenta.vista ? 'Si' : "No"}}
-                  </td>
-                  <td (click)="consultaCuenta(cuenta.id)"
-                    class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">$ {{cuenta.saldo |
-                    number:'1.2-2' }}</td>
-                  <td (mousedown)="onMouseDown()" (mouseleave)="onMouseUp()" class="cursor-move">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                      stroke="currentColor" class="size-4">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
-                    </svg>
-
+                  <td class="font-medium text-gray-900">{{cuenta.nombre}}</td>
+                  <td class="text-gray-500">{{cuenta.institucion}}</td>
+                  <td class="text-center text-gray-500">{{ cuenta.inversion ? "Si" : "No" }}</td>
+                  <td class="text-center text-gray-500">{{cuenta.vista ? 'Si' : "No"}}</td>
+                  <td class="text-center text-gray-500">$ {{cuenta.saldo | number:'1.2-2' }}</td>
+                  <td (mousedown)="onMouseDown()" (mouseleave)="onMouseUp()" class="cursor-move text-center" (click)="$event.stopPropagation()">
+                    <app-drag-icon></app-drag-icon>
                   </td>
                 </tr>
               </ng-container>
