@@ -79,7 +79,6 @@ export class Login {
         console.log(response)
 
         if (response.coderr === "0000") {
-          this.toastService.show("Operación exitosa", response.message, TypeToast.success);
           this.router.navigate(['/dashboard']);
         } else {
           this.toastService.show("Error al iniciar sesión", response.message, TypeToast.danger);
@@ -94,6 +93,11 @@ export class Login {
 
     );
 
+  }
+
+  ngDestroy() {
+    this.isLoading = false;
+    this.toastService.clear();
   }
 
 }

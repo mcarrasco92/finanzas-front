@@ -1,0 +1,137 @@
+<app-toast></app-toast>
+<app-loading *ngIf="isLoading"></app-loading>
+
+<div class="my-4">
+
+  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 align-right">
+
+
+    <div class="relative overflow-hidden rounded-lg bg-white px-4 pt-5 shadow-sm sm:px-6 sm:pt-6">
+      <dt>
+        <div class="absolute rounded-md bg-indigo-500 p-3">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon"
+            aria-hidden="true" class="size-6 text-white">
+            <path
+              d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Total a la vista</p>
+      </dt>
+      <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
+        <p class="text-2xl font-semibold text-gray-900">$$$$$$$</p>
+      </dd>
+    </div>
+
+
+
+    <div class="relative overflow-hidden rounded-lg bg-white px-4 pt-5 shadow-sm sm:px-6 sm:pt-6 pb-5">
+      <dt>
+        <div class="absolute rounded-md bg-indigo-500 p-3">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon"
+            aria-hidden="true" class="size-6 text-white">
+            <path
+              d="M21.75 9v.906a2.25 2.25 0 0 1-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 0 0 1.183 1.981l6.478 3.488m8.839 2.51-4.66-2.51m0 0-1.023-.55a2.25 2.25 0 0 0-2.134 0l-1.022.55m0 0-4.661 2.51m16.5 1.615a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V8.844a2.25 2.25 0 0 1 1.183-1.981l7.5-4.039a2.25 2.25 0 0 1 2.134 0l7.5 4.039a2.25 2.25 0 0 1 1.183 1.98V19.5Z"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Total invertido</p>
+      </dt>
+      <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
+        <p class="text-2xl font-semibold text-gray-900">$$$$$$$$</p>
+      </dd>
+    </div>
+
+
+
+    <div class="relative overflow-hidden rounded-lg bg-white px-4 pt-5 shadow-sm sm:px-6 sm:pt-6">
+      <dt>
+        <div class="absolute rounded-md bg-indigo-500 p-3">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon"
+            aria-hidden="true" class="size-6 text-white">
+            <path
+              d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Saldo total</p>
+      </dt>
+      <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
+        <p class="text-2xl font-semibold text-gray-900">$$$$$$$$$</p>
+        <div class="absolute inset-x-0 bottom-1 px-4 py-0 sm:px-6">
+          <div aria-hidden="true">
+            <div class="overflow-hidden rounded-full bg-gray-200">
+              <div [ngStyle]="{ width: 50 + '%' }" class="h-2 rounded-full bg-indigo-600"></div>
+            </div>
+            <div class="hidden grid-cols-1 text-sm font-medium text-gray-600 sm:grid text-center">
+              <div class="text-center text-indigo-600">{{ 50 | number:"1.0-1" }}% Invertido</div>
+            </div>
+          </div>
+        </div>
+      </dd>
+    </div>
+  </dl>
+</div>
+
+
+<div class="flex justify-end mb-4 mr-15">
+  <div class="input-form-check">
+    <span class="span-label">
+        <label id="inversion-label">Mostrar cuentas desactivadas</label>
+    </span>
+    <div class="check-switch check-default group">
+        <span class="span-border"></span>
+        <input type="checkbox" [(ngModel)]="cuentasDesactivadas"/>
+    </div>
+  </div>
+</div>
+
+<div class="p-4 bg-white shadow-sm">
+
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="mt-1 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <table class="general-table">
+            <thead>
+              <tr>
+                <th scope="col" class="text-left font-semibold">Nombre</th>
+                <th scope="col" class="text-left">Institución</th>
+                <th scope="col" class="text-center">Inversión</th>
+                <th scope="col" class="text-center">A la vista</th>
+                <th scope="col" class="text-center">Saldo actual</th>
+
+              </tr>
+            </thead>
+            <tbody>
+                <!--
+              <ng-container *ngFor="let cuenta of cuentas; let i = index" >
+                <tr *ngIf="cuentasDesactivadas || cuenta.activa" 
+                  (dragstart)="onDragStart($event, i)"
+                  (dragover)="onDragOver($event)" 
+                  (drop)="onDrop($event, i)" 
+                  [draggable]="isDraggable"
+                  [ngClass]="{ 'hover:bg-gray-200': isDraggable, 'opacity-50': !cuenta.activa }"
+                  (click)="consultaCuenta(cuenta.id)">
+
+                  <td class="font-medium text-gray-900">{{cuenta.nombre}}</td>
+                  <td class="text-gray-500">{{cuenta.institucion}}</td>
+                  <td class="text-center text-gray-500">{{ cuenta.inversion ? "Si" : "No" }}</td>
+                  <td class="text-center text-gray-500">{{cuenta.vista ? 'Si' : "No"}}</td>
+                  <td class="text-center text-gray-500">$ {{cuenta.saldo | number:'1.2-2' }}</td>
+                  <td (mousedown)="onMouseDown()" (mouseleave)="onMouseUp()" class="cursor-move text-center" (click)="$event.stopPropagation()">
+                    <app-drag-icon></app-drag-icon>
+                  </td>
+                </tr>
+              </ng-container>
+              -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>

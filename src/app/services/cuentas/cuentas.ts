@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -80,6 +81,14 @@ export class CuentasService {
     // Lógica para eliminar una cuenta
   }
 
+
+
+  private idCuenta = new BehaviorSubject<any>(null);
+    data$ = this.idCuenta.asObservable();
+  
+    setData(data: any) {
+      this.idCuenta.next(data);
+    }
 
 
 }

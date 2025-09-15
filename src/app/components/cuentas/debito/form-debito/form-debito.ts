@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Toast } from '../../../../shared/toast/toast';
 import { ToastService, TypeToast } from '../../../../shared/toast/service/toast-service';
-import { DataService } from '../service/data-service';
 import { Subscription } from 'rxjs';
 import { CuentasService } from '../../../../services/cuentas/cuentas';
 import { Loading } from '../../../../shared/loading/loading';
@@ -18,7 +17,6 @@ import { Cuenta } from '../../../../models/cuenta';
 export class FormDebito {
 
   constructor(private toast: ToastService,
-    private dataService: DataService,
     private cuentasService: CuentasService,
     private cdr: ChangeDetectorRef
   ) { }
@@ -26,7 +24,6 @@ export class FormDebito {
   isLoading: boolean = false;
   editar: boolean = false;
 
-  inversion: boolean = false;
   valNombre: boolean = false;
   valDescripcion: boolean = false;
   valInstitucion: boolean = false;
@@ -43,7 +40,7 @@ export class FormDebito {
   ngOnInit() {
 
 
-    this.dataSubscription = this.dataService.data$.subscribe(data => {
+    this.dataSubscription = this.cuentasService.data$.subscribe(data => {
 
       if (data) {
 
@@ -128,13 +125,21 @@ export class FormDebito {
         institucion: this.cuenta.institucion,
         saldo: this.cuenta.saldo,
         vista: this.cuenta.vista,
-        inversion: this.inversion
+        inversion: this.cuenta.inversion
 
       }).subscribe(response => {
 
+        this.isLoading = false;
+
+        if(response.coderr !== "0000"){
+          this.toast.show('Error al actualizar la cuenta', response.message, TypeToast.danger);
+          this.cdr.detectChanges();
+          return; 
+        }
+
         this.toast.show('Cuenta actualizada exitosamente', "", TypeToast.success);
 
-        this.isLoading = false;
+        
 
         if (response.data && response.data.id) {
 
@@ -158,9 +163,17 @@ export class FormDebito {
 
       this.cuentasService.addCuenta(this.cuenta).subscribe(response => {
 
+        this.isLoading = false;
+
+        if(response.coderr !== "0000"){
+          this.toast.show('Error al registrar la cuenta', response.message, TypeToast.danger);
+          this.cdr.detectChanges();
+          return; 
+        }
+
         this.toast.show('Cuenta creada exitosamente', "", TypeToast.success);
 
-        this.isLoading = false;
+        
 
         if (response.data && response.data.id) {
 
@@ -242,6 +255,11 @@ export class FormDebito {
 
     // Retorna el valor formateado
     return entero + (decimal ? decimal : '.00'); ;
+  }
+
+  ngDestroy() {
+    this.isLoading = false;
+    this.toast.clear();
   }
 
 }

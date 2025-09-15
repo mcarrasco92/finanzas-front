@@ -7,7 +7,6 @@ import { Loading } from '../../../../shared/loading/loading';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { DataService } from '../service/data-service';
 import { Cuenta } from '../../../../models/cuenta';
 import { DragIcon } from '../../../../shared/icons/drag-icon/drag-icon';
 
@@ -22,7 +21,6 @@ export class ListaDebito {
   constructor(private cuentasService: CuentasService,
      private toast: ToastService,
       private cdr: ChangeDetectorRef,
-    private dataService: DataService,
   private router: Router) { }
 
   isLoading: boolean = false;
@@ -73,7 +71,7 @@ export class ListaDebito {
   }
 
   consultaCuenta(id: String) {
-    this.dataService.setData(id);
+    this.cuentasService.setData(id);
     this.router.navigate(['/dashboard/cuentas/debitof']);
   }
 
@@ -129,6 +127,11 @@ export class ListaDebito {
   
   onMouseUp(): void {
     this.isDraggable = false;
+  }
+
+  ngDestroy() {
+    this.isLoading = false;
+    this.toast.clear();
   }
   
 
