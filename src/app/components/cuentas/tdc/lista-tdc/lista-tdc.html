@@ -16,10 +16,10 @@
               stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </div>
-        <p class="ml-16 truncate text-sm font-medium text-gray-500">Total a la vista</p>
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Saldo a pagar</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900">$$$$$$$</p>
+        <p class="text-2xl font-semibold text-gray-900">$ 0.00</p>
       </dd>
     </div>
 
@@ -35,10 +35,10 @@
               stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </div>
-        <p class="ml-16 truncate text-sm font-medium text-gray-500">Total invertido</p>
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Saldo restante</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900">$$$$$$$$</p>
+        <p class="text-2xl font-semibold text-gray-900">$ 0.00</p>
       </dd>
     </div>
 
@@ -57,17 +57,7 @@
         <p class="ml-16 truncate text-sm font-medium text-gray-500">Saldo total</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900">$$$$$$$$$</p>
-        <div class="absolute inset-x-0 bottom-1 px-4 py-0 sm:px-6">
-          <div aria-hidden="true">
-            <div class="overflow-hidden rounded-full bg-gray-200">
-              <div [ngStyle]="{ width: 50 + '%' }" class="h-2 rounded-full bg-indigo-600"></div>
-            </div>
-            <div class="hidden grid-cols-1 text-sm font-medium text-gray-600 sm:grid text-center">
-              <div class="text-center text-indigo-600">{{ 50 | number:"1.0-1" }}% Invertido</div>
-            </div>
-          </div>
-        </div>
+        <p class="text-2xl font-semibold text-gray-900">$ 0.00</p>
       </dd>
     </div>
   </dl>
@@ -77,11 +67,11 @@
 <div class="flex justify-end mb-4 mr-15">
   <div class="input-form-check">
     <span class="span-label">
-        <label id="inversion-label">Mostrar cuentas desactivadas</label>
+        <label id="inversion-label">Mostrar tarjetas desactivadas</label>
     </span>
     <div class="check-switch check-default group">
         <span class="span-border"></span>
-        <input type="checkbox" [(ngModel)]="cuentasDesactivadas"/>
+        <input type="checkbox" [(ngModel)]="tarjetasDesactivadas"/>
     </div>
   </div>
 </div>
@@ -97,34 +87,37 @@
               <tr>
                 <th scope="col" class="text-left font-semibold">Nombre</th>
                 <th scope="col" class="text-left">Institución</th>
-                <th scope="col" class="text-center">Inversión</th>
-                <th scope="col" class="text-center">A la vista</th>
-                <th scope="col" class="text-center">Saldo actual</th>
-
+                <th scope="col" class="text-center">Día de corte</th>
+                <th scope="col" class="text-center">Día de pago</th>
+                <th scope="col" class="text-center">Saldo a pagar</th>
+                <th scope="col" class="text-center">Saldo restante</th>
+                <th scope="col" class="text-center">Saldo total</th>
               </tr>
             </thead>
             <tbody>
-                <!--
-              <ng-container *ngFor="let cuenta of cuentas; let i = index" >
-                <tr *ngIf="cuentasDesactivadas || cuenta.activa" 
+                
+              <ng-container *ngFor="let tarjeta of tarjetas; let i = index" >
+                <tr *ngIf="tarjetasDesactivadas || tarjeta.activa" 
                   (dragstart)="onDragStart($event, i)"
                   (dragover)="onDragOver($event)" 
                   (drop)="onDrop($event, i)" 
                   [draggable]="isDraggable"
-                  [ngClass]="{ 'hover:bg-gray-200': isDraggable, 'opacity-50': !cuenta.activa }"
-                  (click)="consultaCuenta(cuenta.id)">
+                  [ngClass]="{ 'hover:bg-gray-200': isDraggable, 'opacity-50': !tarjeta.activa }"
+                  (click)="consultaTarjeta(tarjeta.id)">
 
-                  <td class="font-medium text-gray-900">{{cuenta.nombre}}</td>
-                  <td class="text-gray-500">{{cuenta.institucion}}</td>
-                  <td class="text-center text-gray-500">{{ cuenta.inversion ? "Si" : "No" }}</td>
-                  <td class="text-center text-gray-500">{{cuenta.vista ? 'Si' : "No"}}</td>
-                  <td class="text-center text-gray-500">$ {{cuenta.saldo | number:'1.2-2' }}</td>
+                  <td class="font-medium text-gray-900">{{tarjeta.nombre}}</td>
+                  <td class="text-gray-500">{{tarjeta.institucion}}</td>
+                  <td class="text-center text-gray-500">{{ tarjeta.dcorte }}</td>
+                  <td class="text-center text-gray-500">{{tarjeta.dpago}}</td>
+                  <td class="text-center text-gray-500">$ {{0 | number:'1.2-2' }}</td>
+                  <td class="text-center text-gray-500">$ {{0 | number:'1.2-2' }}</td>
+                  <td class="text-center text-gray-500">$ {{0 | number:'1.2-2' }}</td>
                   <td (mousedown)="onMouseDown()" (mouseleave)="onMouseUp()" class="cursor-move text-center" (click)="$event.stopPropagation()">
                     <app-drag-icon></app-drag-icon>
                   </td>
                 </tr>
               </ng-container>
-              -->
+              
             </tbody>
           </table>
         </div>

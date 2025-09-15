@@ -19,10 +19,10 @@
       <div class="flex items-center">
 
         <div class="hidden sm:ml-6 sm:flex sm:items-center">
-          <button *ngIf="isDebito()" type="button" (click)="nuevaCuenta()"
+          <button *ngIf="isDebito() && btnNuevaCuenta" type="button" (click)="nuevaCuenta()"
             class="btn-orange">Nueva cuenta</button>
-            <button *ngIf="isTDC()" type="button" (click)="nuevaTDC()"
-            class="btn-orange">Nueva TDC</button>
+            <button *ngIf="isTDC() && btnNuevaTDC" type="button" (click)="nuevaTDC()"
+            class="btn-orange">Nueva tarjeta</button>
         </div>
 
         

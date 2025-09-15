@@ -1,10 +1,10 @@
-export class TDC {
+export class Tarjeta {
   id: string = '';
   nombre: string = '';
   descripcion: string = '';
   institucion: string = '';
-  corte: string = '';
-  pago: string = '';
+  dcorte: string = '';
+  dpago: string = '';
   orden: number = 0;
   activa: boolean = true;
 
@@ -14,8 +14,8 @@ export class TDC {
         this.nombre = '';
         this.descripcion = '';
         this.institucion = '';
-        this.corte = '';
-        this.pago = '';
+        this.dcorte = '';
+        this.dpago = '';
         this.orden = 0;
         this.activa = true;
     }

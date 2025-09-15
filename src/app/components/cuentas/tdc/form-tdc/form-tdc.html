@@ -1,1 +1,52 @@
-<p>form-tdc works!</p>
+<app-toast></app-toast>
+<app-loading *ngIf="isLoading"></app-loading>
+
+<div class="px-4 py-6 bg-white shadow-sm">
+    
+    <h1 class="text-lg font-medium leading-6 text-gray-900 mb-10 w-full text-center border-b border-gray-900/10 pb-4" >{{tarjeta.id ? "Consulta" : "Alta"}} de tarjeta de crédito</h1>
+    <form (ngSubmit)="enviaDatos()" method="POST" class="space-y-8">
+
+        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
+            
+            <div class="input-form-text">
+                <label for="nombreTDC">Nombre</label>
+                <input [(ngModel)]="tarjeta.nombre" id="nombreTDC" type="text" name="nombreTDC" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" />
+                <p *ngIf="valNombre">Este campo es obligatorio</p>
+            </div>
+            
+
+            <div class="input-form-text">
+                <label for="descipcion">Descripción</label>
+                <input [(ngModel)]="tarjeta.descripcion" id="descipcion" type="text" name="descipcion" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" />
+                <p *ngIf="valDescripcion">Este campo es obligatorio</p>
+            </div>
+
+            <div class="input-form-text">
+                <label for="institucion">Institución</label>
+                <input [(ngModel)]="tarjeta.institucion" id="institucion" type="text" name="institucion" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"/>
+                <p *ngIf="valInstitucion">Este campo es obligatorio</p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                <div class="input-form-text">
+                    <label for="dpago">Día de pago</label>
+                    <input [(ngModel)]="tarjeta.dpago" (input)="validarDia($event)" id="dpago" type="number" name="dpago" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"/>
+                    <p *ngIf="valDpago">Este campo es obligatorio</p>
+                </div>
+                <div class="input-form-text">
+                    <label for="dcorte">Día de corte</label>
+                    <input [(ngModel)]="tarjeta.dcorte" (input)="validarDia($event)" id="dcorte" type="number" name="dcorte" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"/>
+                    <p *ngIf="valDcorte">Este campo es obligatorio</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10">
+            <button *ngIf="tarjeta.id" (click)="activaDesactivaTarjeta()" type="button" class="btn-danger absolute left-0">{{tarjeta.activa ? "Desactivar" : "Activar"}} TDC</button>
+            <button *ngIf="editar && tarjeta.id" (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
+            <button *ngIf="editar || !tarjeta.id" type="submit" class="btn-primary">Guardar</button>
+            <button *ngIf="!editar && tarjeta.id && tarjeta.activa" (click)="editar=true" type="button" class="btn-primary">Editar</button>
+          </div>
+    </form>
+</div>

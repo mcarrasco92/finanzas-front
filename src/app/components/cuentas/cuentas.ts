@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CuentasService } from '../../services/cuentas/cuentas';
-import { TdcService } from '../../services/tdc/tdc-service';
+import { TarjetasService } from '../../services/tarjetas/tarjetas';
 import { CommonModule } from '@angular/common';
 import { Toast } from '../../shared/toast/toast';
 import { ToastService, TypeToast, typToast } from '../../shared/toast/service/toast-service';
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { RouterLink, Router ,RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cuentas',
@@ -19,43 +20,57 @@ import { RouterLink, Router ,RouterModule } from '@angular/router';
 export class Cuentas {
 
   constructor(private cuentasService: CuentasService, 
-    private tdcService: TdcService,
+    private tarjetaService: TarjetasService,
     private toast: ToastService, 
     private cdr: ChangeDetectorRef,
 private router: Router) { }
 
   isLoading: boolean = false;
-  agregaCuenta: boolean = true;
-  modulo: string = 'Cuentas';
+  btnNuevaCuenta: boolean = true;
+  btnNuevaTDC: boolean = true;
+
+  private dataSubscription!: Subscription;
 
   ngOnInit(): void {
-    this.agregaCuenta = true;
+
+    this.dataSubscription = this.cuentasService.data$.subscribe(data => {
+      if(!data && this.router.url === '/dashboard/cuentas/debitof'){
+        this.btnNuevaCuenta = false;
+      }else{
+        this.btnNuevaCuenta = true;
+      }
+    })
+
+    this.dataSubscription = this.tarjetaService.data$.subscribe(data => {
+      if(!data && this.router.url === '/dashboard/cuentas/tdcf'){
+        this.btnNuevaTDC = false;
+      }else{
+        this.btnNuevaTDC = true;
+      }
+    })
     
     this.cdr.detectChanges();
   }
 
 
-  toggleAgregaCuenta(): void {
-    this.agregaCuenta = !this.agregaCuenta;
-  }
-
-
   nuevaCuenta() {
     this.cuentasService.setData(null);
+    this.btnNuevaCuenta = false;
     this.router.navigate(['/dashboard/cuentas/debitof']);
   }
 
   nuevaTDC() {
-    this.tdcService.setData(null);
+    this.tarjetaService.setData(null);
+    this.btnNuevaTDC = false;
     this.router.navigate(['/dashboard/cuentas/tdcf']);
   }
 
   isDebito(): boolean {
-    return this.router.url === '/dashboard/cuentas/debito' || this.router.url === '/dashboard/cuentas/debitof';
+    return (this.router.url === '/dashboard/cuentas/debito' || this.router.url === '/dashboard/cuentas/debitof');
   }
 
   isTDC(): boolean {
-    return this.router.url === '/dashboard/cuentas/tdc' || this.router.url === '/dashboard/cuentas/tdcf';
+    return (this.router.url === '/dashboard/cuentas/tdc' || this.router.url === '/dashboard/cuentas/tdcf');
   }
 
 

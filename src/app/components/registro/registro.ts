@@ -40,7 +40,7 @@ export class Registro {
   validaCaracteres(event: Event): void {
     const input = event.target as HTMLInputElement;
 
-    input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+    input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ´\s]/g, '');
     this.name = input.value;
   }
 
@@ -112,6 +112,7 @@ export class Registro {
 
     this.authService.registrarUsuario(datos).subscribe(
       response => {
+        this.isLoading = false;
 
         if(response.coderr === "0000"){
           this.toastService.show("Operación exitosa",response.message, TypeToast.success);

@@ -75,6 +75,9 @@ export class FormDebito {
   }
 
   ngOnDestroy() {
+    this.isLoading = false;
+    this.toast.clear();
+    this.cuentasService.setData(null);
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
@@ -146,6 +149,7 @@ export class FormDebito {
           this.cuenta = Object.assign(new Cuenta(), response.data);
           this.cuentaOriginal = Object.assign(new Cuenta(), response.data);
           this.saldo = this.cuenta.getSaldo();
+          this.cuentasService.setData(this.cuenta.id);
 
           this.cdr.detectChanges();
         }
@@ -180,6 +184,7 @@ export class FormDebito {
           this.cuenta = Object.assign(new Cuenta(), response.data);
           this.cuentaOriginal = Object.assign(new Cuenta(), response.data);
           this.saldo = this.cuenta.getSaldo();
+          this.cuentasService.setData(this.cuenta.id);
 
           this.cdr.detectChanges();
         }
@@ -257,9 +262,5 @@ export class FormDebito {
     return entero + (decimal ? decimal : '.00'); ;
   }
 
-  ngDestroy() {
-    this.isLoading = false;
-    this.toast.clear();
-  }
 
 }
