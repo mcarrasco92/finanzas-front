@@ -56,6 +56,7 @@ export class CategoriasModal {
         });
       } else {
         this.categoria = new Categoria();
+        this.editar = true;
         this.cdr.detectChanges();
       }
     });
