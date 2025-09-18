@@ -11,6 +11,21 @@ body{
   background-color: rgb(237	233	225);
 }
 
+.select-form {
+  @apply relative;
+  label {
+    @apply absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-900;
+  }
+  select {
+    @apply block w-full rounded-md px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6;
+  }
+
+  p {
+    @apply mt-2 text-sm text-red-600;
+  }
+
+}
+
 .input-form-text {
   @apply relative;
   label {

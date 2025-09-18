@@ -1,0 +1,94 @@
+<app-toast></app-toast>
+<app-loading *ngIf="isLoading"></app-loading>
+<app-categorias-modal *ngIf="mostrarCategoriasModal" (cerrar)="cerrarCategoriasModal()"></app-categorias-modal>
+
+<div class="my-4">
+  <div class="flex justify-end mb-4 mr-15">
+    <div class="input-form-check">
+      <span class="span-label">
+          <label id="inversion-label">Mostrar categorias desactivadas</label>
+      </span>
+      <div class="check-switch check-default group">
+          <span class="span-border"></span>
+          <input type="checkbox" [(ngModel)]="categoriasDesactivadas"/>
+      </div>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+    
+    <div class="px-4 py-6 bg-white shadow-sm">
+      <h1 class="text-lg font-medium leading-6 text-gray-900 mb-5 w-full text-center border-b border-gray-900/10 pb-4" >Categorías ingresos</h1>
+
+      <div class="px-4 sm:px-6 lg:px-8">
+        <div class="flow-root">
+          <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table class="general-table">
+                <thead>
+                  <tr>
+                    <th scope="col" class=" font-semibold text-center">Nombre</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let categoria of categoriasIngresos; let i = index" >
+                    <tr *ngIf="categoriasDesactivadas || categoria.activa" 
+                      (dragstart)="onDragStart($event, i)"
+                      (dragover)="onDragOver($event)" 
+                      (drop)="onDropIngresos($event, i)" 
+                      [draggable]="isDraggable"
+                      [ngClass]="{ 'hover:bg-gray-200': isDraggable, 'opacity-50': !categoria.activa }"
+                      (click)="consultaCategoria(categoria.id)">
+                      <td class="text-gray-500 text-center">{{categoria.nombre}}</td>
+                      <td (mousedown)="onMouseDown()" (mouseleave)="onMouseUp()" class="cursor-move text-center w-15" (click)="$event.stopPropagation()">
+                        <app-drag-icon></app-drag-icon>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-4 py-6 bg-white shadow-sm">
+      <h1 class="text-lg font-medium leading-6 text-gray-900 mb-5 w-full text-center border-b border-gray-900/10 pb-4" >Categorías egresos</h1>
+      
+      <div class="px-4 sm:px-6 lg:px-8">
+        <div class="flow-root">
+          <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table class="general-table">
+                <thead>
+                  <tr>
+                    <th scope="col" class=" font-semibold text-center">Nombre</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let categoria of categoriasEgresos; let i = index" >
+                    <tr *ngIf="categoriasDesactivadas || categoria.activa" 
+                      (dragstart)="onDragStart($event, i)"
+                      (dragover)="onDragOver($event)" 
+                      (drop)="onDropEgresos($event, i)" 
+                      [draggable]="isDraggable"
+                      [ngClass]="{ 'hover:bg-gray-200': isDraggable, 'opacity-50': !categoria.activa }"
+                      (click)="consultaCategoria(categoria.id)">
+                      <td class="text-gray-500 text-center">{{categoria.nombre}}</td>
+                      <td (mousedown)="onMouseDown()" (mouseleave)="onMouseUp()" class="cursor-move text-center w-15" (click)="$event.stopPropagation()">
+                        <app-drag-icon></app-drag-icon>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+     </div>
+
+  </div>
+
+</div>
+    

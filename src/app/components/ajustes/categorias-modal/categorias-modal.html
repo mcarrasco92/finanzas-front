@@ -1,0 +1,46 @@
+<app-loading *ngIf="isLoading"></app-loading>
+
+<div>
+
+  <div class="fixed inset-0 z-49 flex items-center justify-center backdrop-blur-sm absolute bg-black opacity-50"></div>
+  <div class="fixed inset-0 z-49 flex items-center justify-center backdrop-blur-sm absolute"></div>
+  <div class="fixed inset-0 z-50 flex items-center justify-center">
+
+    <div class="bg-white rounded-lg shadow-lg w-120 p-6">
+      <h2 class="relative text-lg font-semibold text-gray-900 mb-4 border-b border-gray-900/10 pb-5">Nueva Categoría
+        <div class="absolute top-0 right-1 cursor-pointer" (click)="cerrarModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </div>
+      </h2>
+
+      <form class="pt-4">
+        <div class="input-form-text">
+          <label for="nombreCategoria">Nombre</label>
+          <input [(ngModel)]="categoria.nombre" id="nombreCategoria" type="text" name="nombreCategoria" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" [disabled]="!editar && categoria.id"
+            autocomplete="off" />
+          <p *ngIf="valNombre">Este campo es obligatorio</p>
+        </div>
+
+        <div class="select-form mt-4">
+          <label for="tipo">Tipo</label>
+          <select [(ngModel)]="categoria.tipo" id="tipo" name="tipo" class="pl-10" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" [disabled]="!editar && categoria.id">
+            <option value="">Selecciona una opción</option>
+            <option value="I">Ingreso</option>
+            <option value="E">Egreso</option>
+          </select>
+          <p *ngIf="valTipo">Este campo es obligatorio</p>
+        </div>
+
+        <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10 mt-7">
+          <button *ngIf="categoria.id" type="button" class="btn-danger absolute left-0" (click)="activaDesactivaCategoria()" >{{categoria.activa ? "Desactivar categoría" : "Activar categoría"}}</button>
+          <button *ngIf="editar && categoria.id" (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
+          <button *ngIf="editar || !categoria.id" type="submit" class="btn-primary" (click)="enviaDatos()">Guardar</button>
+          <button *ngIf="!editar && categoria.id && categoria.activa" (click)="editar=true" type="button" class="btn-primary">Editar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
