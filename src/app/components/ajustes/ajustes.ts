@@ -5,6 +5,7 @@ import { Toast } from '../../shared/toast/toast';
 import { Loading } from '../../shared/loading/loading';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { CategoriasModal } from './categorias-modal/categorias-modal';
+import { CategoriasService } from '../../services/categorias/categorias';
 
 
 @Component({
@@ -18,13 +19,14 @@ export class Ajustes {
   isLoading = false;
 mostrarCategoriasModal = false;
   
-  constructor(private router: Router) { }
+  constructor(private router: Router, private categoriasService: CategoriasService) { }
 
   isCategorias(): boolean {
     return this.router.url === '/dashboard/ajustes/categorias';
   }
 
   abrirCategoriasModal(): void {
+    this.categoriasService.setData(null); // Limpia cualquier dato previo
     this.mostrarCategoriasModal = true; // Muestra el modal
   }
 
