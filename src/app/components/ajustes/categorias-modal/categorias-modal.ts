@@ -170,7 +170,7 @@ export class CategoriasModal {
   
         this.cdr.detectChanges();
   
-        this.toast.show('Categoria activada exitosamente', "", TypeToast.success);
+        this.toast.show(response.message, "", TypeToast.success);
   
         this.isLoading = false;
       } , error => {
