@@ -6,19 +6,17 @@ import { DragIcon } from '../../../shared/icons/drag-icon/drag-icon';
 import { ToastService , TypeToast } from '../../../shared/toast/service/toast-service';
 import { Categoria } from '../../../models/categoria';
 import { CategoriasService } from '../../../services/categorias/categorias';
-import { CategoriasModal } from '../categorias-modal/categorias-modal';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-categorias',
-  imports: [ Toast, CommonModule, FormsModule, DragIcon, CategoriasModal],
+  imports: [ Toast, CommonModule, FormsModule, DragIcon],
   templateUrl: './categorias.html',
   styleUrl: './categorias.css'
 })
 export class Categorias {
 
   categoriasDesactivadas: boolean = false;
-  mostrarCategoriasModal = false;
 
 
   constructor(private toast: ToastService, 
@@ -84,7 +82,7 @@ export class Categorias {
 
   consultaCategoria(id: String) {
     this.categoriasService.setData(id);
-    this.mostrarCategoriasModal = true;
+    this.categoriasService.setAbrirCategoriasModal(true); // Indica que se debe abrir el modal
     
   }
   
@@ -118,14 +116,6 @@ export class Categorias {
 
     this.categoriasService.ordenaCategorias(categoriasOrdenadas).subscribe(response => {});
 
-  }
-
-  abrirCategoriasModal(): void {
-    this.mostrarCategoriasModal = true; // Muestra el modal
-  }
-
-  cerrarCategoriasModal(): void {
-    this.mostrarCategoriasModal = false; // Oculta el modal
   }
 
 

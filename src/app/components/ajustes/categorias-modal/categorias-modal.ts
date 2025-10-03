@@ -144,6 +144,8 @@ export class CategoriasModal {
           this.toast.show('Error al crear la categoria', error.error.message, TypeToast.danger);
         });
       }
+
+      this.cerrarModal();
   
     }
 
@@ -171,7 +173,7 @@ export class CategoriasModal {
     } 
 
   cerrarModal(): void {
-    console.log('Cerrando modal');
+    this.categoriasService.setData(null);
     this.cerrar.emit();
   }
 

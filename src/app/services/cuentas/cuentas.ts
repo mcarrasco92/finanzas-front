@@ -106,8 +106,16 @@ export class CuentasService {
 
 
    //Eliminar cuenta
-   deleteCuenta(cuentaId: string) {
-    // Lógica para eliminar una cuenta
+   deleteCuenta(cuentaId: string) : Observable<any>{
+    return this.http.delete(this.baseUrl + `/api/cuentas/eliminar/${cuentaId}`).pipe(
+      tap(() => {
+        this.getCuentasSubscription?.unsubscribe();
+        this.getCuentasSubscription = this.getCuentas().subscribe();
+      }),
+      catchError((error) => {
+        // Manejo del error
+        throw error; // Re-lanzar el error para que pueda ser manejado por el suscriptor
+      })); 
   }
 
 

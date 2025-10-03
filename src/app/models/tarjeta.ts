@@ -8,6 +8,7 @@ export class Tarjeta {
   dpago: string = '';
   orden: number = 0;
   activa: boolean = true;
+  transacciones: boolean = false;
 
 
     limpiar() {
@@ -20,6 +21,7 @@ export class Tarjeta {
         this.dpago = '';
         this.orden = 0;
         this.activa = true;
+        this.transacciones = false;
     }
 
 }

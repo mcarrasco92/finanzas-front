@@ -1,20 +1,22 @@
 import { Component } from '@angular/core';
-import  { RouterOutlet, RouterLink, Router } from '@angular/router';
+import  { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Auth } from '../../services/auth';
 import { ItemMenu } from '../../shared/item-menu/item-menu';
 import { Transacciones } from '../transacciones/transacciones';
 import { FormsModule } from '@angular/forms';
 import { CategoriasService } from '../../services/categorias/categorias';
-import { Categoria } from '../../models/categoria';
 import { CuentasService } from '../../services/cuentas/cuentas';
 import { Subscription } from 'rxjs';
 import { TarjetasService } from '../../services/tarjetas/tarjetas';
 import { TransaccionesService } from '../../services/transacciones/transacciones';
+import { filter } from 'rxjs/operators';
+import { CategoriasModal } from '../ajustes/categorias-modal/categorias-modal';
+
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule],
+  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -30,13 +32,18 @@ export class Dashboard {
 
   openPerfil = false;
   mostrarTransaccionesModal: boolean = false;
+  mostrarCategoriasModal: boolean = false;
 
   cuentasSuscription: Subscription | null = null;
   tarjetasSuscription: Subscription | null = null;
   categoriasSuscription: Subscription | null = null;
   cargaTransaccionSuscription: Subscription | null = null;
+  categoriasModalSuscription: Subscription | null = null;
 
   tipoTransaccion: string = '';
+
+  tabActivo: string = 'Dashboard';
+  rutaActual: string = '';
   
   ngOnInit() {
     this.categoriasSuscription = this.categoriasService.getCategorias().subscribe();
@@ -49,6 +56,38 @@ export class Dashboard {
         this.menuAbierto = false;
       }
     })
+
+    this.categoriasModalSuscription = this.categoriasService.abrirCategoriasModal$.subscribe(abrir => {
+      if(abrir) {
+        this.mostrarCategoriasModal = true;
+      }
+    }); 
+
+    /// Determinar la pestaña activa según la ruta actual al cargar el componente
+    this.rutaActual = this.router.url;
+    if(this.rutaActual.includes('ajustes')) {
+      this.tabActivo = 'Ajustes';
+    }else if(this.rutaActual.includes('cuentas')) {
+      this.tabActivo = 'Cuentas';
+    } else {
+      this.tabActivo = 'Dashboard';
+    }
+
+    /// Escuchar cambios en la ruta para actualizar la pestaña activa
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe((event: NavigationEnd) => {
+
+      if(event.urlAfterRedirects.includes('ajustes')) {
+        this.tabActivo = 'Ajustes';
+      }else if(event.urlAfterRedirects.includes('cuentas')) {
+        this.tabActivo = 'Cuentas';
+      } else {
+        this.tabActivo = 'Dashboard';
+      }
+
+    });
+
   }
 
   ngOnDestroy() {
@@ -56,6 +95,7 @@ export class Dashboard {
     this.tarjetasSuscription?.unsubscribe();
     this.categoriasSuscription?.unsubscribe();
     this.cargaTransaccionSuscription?.unsubscribe();
+    this.categoriasModalSuscription?.unsubscribe();
   }
 
   togglePerfil() {
@@ -91,8 +131,18 @@ export class Dashboard {
     this.menuAbierto = false; // Cierra el menú después de la acción
   }
 
+  // Acción para "Nuevo Egreso"
+  nuevaCategoria(): void {
+    this.categoriasService.setAbrirCategoriasModal(true);
+    this.menuAbierto = false; // Cierra el menú después de la acción
+  }
+
   cerrarTransaccionesModal() {
     this.mostrarTransaccionesModal = false;
   }
+
+  cerrarCategoriasModal() {
+    this.mostrarCategoriasModal = false;
+  } 
 
 }

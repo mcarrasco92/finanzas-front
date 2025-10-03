@@ -16,10 +16,12 @@ import { MesEsPipe } from '../../../../pipes/mes-es-pipe';
 import { FilterTipoTransaccionPipe } from '../../../../pipes/filter-tipo-transaccion-pipe';
 import { ConfirmModal } from '../../../../shared/confirm-modal/confirm-modal';
 import { OptionsMenu } from '../../../../shared/options-menu/options-menu';
+import { TrashIcon } from '../../../../shared/icons/trash-icon/trash-icon';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-debito',
-  imports: [CommonModule, FormsModule, Toast, LeftIcon, RightIcon, MesEsPipe, FilterTipoTransaccionPipe, ConfirmModal, OptionsMenu],
+  imports: [CommonModule, FormsModule, Toast, LeftIcon, RightIcon, MesEsPipe, FilterTipoTransaccionPipe, ConfirmModal, OptionsMenu, TrashIcon],
   templateUrl: './form-debito.html',
   styleUrl: './form-debito.css'
 })
@@ -30,7 +32,8 @@ export class FormDebito {
     private cdr: ChangeDetectorRef,
     private transaccionesService: TransaccionesService,
     private route: ActivatedRoute,
-    private generalService: GeneralService
+    private generalService: GeneralService,
+    private router: Router
   ) { }
 
   editar: boolean = false;
@@ -44,6 +47,7 @@ export class FormDebito {
 
   transaccionModal: boolean = false;
   confirmModal: boolean = false;
+  confirmModalEliminaCuenta: boolean = false;
   deleteTransaccionId: string = '';
 
   cuenta: Cuenta = new Cuenta();
@@ -81,21 +85,27 @@ export class FormDebito {
     }
 
     this.generalSubscription = this.generalService.actualizaPantalla$.subscribe(actualiza => {
+      actualiza ? this.actualizaPantalla() : null;
+    })
 
-      if (!actualiza) {
-        return;
-      }
+  }
 
+  actualizaPantalla(){
+
+    setTimeout(() => {
       this.consultaDetalle(this.cuenta.id);
       
       let filtro = {
         yearMonth: this.fechaActual.toISOString().slice(0, 7),
         cuentaId: this.cuenta.id
       };
-  
+    
       this.consultaMovimientos(filtro);
-    })
+    }, 500);
 
+
+
+    
   }
 
   ngOnDestroy() {
@@ -104,7 +114,10 @@ export class FormDebito {
   }
 
   consultaDetalle(cuentaId: string): void {
+
+    console.log('Consultando detalle de la cuenta ' + cuentaId);
     this.cuentasService.getCuentaById(cuentaId).subscribe(response => {
+      console.log(response);
 
       if(response.coderr !== "0000"){
         this.toast.show('Error al consultar la cuenta', response.message, TypeToast.danger);
@@ -258,9 +271,12 @@ export class FormDebito {
   }
 
   showConfirmModal(trans: any): void {
-    console.log('Borrar transacción');
     this.deleteTransaccionId = trans.id;
     this.confirmModal = true;
+  }
+
+  showConfirmModalEliminarCuenta(): void {
+    this.confirmModalEliminaCuenta = true;
   }
 
   eliminaTransaccion() {
@@ -270,12 +286,33 @@ export class FormDebito {
     this.transaccionesService.deleteTransaccion(this.deleteTransaccionId).subscribe(response => {
       if (response.coderr === '0000') {
         this.toast.show('Transacción eliminada correctamente', '', TypeToast.success);
+        this.actualizaPantalla();
       } else {
         this.toast.show('Error al eliminar la transacción', response.message, TypeToast.danger);
       }
     });
 
+
   }
+
+  eliminaCuenta(): void {
+
+    if (!this.cuenta.id) {
+      return;
+    }
+
+    this.confirmModalEliminaCuenta = false;
+
+    this.cuentasService.deleteCuenta(this.cuenta.id).subscribe(response => {
+      if (response.coderr === '0000') {
+        this.toast.show('Cuenta eliminada correctamente', '', TypeToast.success);
+        this.router.navigate(['/dashboard/cuentas/debito']);
+      } else {
+        this.toast.show('Error al eliminar la cuenta', response.message, TypeToast.danger);
+      }
+    });
+
+  } 
 
   actualizaSaldo(): void {
     this.cuenta.setSaldo(this.saldo);

@@ -8,6 +8,7 @@ export class Cuenta {
   vista: boolean = false;
   orden: number = 0;
   activa: boolean = true;
+  transacciones: boolean = false;
 
 
     limpiar() {
@@ -20,6 +21,7 @@ export class Cuenta {
         this.vista = false;
         this.orden = 0;
         this.activa = true;
+        this.transacciones = false;
     }
 
     setSaldo(saldo: string) {

@@ -86,8 +86,16 @@ activaDesactivaTarjeta(tarjetaId: string, activa: boolean): Observable<any> {
 }
 
 //Eliminar tarjeta
-deleteTarjeta(tarjetaId: string) {
-  // Lógica para eliminar una tarjeta
+deleteTarjeta(tarjetaId: string): Observable<any>{ 
+  return this.http.delete(this.baseUrl + `/api/tarjetas/eliminar/${tarjetaId}`).pipe(
+    tap(() => {
+      this.getTarjetasSubscription?.unsubscribe();
+      this.getTarjetasSubscription = this.getTarjetas().subscribe();
+    }),
+    catchError((error) => {
+      // Manejo del error
+      throw error; // Re-lanzar el error para que pueda ser manejado por el suscriptor
+    })); 
 }
 
 private tarjetasList = new BehaviorSubject<Tarjeta[]>([]);

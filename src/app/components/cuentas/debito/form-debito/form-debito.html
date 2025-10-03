@@ -1,5 +1,6 @@
 <app-toast></app-toast>
 <app-confirm-modal *ngIf="confirmModal" [titulo]="'Eliminar movimiento'" [mensaje]="'¿Estás seguro de que deseas eliminar este movimiento?'" [fondoOscuro]="true" (cerrar)="confirmModal=false" (confirmar)="eliminaTransaccion()"></app-confirm-modal>
+<app-confirm-modal *ngIf="confirmModalEliminaCuenta" [titulo]="'Eliminar cuenta'" [mensaje]="'¿Estás seguro de que deseas eliminar esta cuenta?'" [fondoOscuro]="true" (cerrar)="confirmModalEliminaCuenta=false" (confirmar)="eliminaCuenta()"></app-confirm-modal>
 
 <div class="px-4 py-6 bg-white shadow-sm">
     
@@ -68,7 +69,16 @@
         </div>
 
         <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10">
-            <button *ngIf="cuenta.id" (click)="activaDesactivaCuenta()" type="button" class="btn-danger absolute left-0">{{cuenta.activa ? "Desactivar cuenta" : "Activar cuenta"}}</button>
+            <div class="flex-grow flex justify-start space-x-4">
+              <button *ngIf="cuenta.id && !cuenta.transacciones" (click)="showConfirmModalEliminarCuenta()" type="button" class="btn-danger">
+                <div class="flex items-center space-x-2">
+                  <app-trash-icon></app-trash-icon>
+                  <div>Eliminar cuenta</div>
+                </div>
+              </button>
+              
+              <button *ngIf="cuenta.id" (click)="activaDesactivaCuenta()" type="button" class="btn-danger">{{cuenta.activa ? "Desactivar cuenta" : "Activar cuenta"}}</button>
+            </div>
             <button *ngIf="editar && cuenta.id" (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
             <button *ngIf="editar || !cuenta.id" type="submit" class="btn-primary">Guardar</button>
             <button *ngIf="!editar && cuenta.id && cuenta.activa" (click)="editar=true" type="button" class="btn-primary">Editar</button>
@@ -123,7 +133,7 @@
                     <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">{{trans.tipo}}</td>
                     <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">{{trans.importe | currency:'USD':'symbol-narrow'}}</td>
                     <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">{{trans.descripcion}}</td>
-                    <td>
+                    <td *ngIf="cuenta.activa">
                       <app-options-menu (editar)="editarTransaccion(trans)" (eliminar)="showConfirmModal(trans)"></app-options-menu>
                     </td>
                   </tr>

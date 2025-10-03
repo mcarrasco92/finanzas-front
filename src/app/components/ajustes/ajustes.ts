@@ -4,20 +4,19 @@ import { FormsModule } from '@angular/forms';
 import { Toast } from '../../shared/toast/toast';
 import { Loading } from '../../shared/loading/loading';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { CategoriasModal } from './categorias-modal/categorias-modal';
 import { CategoriasService } from '../../services/categorias/categorias';
 
 
 @Component({
   selector: 'app-ajustes',
-  imports: [CommonModule, FormsModule, Toast, Loading, RouterLink, RouterOutlet, CategoriasModal],
+  imports: [CommonModule, FormsModule, Toast, Loading, RouterLink, RouterOutlet],
   templateUrl: './ajustes.html',
   styleUrl: './ajustes.css'
 })
 export class Ajustes {
 
   isLoading = false;
-mostrarCategoriasModal = false;
+  mostrarCategoriasModal = false;
   
   constructor(private router: Router, private categoriasService: CategoriasService) { }
 
@@ -27,11 +26,7 @@ mostrarCategoriasModal = false;
 
   abrirCategoriasModal(): void {
     this.categoriasService.setData(null); // Limpia cualquier dato previo
-    this.mostrarCategoriasModal = true; // Muestra el modal
-  }
-
-  cerrarCategoriasModal(): void {
-    this.mostrarCategoriasModal = false; // Oculta el modal
+    this.categoriasService.setAbrirCategoriasModal(true); // Indica que se debe abrir el modal
   }
 
 }

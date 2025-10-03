@@ -129,9 +129,11 @@ export class CategoriasService {
 
   private categoriasIngresos = new BehaviorSubject<Categoria[]>([]);
   private categoriasEgresos = new BehaviorSubject<Categoria[]>([]);
+  private abrirCategoriasModal = new BehaviorSubject<boolean>(false);
 
   categoriasIngresos$ = this.categoriasIngresos.asObservable();
   categoriasEgresos$ = this.categoriasEgresos.asObservable();
+  abrirCategoriasModal$ = this.abrirCategoriasModal.asObservable();
 
 
   setCategoriasIngresos(categorias: Categoria[]) {
@@ -141,6 +143,10 @@ export class CategoriasService {
   setCategoriasEgresos(categorias: Categoria[]) {
     this.categoriasEgresos.next(categorias);
   } 
+
+  setAbrirCategoriasModal(abrir: boolean) {
+    this.abrirCategoriasModal.next(abrir);
+  }
 
 
 }

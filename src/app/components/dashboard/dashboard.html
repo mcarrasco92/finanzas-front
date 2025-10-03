@@ -1,5 +1,5 @@
 <div class="flex bg-white h-screen">
-  <div class="flex w-60 flex-col">
+  <div class="flex w-60 flex-col fixed h-full">
     <div class="relative flex grow flex-col overflow-y-auto border-r border-gray-200 bg-white px-6">
       <div class="relative flex h-20 shrink-0 items-center justify-center mt-2">
         <img src="assets/logoBlanco.jpeg" alt="Your Company" class="h-20 w-auto" />
@@ -10,8 +10,8 @@
           <li>
             <ul role="list" class="-mx-2 space-y-1">
 
-              <app-item-menu nombre="Cuentas" link="/dashboard/cuentas/debito"></app-item-menu>
-              <app-item-menu nombre="Ajustes" link="/dashboard/ajustes/categorias"></app-item-menu>
+              <app-item-menu nombre="Cuentas" link="/dashboard/cuentas/debito" activo={{tabActivo}}></app-item-menu>
+              <app-item-menu nombre="Ajustes" link="/dashboard/ajustes/categorias" activo={{tabActivo}}></app-item-menu>
 
             </ul>
           </li>
@@ -52,7 +52,7 @@
     </div>
 
   </div>
-  <div class="flex flex-col bg-gray-50 flex-1">
+  <div class="flex flex-col bg-gray-50 flex-1 ml-60 h-full overflow-y-auto pb-18">
     <!-- Replace with your content -->
 
     <div class="p-2">
@@ -65,7 +65,7 @@
       <div class="relative">
         <!-- Botón principal -->
         <button (click)="toggleMenu()"
-          class="w-14 h-14 rounded-full bg-indigo-600 text-white shadow-lg flex items-center justify-center hover:bg-indigo-700 focus:outline-none">
+          class="w-12 h-12 rounded-full bg-indigo-600 text-white shadow-lg flex items-center justify-center hover:bg-indigo-700 focus:outline-none cursor-pointer shadow-md">
           <span class="text-2xl font-semibold">+</span>
         </button>
 
@@ -84,6 +84,12 @@
                 Nuevo Egreso
               </button>
             </li>
+            <li>
+              <button (click)="nuevaCategoria()"
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Nueva Categoría
+              </button>
+            </li>
           </ul>
         </div>
       </div>
@@ -93,3 +99,4 @@
 </div>
 
 <app-transacciones *ngIf="mostrarTransaccionesModal" (cerrar)="cerrarTransaccionesModal()" [tipo]=tipoTransaccion></app-transacciones>
+<app-categorias-modal *ngIf="mostrarCategoriasModal" (cerrar)="cerrarCategoriasModal()"></app-categorias-modal>

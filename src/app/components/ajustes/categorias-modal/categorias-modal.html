@@ -15,14 +15,8 @@
       </h2>
 
       <form class="pt-4">
-        <div class="input-form-text">
-          <label for="nombreCategoria">Nombre</label>
-          <input [(ngModel)]="categoria.nombre" id="nombreCategoria" type="text" name="nombreCategoria" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" [disabled]="!editar && categoria.id"
-            autocomplete="off" />
-          <p *ngIf="valNombre">Este campo es obligatorio</p>
-        </div>
 
-        <div class="select-form mt-4">
+        <div class="select-form">
           <label for="tipo">Tipo</label>
           <select [(ngModel)]="categoria.tipo" id="tipo" name="tipo" class="pl-10" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" [disabled]="!editar && categoria.id">
             <option value="">Selecciona una opción</option>
@@ -30,6 +24,13 @@
             <option value="E">Egreso</option>
           </select>
           <p *ngIf="valTipo">Este campo es obligatorio</p>
+        </div>
+
+        <div class="input-form-text mt-4">
+          <label for="nombreCategoria">Nombre</label>
+          <input [(ngModel)]="categoria.nombre" id="nombreCategoria" type="text" name="nombreCategoria" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" [disabled]="!editar && categoria.id"
+            autocomplete="off" />
+          <p *ngIf="valNombre">Este campo es obligatorio</p>
         </div>
 
         <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10 mt-7">

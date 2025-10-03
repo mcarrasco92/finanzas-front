@@ -12,5 +12,6 @@ export class ItemMenu {
 
 @Input() nombre: string = ''; // Recibe el nombre como parámetro
 @Input() link: string = ''; // Recibe el link como parámetro
+@Input() activo: string = ''; // Recibe el link como parámetro
 
 }

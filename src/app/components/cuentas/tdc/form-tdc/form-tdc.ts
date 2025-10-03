@@ -16,11 +16,13 @@ import { FilterTipoTransaccionPipe } from '../../../../pipes/filter-tipo-transac
 import { ConfirmModal } from '../../../../shared/confirm-modal/confirm-modal';
 import { OptionsMenu } from '../../../../shared/options-menu/options-menu';
 import { Subscription } from 'rxjs';
+import { TrashIcon } from '../../../../shared/icons/trash-icon/trash-icon';
+import { Router } from '@angular/router';
 
 
 @Component({
   selector: 'app-form-tdc',
-  imports: [Toast, CommonModule, FormsModule, LeftIcon, RightIcon, MesEsPipe, FilterTipoTransaccionPipe, ConfirmModal, OptionsMenu],
+  imports: [Toast, CommonModule, FormsModule, LeftIcon, RightIcon, MesEsPipe, FilterTipoTransaccionPipe, ConfirmModal, OptionsMenu, TrashIcon],
   templateUrl: './form-tdc.html',
   styleUrl: './form-tdc.css'
 })
@@ -33,6 +35,7 @@ export class FormTDC {
 
   transaccionModal: boolean = false;
   confirmModal: boolean = false;
+  confirmModalEliminaTarjeta: boolean = false;
   deleteTransaccionId: string = '';
 
   valNombre: boolean = false;
@@ -55,7 +58,8 @@ export class FormTDC {
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private generalService: GeneralService,
-    private transaccionesService: TransaccionesService
+    private transaccionesService: TransaccionesService,
+    private router: Router
   ) { }
 
 
@@ -81,16 +85,24 @@ export class FormTDC {
     }
 
     this.generalSubscription = this.generalService.actualizaPantalla$.subscribe(actualiza => {
-
-      let filtro = {
-        yearMonth: this.fechaActual.toISOString().slice(0, 7),
-        tarjetaId: this.tarjeta.id
-      };
-  
-      this.consultaMovimientos(filtro);
+      actualiza ? this.actualizaPantalla() : null;
     })
 
 
+  }
+
+  actualizaPantalla(){
+
+    setTimeout(() => {
+      this.consultaDetalle(this.tarjeta.id);
+      
+      let filtro = {
+        yearMonth: this.fechaActual.toISOString().slice(0, 7),
+        cuentaId: this.tarjeta.id
+      };
+    
+      this.consultaMovimientos(filtro);
+    }, 1000);
   }
 
   consultaDetalle(cuentaId: string) {
@@ -243,6 +255,10 @@ export class FormTDC {
     this.confirmModal = true;
   }
 
+  showConfirmModalEliminarTarjeta(): void {
+    this.confirmModalEliminaTarjeta = true;
+  }
+
   eliminaTransaccion() {
 
     this.confirmModal = false;
@@ -250,12 +266,32 @@ export class FormTDC {
     this.transaccionesService.deleteTransaccion(this.deleteTransaccionId).subscribe(response => {
       if (response.coderr === '0000') {
         this.toast.show('Transacción eliminada correctamente', '', TypeToast.success);
+        this.actualizaPantalla();
       } else {
         this.toast.show('Error al eliminar la transacción', response.message, TypeToast.danger);
       }
     });
 
   }
+
+  eliminaTarjeta(): void {
+
+    if (!this.tarjeta.id) {
+      return;
+    }
+
+    this.confirmModalEliminaTarjeta = false;
+
+    this.tarjetaService.deleteTarjeta(this.tarjeta.id).subscribe(response => {
+      if (response.coderr === '0000') {
+        this.toast.show('Tarjeta eliminada correctamente', '', TypeToast.success);
+        this.router.navigate(['/dashboard/cuentas/tdc']);
+      } else {
+        this.toast.show('Error al eliminar la tarjeta', response.message, TypeToast.danger);
+      }
+    });
+
+  } 
 
   validarDia(event: Event): void {
     const input = event.target as HTMLInputElement;
