@@ -1,0 +1,11 @@
+/* Animación para el menú desplegable */
+.menu-enter {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  
+  .menu-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+  }

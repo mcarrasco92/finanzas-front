@@ -1,5 +1,5 @@
 <app-toast></app-toast>
-<app-loading *ngIf="isLoading"></app-loading>
+<app-confirm-modal *ngIf="confirmModal" [titulo]="'Eliminar movimiento'" [mensaje]="'¿Estás seguro de que deseas eliminar este movimiento?'" [fondoOscuro]="true" (cerrar)="confirmModal=false" (confirmar)="eliminaTransaccion()"></app-confirm-modal>
 
 <div class="px-4 py-6 bg-white shadow-sm">
     
@@ -77,41 +77,64 @@
 </div>
 
 
-<div class="p-4 bg-white shadow-sm mt-5">
-    <h1 class="text-lg font-medium leading-6 text-gray-900 mb-10 w-full text-center">Transacciones</h1>
-    <div class="px-4 sm:px-6 lg:px-8">
-      <div class="mt-1 flow-root">
-        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <table class="relative min-w-full divide-y divide-gray-300">
-              <thead>
-                <tr>
-                  <th scope="col" class="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-0">Nombre
-                  </th>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Institución</th>
-                  <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Inversión</th>
-                  <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Tasa Anual</th>
-                  <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">A la vista</th>
-                  <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Saldo actual</th>
+<div *ngIf="cuenta.id">
+
+  <nav class="bg-white shadow-sm mt-4 pt-4">
+    <h1 class="text-lg font-medium text-gray-900 w-full text-center">Movimientos</h1>
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-12 justify-between">
+        <div class="flex justify-center w-full">
+            <div (click)="cmabiaTipoMovimiento('General')" [ngClass]="{'!border-orange-400 text-gray-900': tipoMovimiento == 'General'}" class="inline-flex items-center border-b-2 border-transparent px-10 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 cursor-pointer">General</div>
+            <div (click)="cmabiaTipoMovimiento('Ingresos')" [ngClass]="{'!border-orange-400 text-gray-900': tipoMovimiento == 'Ingresos'}" class="inline-flex items-center border-b-2 border-transparent px-10 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 cursor-pointer">Ingresos</div>
+            <div (click)="cmabiaTipoMovimiento('Egresos')" [ngClass]="{'!border-orange-400 text-gray-900': tipoMovimiento == 'Egresos'}" class="inline-flex items-center border-b-2 border-transparent px-10 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 cursor-pointer">Egresos</div>
+        </div>
+      </div>
+    </div>
+  </nav>
   
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200">
-                <tr class="cursor-pointer hover:bg-gray-50">
-                  <td class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0">sdfsdf</td>
-                  <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500">sdfsdf</td>
-                  <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">sdfsdf</td>
-                  <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">sdfsdf</td>
-                  <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">sdfsdfsd</td>
-                  <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">sdfsdf</td>
-                </tr>
-              </tbody>
-            </table>
+  <div class="flex justify-center mt-5">
+    <div class="flex items-center space-x-4">
+      <app-left-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(-1)"></app-left-icon>
+      <h1 class="text-lg font-medium leading-6 text-gray-900 w-full text-center">{{fechaActual | date: 'LLLL yyyy' | mesEs}}</h1>
+      <app-right-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(1)"></app-right-icon>
+    </div>
+  </div>
+  
+  <div *ngIf="transacciones.length > 0" class="p-4 bg-white shadow-sm mt-5">
+      <div class="px-4 sm:px-6 lg:px-8">
+        <div class="mt-1 flow-root">
+          <div class="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table class="relative min-w-full divide-y divide-gray-300">
+                <thead>
+                  <tr>
+                    <th scope="col" class="py-3.5 pr-3 pl-4 text-center text-sm font-semibold text-gray-900 sm:pl-0">Fecha</th>
+                    <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Concepto</th>
+                    <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Tipo</th>
+                    <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Importe</th>
+                    <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Descripción</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                  <tr *ngFor="let trans of transacciones | filterTipoTransaccion : tipoMovimiento; let i = index " class="hover:bg-gray-50">
+                    <td class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 text-center sm:pl-0">{{trans.fecha}}</td>
+                    <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">{{trans.concepto}}</td>
+                    <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">{{trans.tipo}}</td>
+                    <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">{{trans.importe | currency:'USD':'symbol-narrow'}}</td>
+                    <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500 text-center">{{trans.descripcion}}</td>
+                    <td>
+                      <app-options-menu (editar)="editarTransaccion(trans)" (eliminar)="showConfirmModal(trans)"></app-options-menu>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
   
-  
-  
+    <p *ngIf="transacciones.length === 0" class="text-center text-gray-500 mt-10">No hay movimientos para este mes</p>
+    
   </div>

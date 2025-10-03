@@ -9,6 +9,8 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Cuenta } from '../../../../models/cuenta';
 import { DragIcon } from '../../../../shared/icons/drag-icon/drag-icon';
+import { Subscription } from 'rxjs';
+import { GeneralService } from '../../../../services/general-service';
 
 
 @Component({
@@ -19,9 +21,11 @@ import { DragIcon } from '../../../../shared/icons/drag-icon/drag-icon';
 })
 export class ListaDebito {
   constructor(private cuentasService: CuentasService,
-     private toast: ToastService,
-      private cdr: ChangeDetectorRef,
-  private router: Router) { }
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private generalService: GeneralService
+  ) { }
 
   isLoading: boolean = false;
   cuentas: Cuenta[] = [];
@@ -31,9 +35,39 @@ export class ListaDebito {
 
   porcentajeInvertido: number = 0;
   cuentasDesactivadas: boolean = false;
-  
+
+  cuentasSubscription: Subscription | null = null;
+  saldoDisponibleSubscription: Subscription | null = null;
+  saldoInvertidoSubscription: Subscription | null = null;
+  saldoTotalSubscription: Subscription | null = null;
 
   ngOnInit() {
+
+    this.generalService.setScreen('lista-debito');
+
+    this.cuentasSubscription = this.cuentasService.cuentasList$.subscribe((cuentas) => {
+      this.cuentas = cuentas;
+      this.cdr.detectChanges();
+    });
+
+    this.saldoDisponibleSubscription = this.cuentasService.saldoDisponible$.subscribe((saldo) => {
+      this.saldoDisponible = saldo;
+      this.cdr.detectChanges();
+    });
+
+    this.saldoInvertidoSubscription = this.cuentasService.saldoInvertido$.subscribe((saldo) => {
+      this.saldoInvertido = saldo;
+      this.cdr.detectChanges();
+    });
+
+    this.saldoTotalSubscription = this.cuentasService.saldoTotal$.subscribe((saldo) => {
+      this.saldoTotal = saldo;
+      this.cdr.detectChanges();
+    });
+    
+  }
+
+  consultarCuentas(){
 
     this.isLoading = true;
 
@@ -71,8 +105,7 @@ export class ListaDebito {
   }
 
   consultaCuenta(id: String) {
-    this.cuentasService.setData(id);
-    this.router.navigate(['/dashboard/cuentas/debitof']);
+    this.router.navigate(['/dashboard/cuentas/debitof/' + id]);
   }
 
 
@@ -129,7 +162,12 @@ export class ListaDebito {
     this.isDraggable = false;
   }
 
-  ngDestroy() {
+
+  ngOnDestroy() {
+    this.cuentasSubscription?.unsubscribe();
+    this.saldoDisponibleSubscription?.unsubscribe();
+    this.saldoInvertidoSubscription?.unsubscribe();
+    this.saldoTotalSubscription?.unsubscribe();
     this.isLoading = false;
     this.toast.clear();
   }

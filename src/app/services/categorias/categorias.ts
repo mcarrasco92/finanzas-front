@@ -3,12 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
 import { BehaviorSubject } from 'rxjs';
+import { Categoria } from '../../models/categoria';
+import { tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoriasService {
   baseUrl = environment.apiUrl; // Usa la URL del entorno
+
+  private getCategoriasSubscription: Subscription | null = null;
+
   constructor(private http: HttpClient) { }
 
   ordenaCategorias(datos: any): Observable<any> {
@@ -21,10 +27,18 @@ export class CategoriasService {
 
   //Consultar categorias
   getCategorias(): Observable<any> {
-
-      
-   
       return this.http.get(this.baseUrl + '/api/categorias').pipe(
+      tap((response: any) => {
+        
+        if (response.coderr === '0000') {
+          const ingresos:Categoria[] = response.data.categoriasIngresos;
+          const egresos:Categoria[] = response.data.categoriasEgresos;
+          ingresos.sort((a, b) => a.orden - b.orden);
+          egresos.sort((a, b) => a.orden - b.orden);
+          this.setCategoriasIngresos(ingresos);
+          this.setCategoriasEgresos(egresos);
+        }
+      }),
       catchError((error) => {
         // Manejo del error
         throw error; // Re-lanzar el error para que pueda ser manejado por el suscriptor
@@ -38,6 +52,10 @@ export class CategoriasService {
     console.log(categoria);
 
     return this.http.post(this.baseUrl + '/api/categorias/registrar', categoria).pipe(
+      tap(() => {
+        this.getCategoriasSubscription?.unsubscribe();
+        this.getCategoriasSubscription = this.getCategorias().subscribe();
+      }),
       catchError((error) => {
         // Manejo del error
         throw error; // Re-lanzar el error para que pueda ser manejado por el suscriptor
@@ -49,6 +67,10 @@ export class CategoriasService {
   //Actualizar categoria
   updateCategoria(categoriaId: string, categoria: any): Observable<any> {
     return this.http.put(this.baseUrl + `/api/categorias/actualizar/${categoriaId}`, categoria).pipe(
+      tap(() => {
+        this.getCategoriasSubscription?.unsubscribe();
+        this.getCategoriasSubscription = this.getCategorias().subscribe();
+      }),
       catchError((error) => {
         // Manejo del error
         throw error; // Re-lanzar el error para que pueda ser manejado por el suscriptor
@@ -70,6 +92,10 @@ export class CategoriasService {
 
   activaDesactivaCategoria(categoriaId: string, activa: boolean): Observable<any> {
     return this.http.put(this.baseUrl + `/api/categorias/activar/${categoriaId}`, activa).pipe(
+      tap(() => {
+        this.getCategoriasSubscription?.unsubscribe();
+        this.getCategoriasSubscription = this.getCategorias().subscribe();
+      }),
       catchError((error) => {
         // Manejo del error
         throw error; // Re-lanzar el error para que pueda ser manejado por el suscriptor
@@ -90,11 +116,31 @@ export class CategoriasService {
     setData(data: any) {
       this.idCategoria.next(data);
     }
-
+/*
   private recargaCategorias = new BehaviorSubject<boolean>(false);
   recarga$ = this.recargaCategorias.asObservable();
 
   setRecarga(value: boolean) {
     this.recargaCategorias.next(value);
   }
+*/
+
+
+
+  private categoriasIngresos = new BehaviorSubject<Categoria[]>([]);
+  private categoriasEgresos = new BehaviorSubject<Categoria[]>([]);
+
+  categoriasIngresos$ = this.categoriasIngresos.asObservable();
+  categoriasEgresos$ = this.categoriasEgresos.asObservable();
+
+
+  setCategoriasIngresos(categorias: Categoria[]) {
+    this.categoriasIngresos.next(categorias);
+  }
+
+  setCategoriasEgresos(categorias: Categoria[]) {
+    this.categoriasEgresos.next(categorias);
+  } 
+
+
 }

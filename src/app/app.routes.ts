@@ -17,8 +17,10 @@ export const routes: Routes = [
     {path: 'cuentas', component: Cuentas, children: [
       {path: 'debito', component: ListaDebito},
       {path: 'debitof', component: FormDebito},
+      {path: 'debitof/:id', component: FormDebito},
       {path: 'tdc', component: ListaTDC},
       {path: 'tdcf', component: FormTDC},
+      {path: 'tdcf/:id', component: FormTDC},
     ]},
     {path: 'ajustes', component: Ajustes, children: [
       {path: 'categorias', component: Categorias}

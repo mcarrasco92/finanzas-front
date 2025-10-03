@@ -10,6 +10,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { RouterLink, Router ,RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { GeneralService } from '../../services/general-service';
 
 @Component({
   selector: 'app-cuentas',
@@ -23,54 +24,54 @@ export class Cuentas {
     private tarjetaService: TarjetasService,
     private toast: ToastService, 
     private cdr: ChangeDetectorRef,
-private router: Router) { }
+    private router: Router,
+    private generalService: GeneralService
+) { }
 
   isLoading: boolean = false;
   btnNuevaCuenta: boolean = true;
   btnNuevaTDC: boolean = true;
 
-  private dataSubscription!: Subscription;
+  private screenSubscription!: Subscription;
+
 
   ngOnInit(): void {
 
-    this.dataSubscription = this.cuentasService.data$.subscribe(data => {
-      if(!data && this.router.url === '/dashboard/cuentas/debitof'){
-        this.btnNuevaCuenta = false;
-      }else{
+    this.screenSubscription = this.generalService.screen$.subscribe(screen => {
+      this.btnNuevaTDC = false;
+      this.btnNuevaCuenta = false;
+      if(screen === 'lista-debito' || screen === 'form-debito-id'){
         this.btnNuevaCuenta = true;
-      }
-    })
-
-    this.dataSubscription = this.tarjetaService.data$.subscribe(data => {
-      if(!data && this.router.url === '/dashboard/cuentas/tdcf'){
-        this.btnNuevaTDC = false;
-      }else{
+      }else if(screen === 'lista-tdc' || screen === 'form-tdc-id'){
         this.btnNuevaTDC = true;
       }
-    })
+      this.cdr.detectChanges();
+    });
     
     this.cdr.detectChanges();
   }
 
+  ngOnDestroy(): void {
+    this.screenSubscription?.unsubscribe();
+  }
+
 
   nuevaCuenta() {
-    this.cuentasService.setData(null);
     this.btnNuevaCuenta = false;
     this.router.navigate(['/dashboard/cuentas/debitof']);
   }
 
   nuevaTDC() {
-    this.tarjetaService.setData(null);
     this.btnNuevaTDC = false;
     this.router.navigate(['/dashboard/cuentas/tdcf']);
   }
 
   isDebito(): boolean {
-    return (this.router.url === '/dashboard/cuentas/debito' || this.router.url === '/dashboard/cuentas/debitof');
+    return this.router.url.includes('/dashboard/cuentas/debito');
   }
 
   isTDC(): boolean {
-    return (this.router.url === '/dashboard/cuentas/tdc' || this.router.url === '/dashboard/cuentas/tdcf');
+    return this.router.url.includes('/dashboard/cuentas/tdc');
   }
 
 

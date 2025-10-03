@@ -1,0 +1,24 @@
+<div>
+    <div *ngIf="fondoOscuro" class="fixed inset-0 z-49 flex items-center justify-center backdrop-blur-sm absolute bg-black opacity-50"></div>
+    <div *ngIf="fondoOscuro" class="fixed inset-0 z-49 flex items-center justify-center backdrop-blur-sm absolute"></div>
+    <div class="fixed inset-0 z-50 flex items-center justify-center">
+            
+        <div class="bg-white rounded-lg shadow-lg w-150 p-6">
+            <h2 class="relative text-lg font-semibold text-gray-900 mb-4 border-b border-gray-900/10 pb-5">{{ titulo }}
+            <div class="absolute top-0 right-1 cursor-pointer" (click)="cerrarModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </div>
+            </h2>
+    
+            <p class="mb-6" [innerHTML]="mensaje"></p>
+    
+            <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10">
+            <button (click)="cerrarModal()" type="button" class="btn-secondary">Cancelar</button>
+            <button (click)="confirmarAccion()" type="button" class="btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>

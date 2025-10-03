@@ -17,22 +17,28 @@
           </li>
 
           <li class="-mx-6 mt-auto">
-            <a (click)="togglePerfil()" class="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-50 cursor-pointer relative">
-              <div class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 border border-gray-300 text-xs font-medium text-gray-600">
+            <a (click)="togglePerfil()"
+              class="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-50 cursor-pointer relative">
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 border border-gray-300 text-xs font-medium text-gray-600">
                 M
               </div>
               <span aria-hidden="true">Mauricio Carrasco</span>
             </a>
 
 
-            <div *ngIf="openPerfil" class="absolute bottom-15 left-0 w-50 bg-white border border-gray-200 border-t-0 rounded-b-md shadow-md z-10 cursor-pointer hover:bg-gray-50">
+            <div *ngIf="openPerfil"
+              class="absolute bottom-15 left-0 w-50 bg-white border border-gray-200 border-t-0 rounded-b-md shadow-md z-10 cursor-pointer hover:bg-gray-50">
               <ul class="text-sm text-gray-700">
                 <li (click)="cerrarSesion()">
-                  <a routerLink="/dashboard/cuentas" class="group flex gap-x-3 rounded-md p-2 text-sm/6 text-gray-600 hover:bg-gray-50">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 shrink-0">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
-                  </svg>
-                  Cerrar sesión
+                  <a routerLink="/dashboard/cuentas"
+                    class="group flex gap-x-3 rounded-md p-2 text-sm/6 text-gray-600 hover:bg-gray-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                      stroke="currentColor" class="size-6 shrink-0">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                    </svg>
+                    Cerrar sesión
                   </a>
                 </li>
               </ul>
@@ -48,9 +54,42 @@
   </div>
   <div class="flex flex-col bg-gray-50 flex-1">
     <!-- Replace with your content -->
-    
-<div class="p-2">
-  <router-outlet></router-outlet>
-</div>
+
+    <div class="p-2">
+      <router-outlet></router-outlet>
+    </div>
+
+
+    <!-- Botón flotante -->
+    <div class="fixed bottom-6 right-6">
+      <div class="relative">
+        <!-- Botón principal -->
+        <button (click)="toggleMenu()"
+          class="w-14 h-14 rounded-full bg-indigo-600 text-white shadow-lg flex items-center justify-center hover:bg-indigo-700 focus:outline-none">
+          <span class="text-2xl font-semibold">+</span>
+        </button>
+
+        <!-- Menú desplegable -->
+        <div *ngIf="menuAbierto" class="absolute bottom-16 right-0 bg-white shadow-lg rounded-md w-48">
+          <ul class="py-2">
+            <li>
+              <button (click)="nuevoIngreso()"
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Nuevo Ingreso
+              </button>
+            </li>
+            <li>
+              <button (click)="nuevoEgreso()"
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Nuevo Egreso
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<app-transacciones *ngIf="mostrarTransaccionesModal" (cerrar)="cerrarTransaccionesModal()" [tipo]=tipoTransaccion></app-transacciones>

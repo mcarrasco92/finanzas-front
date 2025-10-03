@@ -5,12 +5,21 @@ import { Toast } from '../../../../shared/toast/toast';
 import { ToastService, TypeToast } from '../../../../shared/toast/service/toast-service';
 import { Subscription } from 'rxjs';
 import { CuentasService } from '../../../../services/cuentas/cuentas';
-import { Loading } from '../../../../shared/loading/loading';
 import { Cuenta } from '../../../../models/cuenta';
+import { Transaccion } from '../../../../models/transaccion';
+import { TransaccionesService } from '../../../../services/transacciones/transacciones';
+import { ActivatedRoute } from '@angular/router';
+import { GeneralService } from '../../../../services/general-service';
+import { LeftIcon } from '../../../../shared/icons/left-icon/left-icon';
+import { RightIcon } from '../../../../shared/icons/right-icon/right-icon';
+import { MesEsPipe } from '../../../../pipes/mes-es-pipe';
+import { FilterTipoTransaccionPipe } from '../../../../pipes/filter-tipo-transaccion-pipe';
+import { ConfirmModal } from '../../../../shared/confirm-modal/confirm-modal';
+import { OptionsMenu } from '../../../../shared/options-menu/options-menu';
 
 @Component({
   selector: 'app-form-debito',
-  imports: [CommonModule, FormsModule, Toast, Loading],
+  imports: [CommonModule, FormsModule, Toast, LeftIcon, RightIcon, MesEsPipe, FilterTipoTransaccionPipe, ConfirmModal, OptionsMenu],
   templateUrl: './form-debito.html',
   styleUrl: './form-debito.css'
 })
@@ -18,10 +27,12 @@ export class FormDebito {
 
   constructor(private toast: ToastService,
     private cuentasService: CuentasService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private transaccionesService: TransaccionesService,
+    private route: ActivatedRoute,
+    private generalService: GeneralService
   ) { }
 
-  isLoading: boolean = false;
   editar: boolean = false;
 
   valNombre: boolean = false;
@@ -31,64 +42,122 @@ export class FormDebito {
 
   saldo: string = '';
 
+  transaccionModal: boolean = false;
+  confirmModal: boolean = false;
+  deleteTransaccionId: string = '';
+
   cuenta: Cuenta = new Cuenta();
   cuentaOriginal: Cuenta = new Cuenta();
 
-  private dataSubscription!: Subscription; // Variable para almacenar la suscripción
+  transacciones: Transaccion[] = [];
+
+  fechaActual: Date = new Date();
+  tipoMovimiento: String = 'General'
+
+  generalSubscription: Subscription | null = null;
+
 
 
   ngOnInit() {
+    //recibir dato desde el path :id
+    const id = this.route.snapshot.paramMap.get('id');
+    if(id){
+      this.generalService.setScreen('form-debito-id');
+      this.consultaDetalle(id);
 
+      let filtro = {
+        yearMonth: new Date().toISOString().slice(0, 7),
+        cuentaId: id
+      };
 
-    this.dataSubscription = this.cuentasService.data$.subscribe(data => {
+      this.consultaMovimientos(filtro);
+    }else{
+      this.generalService.setScreen('form-debito');
+      this.cuenta.limpiar();
+      this.cuentaOriginal.limpiar();
+      this.editar = true;
+      this.saldo = '';
+      this.cdr.detectChanges();
+    }
 
-      if (data) {
+    this.generalSubscription = this.generalService.actualizaPantalla$.subscribe(actualiza => {
 
-        this.isLoading = true;
-        this.cuentasService.getCuentaById(data).subscribe(response => {
-          this.isLoading = false;
-
-          if(response.coderr !== "0000"){
-            this.toast.show('Error al consultar la cuenta', response.message, TypeToast.danger);
-            this.cdr.detectChanges();
-            return; 
-          }
-
-          this.cuenta = Object.assign(new Cuenta(), response.data);
-          this.cuentaOriginal = Object.assign(new Cuenta(), response.data);
-
-          this.saldo = this.cuenta.getSaldo();
-
-          this.cdr.detectChanges();
-
-
-        });
-      } else {
-        this.cuenta.limpiar();
-        this.saldo = '';
-
-        this.editar = true;
-        this.cdr.detectChanges();
+      if (!actualiza) {
+        return;
       }
-    });
+
+      this.consultaDetalle(this.cuenta.id);
+      
+      let filtro = {
+        yearMonth: this.fechaActual.toISOString().slice(0, 7),
+        cuentaId: this.cuenta.id
+      };
+  
+      this.consultaMovimientos(filtro);
+    })
 
   }
 
   ngOnDestroy() {
-    this.isLoading = false;
     this.toast.clear();
-    this.cuentasService.setData(null);
-    if (this.dataSubscription) {
-      this.dataSubscription.unsubscribe();
-    }
+    this.generalService.setScreen('');
+  }
+
+  consultaDetalle(cuentaId: string): void {
+    this.cuentasService.getCuentaById(cuentaId).subscribe(response => {
+
+      if(response.coderr !== "0000"){
+        this.toast.show('Error al consultar la cuenta', response.message, TypeToast.danger);
+        this.cdr.detectChanges();
+        return; 
+      }
+
+      this.cuenta = Object.assign(new Cuenta(), response.data);
+      this.cuentaOriginal = Object.assign(new Cuenta(), response.data);
+
+      this.saldo = this.cuenta.getSaldo();
+
+      this.cdr.detectChanges();
+
+    });
+  }
+
+  consultaMovimientos(filtro: any): void {
+    
+    this.transacciones = [];
+    this.transaccionesService.getTransaccionesByMonth(filtro).subscribe(response => {
+      
+      if(response.coderr === "0000"){
+        this.transacciones = response.data.transacciones
+      }
+      this.cdr.detectChanges();
+    });
+  }
+
+  cambiaMes(option: number): void {
+
+    this.fechaActual = new Date(this.fechaActual.setMonth(this.fechaActual.getMonth() + option));
+
+    let filtro = {
+      yearMonth: this.fechaActual.toISOString().slice(0, 7),
+      cuentaId: this.cuenta.id
+    };
+
+    this.consultaMovimientos(filtro);
+  }
+
+  cmabiaTipoMovimiento(tipo: string): void {
+    this.tipoMovimiento = tipo;
+  }
+
+  consultaTransaccion(transaccion: Transaccion): void {
+    this.transaccionesService.setTransaccion(transaccion);
   }
 
   activaDesactivaCuenta(): void {
     if (!this.cuenta.id) {
       return;
     }
-
-    this.isLoading = true;
 
     this.cuentasService.activaDesactivaCuenta(this.cuenta.id, !this.cuenta.activa).subscribe(response => {
 
@@ -99,9 +168,7 @@ export class FormDebito {
 
       this.toast.show('Cuenta activada exitosamente', "", TypeToast.success);
 
-      this.isLoading = false;
     } , error => {
-      this.isLoading = false;
       this.toast.show('Error al actualizar la cuenta', error.error.message, TypeToast.danger);
     });
   }
@@ -120,8 +187,6 @@ export class FormDebito {
     if (this.cuenta.id) {
       //Actualizar cuenta
 
-      this.isLoading = true;
-
       this.cuentasService.updateCuenta(this.cuenta.id, {
         nombre: this.cuenta.nombre,
         descripcion: this.cuenta.descripcion,
@@ -132,8 +197,6 @@ export class FormDebito {
 
       }).subscribe(response => {
 
-        this.isLoading = false;
-
         if(response.coderr !== "0000"){
           this.toast.show('Error al actualizar la cuenta', response.message, TypeToast.danger);
           this.cdr.detectChanges();
@@ -142,20 +205,18 @@ export class FormDebito {
 
         this.toast.show('Cuenta actualizada exitosamente', "", TypeToast.success);
 
-        
+        console.log(response);
 
         if (response.data && response.data.id) {
 
           this.cuenta = Object.assign(new Cuenta(), response.data);
           this.cuentaOriginal = Object.assign(new Cuenta(), response.data);
           this.saldo = this.cuenta.getSaldo();
-          this.cuentasService.setData(this.cuenta.id);
 
           this.cdr.detectChanges();
         }
 
       }, error => {
-        this.isLoading = false;
         this.toast.show('Error al actualizar la cuenta', error.error.message, TypeToast.danger);
       });
 
@@ -163,11 +224,7 @@ export class FormDebito {
 
       //Nueva cuenta
 
-      this.isLoading = true;
-
       this.cuentasService.addCuenta(this.cuenta).subscribe(response => {
-
-        this.isLoading = false;
 
         if(response.coderr !== "0000"){
           this.toast.show('Error al registrar la cuenta', response.message, TypeToast.danger);
@@ -184,16 +241,39 @@ export class FormDebito {
           this.cuenta = Object.assign(new Cuenta(), response.data);
           this.cuentaOriginal = Object.assign(new Cuenta(), response.data);
           this.saldo = this.cuenta.getSaldo();
-          this.cuentasService.setData(this.cuenta.id);
 
           this.cdr.detectChanges();
         }
 
       }, error => {
-        this.isLoading = false;
         this.toast.show('Error al crear la cuenta', error.error.message, TypeToast.danger);
       });
     }
+
+  }
+
+  editarTransaccion(trans: any): void {
+    console.log('Editar transacción:', trans);
+    this.transaccionesService.setTransaccion(trans)
+  }
+
+  showConfirmModal(trans: any): void {
+    console.log('Borrar transacción');
+    this.deleteTransaccionId = trans.id;
+    this.confirmModal = true;
+  }
+
+  eliminaTransaccion() {
+
+    this.confirmModal = false;
+
+    this.transaccionesService.deleteTransaccion(this.deleteTransaccionId).subscribe(response => {
+      if (response.coderr === '0000') {
+        this.toast.show('Transacción eliminada correctamente', '', TypeToast.success);
+      } else {
+        this.toast.show('Error al eliminar la transacción', response.message, TypeToast.danger);
+      }
+    });
 
   }
 

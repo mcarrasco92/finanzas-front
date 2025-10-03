@@ -1,6 +1,8 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection, importProvidersFrom} from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection, importProvidersFrom, LOCALE_ID} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 
 import { routes } from './app.routes';
 
@@ -18,4 +20,6 @@ export const appConfig: ApplicationConfig = {
       multi: true
     } 
   ]
+
+  
 };

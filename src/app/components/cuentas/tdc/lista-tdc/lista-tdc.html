@@ -111,7 +111,7 @@
                   <td class="text-center text-gray-500">{{tarjeta.dpago}}</td>
                   <td class="text-center text-gray-500">$ {{0 | number:'1.2-2' }}</td>
                   <td class="text-center text-gray-500">$ {{0 | number:'1.2-2' }}</td>
-                  <td class="text-center text-gray-500">$ {{0 | number:'1.2-2' }}</td>
+                  <td class="text-center text-gray-500">{{tarjeta.saldo | currency}}</td>
                   <td (mousedown)="onMouseDown()" (mouseleave)="onMouseUp()" class="cursor-move text-center" (click)="$event.stopPropagation()">
                     <app-drag-icon></app-drag-icon>
                   </td>

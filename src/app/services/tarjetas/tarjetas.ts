@@ -3,6 +3,9 @@ import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environment/environment';
 import { catchError, Observable } from 'rxjs';
+import { Tarjeta } from '../../models/tarjeta';
+import { tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,12 +15,7 @@ export class TarjetasService {
   baseUrl = environment.apiUrl; // Usa la URL del entorno
   constructor(private http: HttpClient) { }
 
-  private idTarjeta = new BehaviorSubject<any>(null);
-  data$ = this.idTarjeta.asObservable();
-
-  setData(data: any) {
-    this.idTarjeta.next(data);
-  }
+  private getTarjetasSubscription: Subscription | null = null;
 
   ordenaTarjetas(datos: any): Observable<any> {
     return this.http.post(this.baseUrl + '/api/tarjetas/orden', datos).pipe(
@@ -30,6 +28,13 @@ export class TarjetasService {
   getTarjetas(): Observable<any> {
 
     return this.http.get(this.baseUrl + '/api/tarjetas').pipe(
+    tap((response: any) => {
+      if (response.coderr === '0000') {
+        const tarejtasList:Tarjeta[] = response.data.tarjetas;
+        tarejtasList.sort((a, b) => a.orden - b.orden);
+        this.setTarjetasList(tarejtasList);
+      }
+    }),
     catchError((error) => {
       throw error;
     }));
@@ -40,6 +45,10 @@ export class TarjetasService {
 addTarjeta(tarjeta: any): Observable<any> {
 
   return this.http.post(this.baseUrl + '/api/tarjetas/registrar', tarjeta).pipe(
+    tap(() => {
+      this.getTarjetasSubscription?.unsubscribe();
+      this.getTarjetasSubscription = this.getTarjetas().subscribe();
+    }),
     catchError((error) => {
       throw error;
     }));  
@@ -48,6 +57,10 @@ addTarjeta(tarjeta: any): Observable<any> {
 //Actualizar tarjeta
 updateTarjeta(tarjetaId: string, tarjeta: any): Observable<any> {
   return this.http.put(this.baseUrl + `/api/tarjetas/actualizar/${tarjetaId}`, tarjeta).pipe(
+    tap(() => {
+      this.getTarjetasSubscription?.unsubscribe();
+      this.getTarjetasSubscription = this.getTarjetas().subscribe();
+    }),
     catchError((error) => {
       throw error;
     }));  
@@ -63,6 +76,10 @@ getTarjetaById(tarjetaId: string): Observable<any> {
 
 activaDesactivaTarjeta(tarjetaId: string, activa: boolean): Observable<any> {
   return this.http.put(this.baseUrl + `/api/tarjetas/activar/${tarjetaId}`, activa).pipe(
+    tap(() => {
+      this.getTarjetasSubscription?.unsubscribe();
+      this.getTarjetasSubscription = this.getTarjetas().subscribe();
+    }),
     catchError((error) => {
       throw error;
     }));  
@@ -72,5 +89,15 @@ activaDesactivaTarjeta(tarjetaId: string, activa: boolean): Observable<any> {
 deleteTarjeta(tarjetaId: string) {
   // Lógica para eliminar una tarjeta
 }
+
+private tarjetasList = new BehaviorSubject<Tarjeta[]>([]);
+tarjetasList$ = this.tarjetasList.asObservable();
+
+setTarjetasList(tarjetas: Tarjeta[]) {
+  this.tarjetasList.next(tarjetas);
+}
+
+
+
 
 }

@@ -1,23 +1,22 @@
 import { Component ,ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Loading } from '../../../shared/loading/loading';
 import { Toast } from '../../../shared/toast/toast';
 import { DragIcon } from '../../../shared/icons/drag-icon/drag-icon';
 import { ToastService , TypeToast } from '../../../shared/toast/service/toast-service';
 import { Categoria } from '../../../models/categoria';
 import { CategoriasService } from '../../../services/categorias/categorias';
 import { CategoriasModal } from '../categorias-modal/categorias-modal';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-categorias',
-  imports: [Loading, Toast, CommonModule, FormsModule, DragIcon, CategoriasModal],
+  imports: [ Toast, CommonModule, FormsModule, DragIcon, CategoriasModal],
   templateUrl: './categorias.html',
   styleUrl: './categorias.css'
 })
 export class Categorias {
 
-  isLoading: boolean = false;
   categoriasDesactivadas: boolean = false;
   mostrarCategoriasModal = false;
 
@@ -31,17 +30,19 @@ export class Categorias {
   categoriasIngresos : Categoria[] = [];
   categoriasEgresos : Categoria[] = [];
 
+  IngresosSusbscription: Subscription | null = null;
+  EgresosSusbscription: Subscription | null = null;
+
   ngOnInit() {
 
-    this.isLoading = true;
+    this.IngresosSusbscription = this.categoriasService.categoriasIngresos$.subscribe(categorias => {
+      this.categoriasIngresos = categorias;
+      this.cdr.detectChanges();
+    });
 
-    this.consultaCategorias();
-
-    this.categoriasService.recarga$.subscribe(recarga => {
-      if (recarga) {
-        this.consultaCategorias();
-        this.categoriasService.setRecarga(false);
-      }
+    this.EgresosSusbscription = this.categoriasService.categoriasEgresos$.subscribe(categorias => {
+      this.categoriasEgresos = categorias;
+      this.cdr.detectChanges();
     });
   }
 
@@ -52,7 +53,7 @@ export class Categorias {
 
       if(response.coderr !== '0000') {
         this.toast.show('Error al consultar las categorias', response.message, TypeToast.danger);
-        this.isLoading = false;
+        
         this.cdr.detectChanges();
         return;
       }
@@ -63,14 +64,15 @@ export class Categorias {
       this.categoriasIngresos.sort((a, b) => a.orden - b.orden);
       this.categoriasEgresos.sort((a, b) => a.orden - b.orden);
 
-
+      this.categoriasService.setCategoriasIngresos(this.categoriasIngresos);
+      this.categoriasService.setCategoriasEgresos(this.categoriasEgresos);
 
     }, error => {
       this.toast.show('Error al consultar las categorias', 'Error: ' + error.status, TypeToast.danger);
-      this.isLoading = false;
+      
       this.cdr.detectChanges();
     }, () => {
-      this.isLoading = false;
+      
       this.cdr.detectChanges();
     }
 
@@ -179,8 +181,10 @@ export class Categorias {
     this.isDraggable = false;
   }
 
-  ngDestroy() {
-    this.isLoading = false;
+  ngOnDestroy() {
+    this.IngresosSusbscription?.unsubscribe();
+    this.EgresosSusbscription?.unsubscribe();
+    
     this.toast.clear();
     
   }

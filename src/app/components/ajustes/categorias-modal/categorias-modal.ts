@@ -5,11 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { Toast } from '../../../shared/toast/toast';
 import { ToastService, TypeToast } from '../../../shared/toast/service/toast-service';
 import { Categoria } from '../../../models/categoria';
-import { Loading } from '../../../shared/loading/loading';
 
 @Component({
   selector: 'app-categorias-modal',
-  imports: [CommonModule, FormsModule, Loading],
+  imports: [CommonModule, FormsModule],
   templateUrl: './categorias-modal.html',
   styleUrl: './categorias-modal.css'
 })
@@ -18,8 +17,6 @@ export class CategoriasModal {
   @Output() cerrar = new EventEmitter<void>();
 
   editar: boolean = false;
-
-  isLoading = false;
   valNombre = false;
   valTipo = false;
 
@@ -35,9 +32,9 @@ export class CategoriasModal {
 
     this.categoriasService.data$.subscribe(id => {
       if (id) {
-        this.isLoading = true;
+        
         this.categoriasService.getCategoriaById(id).subscribe(response => {
-          this.isLoading = false;
+          
 
           if (response.coderr !== '0000') {
             this.toast.show('Error al consultar la categoria', response.message, TypeToast.danger);
@@ -50,7 +47,7 @@ export class CategoriasModal {
 
           this.cdr.detectChanges();
         }, error => {
-          this.isLoading = false;
+          
           this.toast.show('Error al consultar la categoria', error.error.message, TypeToast.danger);
           this.cdr.detectChanges();
         });
@@ -61,7 +58,7 @@ export class CategoriasModal {
       }
     });
 
-  }   
+  }
 
   cancelaEdicion(): void {
       this.categoria = Object.assign(new Categoria(), this.categoriaOriginal);
@@ -81,7 +78,7 @@ export class CategoriasModal {
       if (this.categoria.id) {
         //Actualizar categoria
   
-        this.isLoading = true;
+        
   
         this.categoriasService.updateCategoria(this.categoria.id, {
           nombre: this.categoria.nombre,
@@ -89,15 +86,13 @@ export class CategoriasModal {
   
         }).subscribe(response => {
   
-          this.isLoading = false;
+          
   
           if(response.coderr !== "0000"){
             this.toast.show('Error al actualizar la categoria', response.message, TypeToast.danger);
             this.cdr.detectChanges();
             return; 
           }
-
-          this.categoriasService.setRecarga(true);
   
           this.toast.show('Categoria actualizada exitosamente', "", TypeToast.success);
   
@@ -112,7 +107,7 @@ export class CategoriasModal {
           }
   
         }, error => {
-          this.isLoading = false;
+          
           this.toast.show('Error al actualizar la categoria', error.error.message, TypeToast.danger);
         });
   
@@ -120,19 +115,17 @@ export class CategoriasModal {
   
         //Nueva categoria
   
-        this.isLoading = true;
+        
   
         this.categoriasService.addCategoria(this.categoria).subscribe(response => {
   
-          this.isLoading = false;
+          
   
           if(response.coderr !== "0000"){
             this.toast.show('Error al registrar la categoria', response.message, TypeToast.danger);
             this.cdr.detectChanges();
             return; 
           }
-
-          this.categoriasService.setRecarga(true);
   
           this.toast.show('Categoria creada exitosamente', "", TypeToast.success);
   
@@ -147,7 +140,7 @@ export class CategoriasModal {
           }
   
         }, error => {
-          this.isLoading = false;
+          
           this.toast.show('Error al crear la categoria', error.error.message, TypeToast.danger);
         });
       }
@@ -159,22 +152,20 @@ export class CategoriasModal {
         return;
       }
   
-      this.isLoading = true;
+      
   
       this.categoriasService.activaDesactivaCategoria(this.categoria.id, !this.categoria.activa).subscribe(response => {
   
         this.categoria.activa = response.data;
         this.categoriaOriginal.activa = response.data;
-
-        this.categoriasService.setRecarga(true);
   
         this.cdr.detectChanges();
   
         this.toast.show(response.message, "", TypeToast.success);
   
-        this.isLoading = false;
+        
       } , error => {
-        this.isLoading = false;
+        
         this.toast.show('Error al actualizar la categoria', error.error.message, TypeToast.danger);
       });
     } 

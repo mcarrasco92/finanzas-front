@@ -8,6 +8,8 @@ import { TarjetasService } from '../../../../services/tarjetas/tarjetas';
 import { Router } from '@angular/router';
 import { Tarjeta } from '../../../../models/tarjeta';
 import { DragIcon } from '../../../../shared/icons/drag-icon/drag-icon';
+import { Subscription } from 'rxjs';
+import { GeneralService } from '../../../../services/general-service';
 
 @Component({
   selector: 'app-lista-tdc',
@@ -18,47 +20,32 @@ import { DragIcon } from '../../../../shared/icons/drag-icon/drag-icon';
 export class ListaTDC {
 
   constructor(private tarjetaService: TarjetasService,
-    private toast: ToastService,
-     private cdr: ChangeDetectorRef,
- private router: Router) { }
+      private toast: ToastService,
+      private cdr: ChangeDetectorRef,
+      private router: Router,
+      private generalService: GeneralService
+) { }
 
 
   tarjetasDesactivadas: boolean = false;
   isLoading: boolean = false;
   tarjetas: Tarjeta[] = [];
 
+  tarjetasSuscription: Subscription | null = null;
+
   ngOnInit() {
 
-    this.isLoading = true;
+    this.generalService.setScreen('lista-tdc');
 
-    this.tarjetaService.getTarjetas().subscribe(response => {
-
-      if(response.coderr !== '0000') {
-        this.toast.show('Error al consultar las tarjetas de crédito', response.message, TypeToast.danger);
-        this.isLoading = false;
-        this.cdr.detectChanges();
-        return;
-      }
-
-      this.tarjetas = response.data.tarjetas;
-
-      this.tarjetas.sort((a, b) => a.orden - b.orden);
-
-    }, error => {
-      this.toast.show('Error al consultar las tarjetas de crédito', 'Error: ' + error.status, TypeToast.danger);
-      this.isLoading = false;
+    this.tarjetasSuscription = this.tarjetaService.tarjetasList$.subscribe((tarjetas) => {
+      this.tarjetas = tarjetas;
       this.cdr.detectChanges();
-    }, () => {
-      this.isLoading = false;
-      this.cdr.detectChanges();
-    }
+    });
 
-    );
   }
 
   consultaTarjeta(id: String) {
-    this.tarjetaService.setData(id);
-    this.router.navigate(['/dashboard/cuentas/tdcf']);
+    this.router.navigate(['/dashboard/cuentas/tdcf/' + id]);
   }
 
   ordenarTarjetas() {
@@ -113,7 +100,8 @@ export class ListaTDC {
     this.isDraggable = false;
   }
 
-  ngDestroy() {
+  ngOnDestroy() {
+    this.tarjetasSuscription?.unsubscribe();
     this.isLoading = false;
     this.toast.clear();
   }
