@@ -98,10 +98,12 @@ export class FormTDC {
       
       let filtro = {
         yearMonth: this.fechaActual.toISOString().slice(0, 7),
-        cuentaId: this.tarjeta.id
+        tarjetaId: this.tarjeta.id
       };
     
       this.consultaMovimientos(filtro);
+
+      this.generalService.setActualizaPantalla(false);
     }, 1000);
   }
 

@@ -19,5 +19,14 @@ export class GeneralService {
   setActualizaPantalla(actualiza: boolean) {
     this.actualizaPantalla.next(actualiza);
   }
+
+  private isLoading = new BehaviorSubject<boolean>(false);
+  isLoading$ = this.isLoading.asObservable();
+
+  setIsLoading(loading: boolean) {
+    this.isLoading.next(loading);
+  }
+
+  constructor() { }
   
 }

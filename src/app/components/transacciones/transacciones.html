@@ -42,7 +42,7 @@
                   <select [(ngModel)]="transaccion.catIngresoId" [ngClass]="{'!text-gray-400': !transaccion.catIngresoId}" id="categoria" name="categoria" class="pl-10" >
                     <option value="" disabled selected>Selecciona una opción</option>
                     <ng-container *ngFor="let cat of catIngresos">
-                      <option *ngIf="cat.activa" [value]=cat.id>{{cat.nombre}}</option>
+                      <option *ngIf="cat.activa || transaccion.catIngresoId == cat.id" [value]=cat.id>{{cat.nombre}}</option>
                     </ng-container>
                   </select>
                   <p *ngIf="valCatIngreso">Este campo es obligatorio</p>

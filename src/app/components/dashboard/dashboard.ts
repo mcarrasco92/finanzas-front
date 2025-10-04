@@ -12,11 +12,15 @@ import { TarjetasService } from '../../services/tarjetas/tarjetas';
 import { TransaccionesService } from '../../services/transacciones/transacciones';
 import { filter } from 'rxjs/operators';
 import { CategoriasModal } from '../ajustes/categorias-modal/categorias-modal';
+import { Loading } from '../../shared/loading/loading';
+import { GeneralService } from '../../services/general-service';
+import { PerfilService } from '../../services/perfil/perfil-service';
+import { Perfil } from '../../models/perfil';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal],
+  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Loading],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -27,18 +31,24 @@ export class Dashboard {
     private categoriasService: CategoriasService,
     private cuentasServices: CuentasService,
     private tarjetasService: TarjetasService,
-    private transaccionService: TransaccionesService
+    private transaccionService: TransaccionesService,
+    private generalService: GeneralService,
+    private perfilService: PerfilService
   ) {}
+
+  perfil: Perfil = new Perfil();
 
   openPerfil = false;
   mostrarTransaccionesModal: boolean = false;
   mostrarCategoriasModal: boolean = false;
+  isLoading: boolean = false; 
 
   cuentasSuscription: Subscription | null = null;
   tarjetasSuscription: Subscription | null = null;
   categoriasSuscription: Subscription | null = null;
   cargaTransaccionSuscription: Subscription | null = null;
   categoriasModalSuscription: Subscription | null = null;
+  isLoadingSuscription: Subscription | null = null;
 
   tipoTransaccion: string = '';
 
@@ -49,6 +59,14 @@ export class Dashboard {
     this.categoriasSuscription = this.categoriasService.getCategorias().subscribe();
     this.cuentasSuscription = this.cuentasServices.getCuentas().subscribe();
     this.tarjetasSuscription = this.tarjetasService.getTarjetas().subscribe();
+
+    this.perfilService.getInfoPerfil().subscribe(response => {
+      if(response.coderr === '0000'){
+        this.perfil = response.data;
+      }
+    });
+
+
     this.cargaTransaccionSuscription = this.transaccionService.transaccion$.subscribe(transaccion => {
       if(transaccion && transaccion.id){
         this.tipoTransaccion = transaccion.tipo;
@@ -62,6 +80,10 @@ export class Dashboard {
         this.mostrarCategoriasModal = true;
       }
     }); 
+
+    this.isLoadingSuscription = this.generalService.isLoading$.subscribe(loading => {
+      this.isLoading = loading;
+    });
 
     /// Determinar la pestaña activa según la ruta actual al cargar el componente
     this.rutaActual = this.router.url;

@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Categoria } from '../../models/categoria';
 import { tap } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import { GeneralService } from '../general-service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,9 @@ export class CategoriasService {
 
   private getCategoriasSubscription: Subscription | null = null;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private generalService: GeneralService
+  ) { }
 
   ordenaCategorias(datos: any): Observable<any> {
     return this.http.post(this.baseUrl + '/api/categorias/orden', datos).pipe(
@@ -49,10 +52,10 @@ export class CategoriasService {
   //Agregar categoria
   addCategoria(categoria: any): Observable<any> {
 
-    console.log(categoria);
-
+    this.generalService.setIsLoading(true);
     return this.http.post(this.baseUrl + '/api/categorias/registrar', categoria).pipe(
       tap(() => {
+        this.generalService.setIsLoading(false);
         this.getCategoriasSubscription?.unsubscribe();
         this.getCategoriasSubscription = this.getCategorias().subscribe();
       }),
@@ -66,8 +69,10 @@ export class CategoriasService {
 
   //Actualizar categoria
   updateCategoria(categoriaId: string, categoria: any): Observable<any> {
+    this.generalService.setIsLoading(true);
     return this.http.put(this.baseUrl + `/api/categorias/actualizar/${categoriaId}`, categoria).pipe(
       tap(() => {
+        this.generalService.setIsLoading(false);
         this.getCategoriasSubscription?.unsubscribe();
         this.getCategoriasSubscription = this.getCategorias().subscribe();
       }),
@@ -79,9 +84,13 @@ export class CategoriasService {
   }
 
  
-
+  
   getCategoriaById(categoriaId: string): Observable<any> {
+    this.generalService.setIsLoading(true);
     return this.http.get(this.baseUrl + `/api/categorias/${categoriaId}`).pipe(
+      tap(() => {
+        this.generalService.setIsLoading(false);
+      }),
       catchError((error) => {
         // Manejo del error
         throw error; // Re-lanzar el error para que pueda ser manejado por el suscriptor
@@ -91,8 +100,10 @@ export class CategoriasService {
 
 
   activaDesactivaCategoria(categoriaId: string, activa: boolean): Observable<any> {
+    this.generalService.setIsLoading(true);
     return this.http.put(this.baseUrl + `/api/categorias/activar/${categoriaId}`, activa).pipe(
       tap(() => {
+        this.generalService.setIsLoading(false);
         this.getCategoriasSubscription?.unsubscribe();
         this.getCategoriasSubscription = this.getCategorias().subscribe();
       }),

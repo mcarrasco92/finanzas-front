@@ -101,7 +101,7 @@ export class FormDebito {
       };
     
       this.consultaMovimientos(filtro);
-    }, 500);
+    }, 1000);
 
 
 
