@@ -101,15 +101,15 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-12 justify-center space-x-40">
         <div class="flex flex-col justify-center">
-          <h2 class="text-sm font-medium text-gray-500">Ingresos</h2>
+          <h2 class="text-sm font-medium text-gray-500 text-center">Ingresos</h2>
           <p class="text-lg font-semibold text-green-600">{{ totalIngresos| currency:'USD':'symbol-narrow' }}</p>
         </div>
         <div class="flex flex-col justify-center">
-          <h2 class="text-sm font-medium text-gray-500">Egresos</h2>
+          <h2 class="text-sm font-medium text-gray-500 text-center">Egresos</h2>
           <p class="text-lg font-semibold text-red-600">{{ totalEgresos | currency:'USD':'symbol-narrow' }}</p>
         </div>
         <div class="flex flex-col justify-center">
-          <h2 class="text-sm font-medium text-gray-500">Balance</h2>
+          <h2 class="text-sm font-medium text-gray-500 text-center">Balance</h2>
           <p [ngClass]="{'text-blue-400': balance >= 0, 'text-gray-600': balance < 0}" class="text-lg font-semibold">{{ balance | currency:'USD':'symbol-narrow' }}</p>
         </div>
       </div>
@@ -166,11 +166,6 @@
                     <td class="px-3 py-2 text-sm whitespace-nowrap text-gray-500 text-center w-50">{{ trans.tipo }}</td>
                     <td class="px-3 py-2 text-sm whitespace-nowrap text-gray-500 text-center w-100">{{ trans.descripcion }}</td>
                     <td class="px-3 py-2 pr-5 text-sm whitespace-nowrap text-gray-500 text-right" [ngClass]="{'text-green-600': trans.tipo == 'Ingreso' && tipoMovimiento == 'General', 'text-red-400': trans.tipo == 'Egreso' && tipoMovimiento == 'General'}">{{ trans.importe | currency:'USD':'symbol-narrow' }}</td>
-                    <!--
-                    <td *ngIf="cuenta.activa">
-                      <app-options-menu (editar)="editarTransaccion(trans)" (eliminar)="showConfirmModal(trans)"></app-options-menu>
-                    </td>
-                    -->
                   </tr>
                 </tbody>
               </table>

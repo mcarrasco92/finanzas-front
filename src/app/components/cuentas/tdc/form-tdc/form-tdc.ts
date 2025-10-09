@@ -287,7 +287,9 @@ export class FormTDC {
 
 
   editarTransaccion(trans: any): void {
-    console.log('Editar transacción:', trans);
+    if(!this.tarjeta.activa){
+      return;
+    }
     this.transaccionesService.setTransaccion(trans)
   }
 
@@ -309,6 +311,7 @@ export class FormTDC {
       document.body.style.cursor = 'default';
       if (response.coderr === '0000') {
         this.toast.show('Transacción eliminada correctamente', '', TypeToast.success);
+        this.consultaDetalle(this.tarjeta.id);
       } else {
         this.toast.show('Error al eliminar la transacción', response.message, TypeToast.danger);
       }

@@ -82,8 +82,6 @@ export class FormDebito {
     
     const id = this.route.snapshot.paramMap.get('id');
 
-    console.log('ID de la cuenta desde la ruta:', id);
-
     if(id){
       this.generalService.setScreen('form-debito-id');
       this.consultaDetalle(id);
@@ -324,7 +322,6 @@ export class FormDebito {
     if(!this.cuenta.activa){
       return;
     }
-    console.log('Editar transacción:', trans);
     this.transaccionesService.setTransaccion(trans)
   }
 
