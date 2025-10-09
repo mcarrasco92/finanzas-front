@@ -16,11 +16,12 @@ import { Loading } from '../../shared/loading/loading';
 import { GeneralService } from '../../services/general-service';
 import { PerfilService } from '../../services/perfil/perfil-service';
 import { Perfil } from '../../models/perfil';
+import { CloseIcon } from '../../shared/icons/close-icon/close-icon';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Loading],
+  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Loading, CloseIcon],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

@@ -6,7 +6,6 @@ import { BehaviorSubject } from 'rxjs';
 import { Cuenta } from '../../models/cuenta';
 import { tap } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-import { GeneralService } from '../general-service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +13,7 @@ import { GeneralService } from '../general-service';
 export class CuentasService {
 
   baseUrl = environment.apiUrl; // Usa la URL del entorno
-  constructor(private http: HttpClient,
-    private generalService: GeneralService
+  constructor(private http: HttpClient
   ) { }
 
   private getCuentasSubscription: Subscription | null = null;
@@ -55,11 +53,8 @@ export class CuentasService {
   //Agregar cuenta
   addCuenta(cuenta: any): Observable<any> {
 
-    this.generalService.setIsLoading(true);
-
     return this.http.post(this.baseUrl + '/api/cuentas/registrar', cuenta).pipe(
       tap(() => {
-        this.generalService.setIsLoading(false);
         this.getCuentasSubscription?.unsubscribe();
         this.getCuentasSubscription = this.getCuentas().subscribe();
       }),
@@ -73,10 +68,8 @@ export class CuentasService {
 
   //Actualizar cuenta
   updateCuenta(cuentaId: string, cuenta: any): Observable<any> {
-    this.generalService.setIsLoading(true);
     return this.http.put(this.baseUrl + `/api/cuentas/actualizar/${cuentaId}`, cuenta).pipe(
       tap(() => {
-        this.generalService.setIsLoading(false);
         this.getCuentasSubscription?.unsubscribe();
         this.getCuentasSubscription = this.getCuentas().subscribe();
       }),
@@ -90,11 +83,8 @@ export class CuentasService {
  
 
   getCuentaById(cuentaId: string): Observable<any> {
-
-    this.generalService.setIsLoading(true);
     return this.http.get(this.baseUrl + `/api/cuentas/${cuentaId}`).pipe(
       tap(() => {
-        this.generalService.setIsLoading(false);
       }),
       catchError((error) => {
         // Manejo del error
@@ -105,10 +95,8 @@ export class CuentasService {
 
 
   activaDesactivaCuenta(cuentaId: string, activa: boolean): Observable<any> {
-    this.generalService.setIsLoading(true);
     return this.http.put(this.baseUrl + `/api/cuentas/activar/${cuentaId}`, activa).pipe(
       tap(() => {
-        this.generalService.setIsLoading(false);
         this.getCuentasSubscription?.unsubscribe();
         this.getCuentasSubscription = this.getCuentas().subscribe();
       }),
@@ -122,10 +110,8 @@ export class CuentasService {
    //Eliminar cuenta
    
    deleteCuenta(cuentaId: string) : Observable<any>{
-    this.generalService.setIsLoading(true);
     return this.http.delete(this.baseUrl + `/api/cuentas/eliminar/${cuentaId}`).pipe(
       tap(() => {
-        this.generalService.setIsLoading(false);
         this.getCuentasSubscription?.unsubscribe();
         this.getCuentasSubscription = this.getCuentas().subscribe();
       }),

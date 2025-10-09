@@ -6,7 +6,6 @@ import { catchError, Observable } from 'rxjs';
 import { Tarjeta } from '../../models/tarjeta';
 import { tap } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-import { GeneralService } from '../general-service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +13,7 @@ import { GeneralService } from '../general-service';
 export class TarjetasService {
 
   baseUrl = environment.apiUrl; // Usa la URL del entorno
-  constructor(private http: HttpClient,
-    private generalService: GeneralService
+  constructor(private http: HttpClient
   ) { }
 
   private getTarjetasSubscription: Subscription | null = null;
@@ -46,10 +44,8 @@ export class TarjetasService {
 
 //Agregar Tarjeta
 addTarjeta(tarjeta: any): Observable<any> {
-  this.generalService.setIsLoading(true);
   return this.http.post(this.baseUrl + '/api/tarjetas/registrar', tarjeta).pipe(
     tap(() => {
-      this.generalService.setIsLoading(false);
       this.getTarjetasSubscription?.unsubscribe();
       this.getTarjetasSubscription = this.getTarjetas().subscribe();
     }),
@@ -60,10 +56,8 @@ addTarjeta(tarjeta: any): Observable<any> {
 
 //Actualizar tarjeta
 updateTarjeta(tarjetaId: string, tarjeta: any): Observable<any> {
-  this.generalService.setIsLoading(true);
   return this.http.put(this.baseUrl + `/api/tarjetas/actualizar/${tarjetaId}`, tarjeta).pipe(
     tap(() => {
-      this.generalService.setIsLoading(false);
       this.getTarjetasSubscription?.unsubscribe();
       this.getTarjetasSubscription = this.getTarjetas().subscribe();
     }),
@@ -73,10 +67,8 @@ updateTarjeta(tarjetaId: string, tarjeta: any): Observable<any> {
 }
 
 getTarjetaById(tarjetaId: string): Observable<any> {
-  this.generalService.setIsLoading(true);
   return this.http.get(this.baseUrl + `/api/tarjetas/${tarjetaId}`).pipe(
     tap(() => {
-      this.generalService.setIsLoading(false);
     }),
     catchError((error) => {
       throw error;
@@ -85,10 +77,8 @@ getTarjetaById(tarjetaId: string): Observable<any> {
 }
 
 activaDesactivaTarjeta(tarjetaId: string, activa: boolean): Observable<any> {
-  this.generalService.setIsLoading(true);
   return this.http.put(this.baseUrl + `/api/tarjetas/activar/${tarjetaId}`, activa).pipe(
     tap(() => {
-      this.generalService.setIsLoading(false);
       this.getTarjetasSubscription?.unsubscribe();
       this.getTarjetasSubscription = this.getTarjetas().subscribe();
     }),
@@ -99,10 +89,8 @@ activaDesactivaTarjeta(tarjetaId: string, activa: boolean): Observable<any> {
 
 //Eliminar tarjeta
 deleteTarjeta(tarjetaId: string): Observable<any>{ 
-  this.generalService.setIsLoading(true);
   return this.http.delete(this.baseUrl + `/api/tarjetas/eliminar/${tarjetaId}`).pipe(
     tap(() => {
-      this.generalService.setIsLoading(false);
       this.getTarjetasSubscription?.unsubscribe();
       this.getTarjetasSubscription = this.getTarjetas().subscribe();
     }),

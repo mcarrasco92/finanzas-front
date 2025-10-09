@@ -49,8 +49,14 @@ export class FormTDC {
   transacciones: Transaccion[] = [];
 
   tipoMovimiento: String = 'General'
+  cargandoMovimientos: boolean = false;
 
   generalSubscription: Subscription | null = null;
+
+  agrupadosPorFecha: { [key: string]: Transaccion[] } = {};
+  totalIngresos: number = 0;
+  totalEgresos: number = 0;
+  balance: number = 0;
 
 
   constructor(private toast: ToastService,
@@ -62,6 +68,12 @@ export class FormTDC {
     private router: Router
   ) { }
 
+  getFechas(): string[] {
+    return Object.keys(this.agrupadosPorFecha).filter(fecha => {
+      const transacciones = this.agrupadosPorFecha[fecha];
+      return transacciones.some(t => t.tipo + 's' === this.tipoMovimiento || this.tipoMovimiento === 'General');
+    });
+  }
 
   ngOnInit() {
 
@@ -69,13 +81,6 @@ export class FormTDC {
     if (id) {
       this.generalService.setScreen('form-tdc-id');
       this.consultaDetalle(id); // Llama a un método para cargar datos con el ID
-
-      let filtro = {
-        yearMonth: this.fechaActual.toISOString().slice(0, 7),
-        tarjetaId: id
-      };
-
-      this.consultaMovimientos(filtro);
     }else {
       this.generalService.setScreen('form-tdc');
       this.tarjeta.limpiar();
@@ -85,30 +90,47 @@ export class FormTDC {
     }
 
     this.generalSubscription = this.generalService.actualizaPantalla$.subscribe(actualiza => {
-      actualiza ? this.actualizaPantalla() : null;
+      actualiza ? this.consultaDetalle(this.tarjeta.id) : null;
     })
 
 
   }
 
-  actualizaPantalla(){
-
-    setTimeout(() => {
-      this.consultaDetalle(this.tarjeta.id);
-      
-      let filtro = {
-        yearMonth: this.fechaActual.toISOString().slice(0, 7),
-        tarjetaId: this.tarjeta.id
-      };
-    
-      this.consultaMovimientos(filtro);
-
-      this.generalService.setActualizaPantalla(false);
-    }, 1000);
+  agrupaRegistos(){
+    this.agrupadosPorFecha = this.transacciones.reduce((acc: any, transaccion) => {
+      //const fecha = new Date(transaccion.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+      const fecha = transaccion.fecha;
+      if (!acc[fecha]) {
+        acc[fecha] = [];
+      }
+      acc[fecha].push(transaccion);
+      return acc;
+    }, {});
   }
 
-  consultaDetalle(cuentaId: string) {
-    this.tarjetaService.getTarjetaById(cuentaId).subscribe(response => {
+  getSumaImportes(fecha: string): number {
+    const movimientos = this.agrupadosPorFecha[fecha].filter(trans => 
+      trans.tipo + 's' === this.tipoMovimiento || this.tipoMovimiento === 'General'
+    );
+    return movimientos.reduce((acc, trans) => {
+      if(this.tipoMovimiento === 'General'){
+        if(trans.tipo === 'Ingreso'){
+          acc += trans.importe;
+        }else if(trans.tipo === 'Egreso'){
+          acc -= trans.importe;
+        }
+      }else{
+        acc += trans.importe;
+      }
+      return acc;
+    }, 0);
+
+  }
+
+  consultaDetalle(tarjetaId: string) {
+    document.body.style.cursor = 'wait';
+    this.tarjetaService.getTarjetaById(tarjetaId).subscribe(response => {
+      document.body.style.cursor = 'default';
 
 
       if (response.coderr !== "0000") {
@@ -120,6 +142,13 @@ export class FormTDC {
       this.tarjeta = Object.assign(new Tarjeta(), response.data);
       this.tarjetaOriginal = Object.assign(new Tarjeta(), response.data);
 
+      let filtro = {
+        yearMonth: this.fechaActual.toISOString().slice(0, 7),
+        tarjetaId: this.tarjeta.id
+      };
+
+      this.consultaMovimientos(filtro);
+
       this.cdr.detectChanges();
 
 
@@ -129,10 +158,21 @@ export class FormTDC {
   consultaMovimientos(filtro: any): void {
     
     this.transacciones = [];
+    this.totalIngresos = 0;
+    this.totalEgresos = 0;
+    this.balance = 0;
+    this.agrupadosPorFecha = {};
+    this.cargandoMovimientos = true;
+
     this.transaccionesService.getTransaccionesByMonth(filtro).subscribe(response => {
+      this.cargandoMovimientos = false;
       
       if(response.coderr === "0000"){
         this.transacciones = response.data.transacciones
+        this.totalIngresos = this.transacciones.filter(t => t.tipo === 'Ingreso').reduce((acc, t) => acc + t.importe, 0);
+        this.totalEgresos = this.transacciones.filter(t => t.tipo === 'Egreso').reduce((acc, t) => acc + t.importe, 0);
+        this.balance = this.totalIngresos - this.totalEgresos;
+        this.agrupaRegistos()
       }
       this.cdr.detectChanges();
     });
@@ -175,7 +215,7 @@ export class FormTDC {
       //Actualizar tdc
 
 
-
+      document.body.style.cursor = 'wait';
       this.tarjetaService.updateTarjeta(this.tarjeta.id, {
         nombre: this.tarjeta.nombre,
         descripcion: this.tarjeta.descripcion,
@@ -183,7 +223,7 @@ export class FormTDC {
         dpago: this.tarjeta.dpago,
         dcorte: this.tarjeta.dcorte
       }).subscribe(response => {
-
+        document.body.style.cursor = 'default';
 
 
         if (response.coderr !== "0000") {
@@ -214,9 +254,9 @@ export class FormTDC {
       //Nueva TDC
 
 
-
+      document.body.style.cursor = 'wait';
       this.tarjetaService.addTarjeta(this.tarjeta).subscribe(response => {
-
+        document.body.style.cursor = 'default';
 
 
         if (response.coderr !== "0000") {
@@ -264,11 +304,11 @@ export class FormTDC {
   eliminaTransaccion() {
 
     this.confirmModal = false;
-
+    document.body.style.cursor = 'wait';
     this.transaccionesService.deleteTransaccion(this.deleteTransaccionId).subscribe(response => {
+      document.body.style.cursor = 'default';
       if (response.coderr === '0000') {
         this.toast.show('Transacción eliminada correctamente', '', TypeToast.success);
-        this.actualizaPantalla();
       } else {
         this.toast.show('Error al eliminar la transacción', response.message, TypeToast.danger);
       }
@@ -283,8 +323,9 @@ export class FormTDC {
     }
 
     this.confirmModalEliminaTarjeta = false;
-
+    document.body.style.cursor = 'wait';
     this.tarjetaService.deleteTarjeta(this.tarjeta.id).subscribe(response => {
+      document.body.style.cursor = 'default';
       if (response.coderr === '0000') {
         this.toast.show('Tarjeta eliminada correctamente', '', TypeToast.success);
         this.router.navigate(['/dashboard/cuentas/tdc']);
@@ -312,8 +353,9 @@ export class FormTDC {
     }
 
 
-
+    document.body.style.cursor = 'wait';
     this.tarjetaService.activaDesactivaTarjeta(this.tarjeta.id, !this.tarjeta.activa).subscribe(response => {
+      document.body.style.cursor = 'default';
 
       this.tarjeta.activa = response.data;
       this.tarjetaOriginal.activa = response.data;

@@ -17,7 +17,7 @@ body{
     @apply absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-900;
   }
   select {
-    @apply block w-full rounded-md px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6;
+    @apply block w-full rounded-md px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6;
   }
 
   p {
@@ -32,7 +32,7 @@ body{
     @apply absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-900;
   }
   input {
-    @apply block w-full rounded-md px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6;
+    @apply block w-full rounded-md px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400  sm:text-sm/6 focus:outline-2 focus:-outline-offset-2 ;
   }
 
   p {
@@ -52,7 +52,7 @@ body{
     @apply absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-900;
   }
   input {
-    @apply pl-7 block w-full rounded-md px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6;
+    @apply pl-7 block w-full rounded-md px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-300 sm:text-sm/6;
   }
 
   p {
@@ -72,12 +72,15 @@ body{
   }
 
   .check-switch{
-    @apply ml-3 relative inline-flex w-11 shrink-0 rounded-full p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-indigo-600 transition-colors duration-200 ease-in-out has-focus-visible:outline-2;
+    @apply ml-3 relative inline-flex w-11 shrink-0 rounded-full p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 transition-colors duration-200 ease-in-out has-focus-visible:outline-2 outline-gray-300; 
   }
 
+  /*
   .check-switch.check-default{
-    @apply has-checked:bg-indigo-600 bg-gray-200;
+    @apply bg-gray-200;
   }
+    */
+  
 
   .span-border{
     @apply size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5;
@@ -90,19 +93,19 @@ body{
 }
 
 .btn-primary{
-  @apply rounded-md bg-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+  @apply rounded-md bg-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300;
 }
 
 .btn-secondary{
-  @apply rounded-md bg-gray-50 px-3 py-2 text-sm font-semibold shadow-xs hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+  @apply rounded-md bg-gray-50 px-3 py-2 text-sm font-semibold shadow-xs hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300;
 }
 
 .btn-danger{
-  @apply rounded-md text-red-600 px-3 py-2 text-sm font-semibold shadow-xs hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+  @apply rounded-md text-red-600 px-3 py-2 text-sm font-semibold shadow-xs hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300;
 }
 
 .btn-orange{
-  @apply block rounded-md bg-orange-400 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600
+  @apply block rounded-md bg-orange-400 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300
 }
 
 

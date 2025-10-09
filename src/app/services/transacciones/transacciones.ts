@@ -8,7 +8,6 @@ import { tap } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { TarjetasService } from '../tarjetas/tarjetas';
 import { CuentasService } from '../cuentas/cuentas';
-import { GeneralService } from '../general-service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,18 +16,15 @@ export class TransaccionesService {
   baseUrl = environment.apiUrl; // Usa la URL del entorno
   constructor(private http: HttpClient,
     private tarjetasService: TarjetasService,
-    private cuentasService: CuentasService,
-    private generalService: GeneralService
+    private cuentasService: CuentasService
   ) { }
 
   private getTransaccionesSubscription: Subscription | null = null;
 
   //Consultar Transacciones
   getTransaccionesByMonth(data: any): Observable<any> {
-    this.generalService.setIsLoading(true);
     return this.http.post(this.baseUrl + '/api/transacciones/getTransacciones',data).pipe(
       tap(() => {
-        this.generalService.setIsLoading(false);
       }),
       catchError((error) => {
         throw error;
@@ -39,11 +35,9 @@ export class TransaccionesService {
   //Agregar Transaccion
   addTransaccion(transaccion: any): Observable<any> {
 
-    this.generalService.setIsLoading(true);
 
     return this.http.post(this.baseUrl + '/api/transacciones/registrar', transaccion).pipe(
       tap(() => {
-        this.generalService.setIsLoading(false);
         this.getTransaccionesSubscription?.unsubscribe();
         this.getTransaccionesSubscription = this.tarjetasService.getTarjetas().subscribe();
         this.getTransaccionesSubscription = this.cuentasService.getCuentas().subscribe();
@@ -55,10 +49,8 @@ export class TransaccionesService {
 
   //Actualizar transaccion
   updateTransaccion(transaccionId: string, transaccion: any): Observable<any> {
-    this.generalService.setIsLoading(true);
     return this.http.put(this.baseUrl + `/api/transacciones/actualizar/${transaccionId}`, transaccion).pipe(
       tap(() => {
-        this.generalService.setIsLoading(false);
         this.getTransaccionesSubscription?.unsubscribe();
         this.getTransaccionesSubscription = this.tarjetasService.getTarjetas().subscribe();
         this.getTransaccionesSubscription = this.cuentasService.getCuentas().subscribe();
@@ -69,10 +61,8 @@ export class TransaccionesService {
   }
 
   getTransaccionById(transaccionId: string): Observable<any> {
-    this.generalService.setIsLoading(true);
     return this.http.get(this.baseUrl + `/api/transacciones/${transaccionId}`).pipe(
       tap(() => {
-        this.generalService.setIsLoading(false);
       }),
       catchError((error) => {
         throw error;
@@ -82,10 +72,8 @@ export class TransaccionesService {
 
   //Eliminar transaccion
   deleteTransaccion(transaccionId: string): Observable<any> {
-    this.generalService.setIsLoading(true);
     return this.http.delete(this.baseUrl + `/api/transacciones/eliminar/${transaccionId}`).pipe(
       tap(() => {
-        this.generalService.setIsLoading(false);
         this.getTransaccionesSubscription?.unsubscribe();
         this.getTransaccionesSubscription = this.tarjetasService.getTarjetas().subscribe();
         this.getTransaccionesSubscription = this.cuentasService.getCuentas().subscribe();

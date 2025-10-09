@@ -16,6 +16,7 @@ import { TransaccionesService } from '../../services/transacciones/transacciones
 import { TrashIcon } from '../../shared/icons/trash-icon/trash-icon';
 import { ConfirmModal } from '../../shared/confirm-modal/confirm-modal';
 import { GeneralService } from '../../services/general-service';
+import { time } from 'console';
 
 @Component({
   selector: 'app-transacciones',
@@ -73,7 +74,10 @@ export class Transacciones {
 
     this.generalService.setActualizaPantalla(false);
 
-    this.transaccion.fecha = new Date().toISOString().split('T')[0];
+    const fechaLocal = new Date();
+    this.transaccion.fecha = fechaLocal.getFullYear() + '-' +
+      String(fechaLocal.getMonth() + 1).padStart(2, '0') + '-' +
+      String(fechaLocal.getDate()).padStart(2, '0');
 
     this.catEgresosSuscription = this.categoriasService.categoriasEgresos$.subscribe((egresos) => {
       this.catEgresos = egresos;
@@ -88,8 +92,9 @@ export class Transacciones {
     this.TarejtasSuscription = this.tarjetasService.tarjetasList$.subscribe((tarjetas) => {
       this.tarjetas = tarjetas;
     });
-
+    document.body.style.cursor = 'wait';
     this.transaccionSuscription = this.transaccionesService.transaccion$.subscribe(tran => {
+      document.body.style.cursor = 'default';
       if (tran.id !== '') {
         this.transaccion = Object.assign(new Transaccion(), tran);
         this.transaccionOriginal = Object.assign(new Transaccion(), tran);
@@ -104,7 +109,7 @@ export class Transacciones {
             this.cuentasYTarjetas = '';
           }
         }
-        this.editar = true;
+        this.editar = false;
       }
       this.cdr.detectChanges();
     });
@@ -160,7 +165,9 @@ export class Transacciones {
     
     
     if(this.transaccion.id && this.transaccion.id != ''){ //Actualiza
+      document.body.style.cursor = 'wait';
       this.transaccionesService.updateTransaccion( this.transaccion.id ,this.transaccion).subscribe(response => {
+        document.body.style.cursor = 'default';
         if (response.coderr === '0000') {
           this.cerrarModal();
           this.toast.show('Transacción actualizada correctamente', '', TypeToast.success);
@@ -172,8 +179,9 @@ export class Transacciones {
     }else{ // Agrega
 
       this.transaccion.tipo = this.tipo;
-
+      document.body.style.cursor = 'wait';
       this.transaccionesService.addTransaccion(this.transaccion).subscribe(response => {
+        document.body.style.cursor = 'default';
         if (response.coderr === '0000') {
           this.cerrarModal()
           this.toast.show('Transacción agregada correctamente', '', TypeToast.success);
@@ -188,11 +196,12 @@ export class Transacciones {
   eliminaTransaccion() {
 
     this.confirmModal = false;
-
+    document.body.style.cursor = 'wait';
     this.transaccionesService.deleteTransaccion(this.transaccion.id).subscribe(response => {
+      document.body.style.cursor = 'default';
       if (response.coderr === '0000') {
         this.cerrarModal();
-        this.toast.show('Transacción eliminada correctamente', '', TypeToast.success);
+        this.toast.show('Transacción eliminada correctamente', '', TypeToast.success);  
       } else {
         this.toast.show('Error al eliminar la transacción', response.message, TypeToast.danger);
       }
@@ -247,7 +256,9 @@ export class Transacciones {
   }
 
   cerrarModal(): void {
-    this.cerrar.emit();
+    setTimeout(() => {
+      this.cerrar.emit();
+    }, 500);
   }
 
   cancelaEdicion(): void {

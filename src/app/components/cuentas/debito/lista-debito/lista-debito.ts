@@ -41,6 +41,9 @@ export class ListaDebito {
   saldoInvertidoSubscription: Subscription | null = null;
   saldoTotalSubscription: Subscription | null = null;
 
+  colorPrincipal = "green-500";
+  colorSecundario = "blue-100";
+
   ngOnInit() {
 
     this.generalService.setScreen('lista-debito');

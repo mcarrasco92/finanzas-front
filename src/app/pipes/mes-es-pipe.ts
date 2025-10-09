@@ -5,41 +5,39 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class MesEsPipe implements PipeTransform {
 
-  transform(fecha: any): unknown {
+  transform(fecha: any): String | undefined {
     let fechaStr = fecha.toString().toLowerCase();
-    let anio = fechaStr.split(' ')[1]; // Obtiene el año
-    fechaStr = fechaStr.split(' ')[0]; // Obtiene solo el nombre del mes en inglés
-    
     let fechaEsp = '';
 
-    switch (fechaStr) {
-      case 'january':
-        return 'Enero' + ' ' + anio;
-      case 'february':
-        return 'Febrero' + ' ' + anio;
-      case 'march':
-        return'Marzo' + ' ' + anio;
-      case 'april':
-        return'Abril' + ' ' + anio;
-      case 'may':
-        return 'Mayo' + ' ' + anio;
-      case 'june':
-        return 'Junio' + ' ' + anio;
-      case 'july':
-        return'Julio' + ' ' + anio;
-      case 'august':
-        return 'Agosto' + ' ' + anio;
-      case 'september':
-        return 'Septiembre' + ' ' + anio;
-      case 'october':
-        return 'Octubre' + ' ' + anio;
-      case 'november':
-        return 'Noviembre' + ' ' + anio;
-      case 'december':
-        return 'Diciembre' + ' ' + anio;
-      default:
-        return fecha;
+    if(fechaStr.includes('january')){
+      fechaEsp = fechaStr.replace('january', 'Enero');
+    }else if(fechaStr.includes('february')){
+      fechaEsp = fechaStr.replace('february', 'Febrero');
+    }else if(fechaStr.includes('march')){
+      fechaEsp = fechaStr.replace('march', 'Marzo');
+    }else if(fechaStr.includes('april')){
+      fechaEsp = fechaStr.replace('april', 'Abril');
+    }else if(fechaStr.includes('may')){
+      fechaEsp = fechaStr.replace('may', 'Mayo');
+    }else if(fechaStr.includes('june')){
+      fechaEsp = fechaStr.replace('june', 'Junio');
+    }else if(fechaStr.includes('july')){
+      fechaEsp = fechaStr.replace('july', 'Julio');
+    }else if(fechaStr.includes('august')){
+      fechaEsp = fechaStr.replace('august', 'Agosto');
+    }else if(fechaStr.includes('september')){
+      fechaEsp = fechaStr.replace('september', 'Septiembre');
+    }else if(fechaStr.includes('october')){
+      fechaEsp = fechaStr.replace('october', 'Octubre');
+    }else if(fechaStr.includes('november')){
+      fechaEsp = fechaStr.replace('november', 'Noviembre');
+    }else if(fechaStr.includes('december')){
+      fechaEsp = fechaStr.replace('december', 'Diciembre');
+    }else{
+      return fecha;
     }
+
+    return fechaEsp;
 
   }
 
