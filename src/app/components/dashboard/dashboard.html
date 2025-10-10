@@ -90,6 +90,12 @@
                 Nueva categoría
               </button>
             </li>
+            <li>
+              <button (click)="nuevaTransferencia()"
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Nueva transferencia
+              </button>
+            </li>
           </ul>
         </div>
       </div>
@@ -99,5 +105,6 @@
 </div>
 
 <app-loading *ngIf="isLoading"></app-loading>
+<app-transferencias *ngIf="mostrarTransferenciasModal" (cerrar)="cerrarTransferenciasModal()"></app-transferencias>
 <app-transacciones *ngIf="mostrarTransaccionesModal" (cerrar)="cerrarTransaccionesModal()" [tipo]=tipoTransaccion></app-transacciones>
 <app-categorias-modal *ngIf="mostrarCategoriasModal" (cerrar)="cerrarCategoriasModal()"></app-categorias-modal>

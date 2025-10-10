@@ -16,12 +16,13 @@ import { Loading } from '../../shared/loading/loading';
 import { GeneralService } from '../../services/general-service';
 import { PerfilService } from '../../services/perfil/perfil-service';
 import { Perfil } from '../../models/perfil';
-import { CloseIcon } from '../../shared/icons/close-icon/close-icon';
+import { Transferencias } from '../transferencias/transferencias';
+import { TransferenciasService } from '../../services/transferencias/transferencias';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Loading, CloseIcon],
+  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Loading, Transferencias],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -34,7 +35,8 @@ export class Dashboard {
     private tarjetasService: TarjetasService,
     private transaccionService: TransaccionesService,
     private generalService: GeneralService,
-    private perfilService: PerfilService
+    private perfilService: PerfilService,
+    private transferenciaService: TransferenciasService
   ) {}
 
   perfil: Perfil = new Perfil();
@@ -42,12 +44,14 @@ export class Dashboard {
   openPerfil = false;
   mostrarTransaccionesModal: boolean = false;
   mostrarCategoriasModal: boolean = false;
+  mostrarTransferenciasModal: boolean = false;
   isLoading: boolean = false; 
 
   cuentasSuscription: Subscription | null = null;
   tarjetasSuscription: Subscription | null = null;
   categoriasSuscription: Subscription | null = null;
   cargaTransaccionSuscription: Subscription | null = null;
+  cargaTransferenciaSuscription: Subscription | null = null;
   categoriasModalSuscription: Subscription | null = null;
   isLoadingSuscription: Subscription | null = null;
 
@@ -75,6 +79,15 @@ export class Dashboard {
         this.menuAbierto = false;
       }
     })
+
+    this.cargaTransferenciaSuscription = this.transferenciaService.transferenciaId$.subscribe(transferencia => {
+      if(transferencia && transferencia !== ''){
+        this.mostrarTransferenciasModal = true;
+        this.menuAbierto = false;
+      }
+    });
+
+    
 
     this.categoriasModalSuscription = this.categoriasService.abrirCategoriasModal$.subscribe(abrir => {
       if(abrir) {
@@ -160,8 +173,17 @@ export class Dashboard {
     this.menuAbierto = false; // Cierra el menú después de la acción
   }
 
+  nuevaTransferencia(): void {
+    this.mostrarTransferenciasModal = true;
+    this.menuAbierto = false; // Cierra el menú después de la acción
+  }
+
   cerrarTransaccionesModal() {
     this.mostrarTransaccionesModal = false;
+  }
+
+  cerrarTransferenciasModal() {
+    this.mostrarTransferenciasModal = false;
   }
 
   cerrarCategoriasModal() {

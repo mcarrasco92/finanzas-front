@@ -29,6 +29,7 @@ import { Router } from '@angular/router';
 export class FormTDC {
 
   editar: boolean = false;
+  modalPagar: boolean = false;
 
   tarjeta: Tarjeta = new Tarjeta();
   tarjetaOriginal: Tarjeta = new Tarjeta();
@@ -58,6 +59,8 @@ export class FormTDC {
   totalEgresos: number = 0;
   balance: number = 0;
 
+  otroSaldo: string = '';
+
 
   constructor(private toast: ToastService,
     private tarjetaService: TarjetasService,
@@ -73,6 +76,56 @@ export class FormTDC {
       const transacciones = this.agrupadosPorFecha[fecha];
       return transacciones.some(t => t.tipo + 's' === this.tipoMovimiento || this.tipoMovimiento === 'General');
     });
+  }
+
+  getRangoFechaCorte(): string[] {
+    // Obtener el día de corte como un entero
+    const diaCorte = parseInt(this.tarjeta.dcorte.toString(), 10);
+
+    // Obtener la fecha actual
+    const fechaActual = new Date(this.fechaActual);
+
+    // Calcular la fecha de inicio
+    let fechaInicio = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), diaCorte);
+    fechaInicio.setDate(fechaInicio.getDate() + 1); // Sumar 1 día para incluir el día de corte
+
+    if (fechaActual.getDate() < diaCorte) {
+      // Si el día actual es menor que el día de corte, retroceder un mes
+      fechaInicio = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth() - 1, diaCorte);
+    }
+
+    // Calcular la fecha de fin (un mes después de la fecha de inicio)
+    const fechaFin = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth() + 1, diaCorte);
+
+    // Convertir las fechas al formato "YYYY-MM-DD"
+    const fechaInicioStr = fechaInicio.toISOString().split('T')[0];
+    const fechaFinStr = fechaFin.toISOString().split('T')[0];
+
+    let fechas = [];
+    fechas.push(fechaInicioStr);
+    fechas.push(fechaFinStr);
+    
+    return fechas;
+  }
+
+  pagar(){
+    this.modalPagar = true;
+    let pago: Transaccion  = new Transaccion();
+
+    pago.tipo = 'Ingreso';
+    pago.concepto = 'Pago tarjeta de crédito ' + this.tarjeta.nombre;
+    pago.importe = 10;
+    pago.fecha = this.fechaActual.getFullYear() + '-' +
+      String(this.fechaActual.getMonth() + 1).padStart(2, '0') + '-' +
+      String(this.fechaActual.getDate()).padStart(2, '0');
+    pago.tarjetaId = this.tarjeta.id;
+
+    this.transaccionesService.setPago(pago);
+
+  }
+
+  cerrarModalPagar(){
+    this.modalPagar = false;
   }
 
   ngOnInit() {
@@ -143,7 +196,8 @@ export class FormTDC {
       this.tarjetaOriginal = Object.assign(new Tarjeta(), response.data);
 
       let filtro = {
-        yearMonth: this.fechaActual.toISOString().slice(0, 7),
+        fechaInicio: this.getRangoFechaCorte()[0],
+        fechaFin: this.getRangoFechaCorte()[1],
         tarjetaId: this.tarjeta.id
       };
 
@@ -183,7 +237,8 @@ export class FormTDC {
     this.fechaActual = new Date(this.fechaActual.setMonth(this.fechaActual.getMonth() + option));
 
     let filtro = {
-      yearMonth: this.fechaActual.toISOString().slice(0, 7),
+      fechaInicio: this.getRangoFechaCorte()[0],
+      fechaFin: this.getRangoFechaCorte()[1],
       tarjetaId: this.tarjeta.id
     };
 
@@ -290,6 +345,7 @@ export class FormTDC {
     if(!this.tarjeta.activa){
       return;
     }
+
     this.transaccionesService.setTransaccion(trans)
   }
 
@@ -381,6 +437,49 @@ export class FormTDC {
 
   ngOnDestroy() {
     this.toast.clear();
+    this.generalService.setScreen('');
+    this.generalSubscription?.unsubscribe();
+  }
+
+  esBorrado: boolean = false; // Variable para rastrear si se presionó una tecla de borrado
+
+  detectarTecla(event: KeyboardEvent): void {
+    // Detecta si la tecla presionada es Backspace o Delete
+    this.esBorrado = event.key === 'Backspace' || event.key === 'Delete';
+  }
+
+  formatearSaldo(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let valor = input.value;
+
+    // Obtén la posición actual del cursor
+    const cursorPos = input.selectionStart || 0;
+
+    // Elimina caracteres no numéricos y permite solo un punto decimal
+    valor = valor.replace(/[^0-9.]/g, ''); // Elimina letras y caracteres no permitidos
+    valor = valor.replace(/(\..*)\./g, '$1'); // Permite solo un punto decimal
+
+    // Convierte el valor a número y lo formatea como moneda
+    const partes = valor.split('.');
+    const entero = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Agrega comas como separadores de miles
+    const decimal = partes.length > 1 ? '.' + partes[1].slice(0, 2) : ''; // Limita los decimales a 2 dígitos
+
+    // Actualiza el valor formateado
+    this.otroSaldo = entero + decimal;
+
+    const numeroDeComas = (this.otroSaldo.match(/,/g) || []).length;
+
+    // Calcula el nuevo cursor basado en el formato
+    const diff = this.otroSaldo.length - valor.length; // Diferencia en longitud después del formato
+    const newCursorPos = cursorPos + diff - (this.esBorrado ? numeroDeComas : 0); // Ajusta la posición del cursor considerando las comas y si se borró
+
+    // Actualiza el valor del campo de entrada
+    input.value = this.otroSaldo;
+
+    // Restaura la posición del cursor
+    setTimeout(() => {
+      input.setSelectionRange(newCursorPos, newCursorPos);
+    });
   }
 
 }

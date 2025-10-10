@@ -92,6 +92,13 @@ export class TransaccionesService {
     this.cargaTransaccion.next(transaccion);
   }
 
+  private cargaPago = new BehaviorSubject<Transaccion>(new Transaccion());
+  pago$ = this.cargaPago.asObservable();
+
+  setPago(pago: Transaccion) {
+    this.cargaPago.next(pago);
+  }
+
 
 
 

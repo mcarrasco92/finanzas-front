@@ -63,29 +63,51 @@
 </div>
 
 <div *ngIf="tarjeta.id">
-  <h1 class="text-lg font-medium leading-6 text-gray-900 w-full text-center mt-4">Resumen Mensual</h1>
-  <div class="flex justify-center mt-3">
-    <div class="flex items-center space-x-4">
-      <app-left-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(-1)"></app-left-icon>
-      <h1 class="text-md font-medium leading-6 text-gray-900 w-full text-center">{{fechaActual | date: 'LLLL yyyy' | mesEs}}</h1>
-      <app-right-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(1)"></app-right-icon>
-    </div>
-  </div>
-
-  <nav class="bg-white shadow-sm mt-4 py-2">
+  
+  <nav class="bg-white shadow-sm mt-4 py-4">
+    <h1 class="text-lg font-medium leading-6 text-gray-900 w-full text-center mb-4">Pagar tarjeta</h1>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-12 justify-center space-x-40">
-        <div class="flex flex-col justify-center">
-          <h2 class="text-sm font-medium text-gray-500 text-center">Ingresos</h2>
-          <p class="text-lg font-semibold text-green-600">{{ totalIngresos| currency:'USD':'symbol-narrow' }}</p>
+      <div class="flex h-12 justify-center space-x-20">
+
+        <div class="text-center">
+          <div class="input-form-radio">
+            <input id="saldoTotal" type="radio" name="pagoTDC"/>
+            <label for="saldoTotal" class="mx-3 block text-sm/6 font-medium text-gray-900">Saldo total: </label>
+          </div>
+          <div>
+            <span class="text-lg font-semibold text-green-600 text-center">{{ tarjeta.saldo | currency:'USD':'symbol-narrow' }}</span>
+          </div>
         </div>
-        <div class="flex flex-col justify-center">
-          <h2 class="text-sm font-medium text-gray-500 text-center">Egresos</h2>
-          <p class="text-lg font-semibold text-red-600">{{ totalEgresos | currency:'USD':'symbol-narrow' }}</p>
+
+        <div class="text-center">
+          <div class="input-form-radio">
+            <input id="pagoPendiente" checked type="radio" name="pagoTDC"/>
+            <label for="pagoPendiente" class="mx-3 block text-sm/6 font-medium text-gray-900">Pago pendiente: </label>
+          </div>
+          <div>
+            <span class="text-lg font-semibold text-red-600 text-center">{{ tarjeta.pagoPendiente | currency:'USD':'symbol-narrow' }}</span>
+          </div>
         </div>
-        <div class="flex flex-col justify-center">
-          <h2 class="text-sm font-medium text-gray-500 text-center ">Balance</h2>
-          <p [ngClass]="{'text-blue-400': balance >= 0, 'text-gray-600': balance < 0}" class="text-lg font-semibold">{{ balance | currency:'USD':'symbol-narrow' }}</p>
+
+
+        <div class="flex items-center">
+          <div class="input-form-radio">
+            <input id="otro" type="radio" name="pagoTDC" />
+            <label for="otro" class="mx-3 block text-sm/6 font-medium text-gray-900">Otro: </label>
+          </div>
+          <div>
+            <div class="input-form-currency w-30">
+              <div>$</div>
+              <input [(ngModel)]="otroSaldo" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" />
+              <p *ngIf="">Este campo es obligatorio</p>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="flex items-center">
+          <button type="submit" class="btn-primary h-auto" (click)="pagar()">Pagar</button>
         </div>
       </div>
     </div>
@@ -103,10 +125,18 @@
       </div>
     </div>
   </nav>
-  
-  
 
-
+  <div class="flex justify-center mt-6">
+    <div class="flex items-center space-x-4">
+      <app-left-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(-1)"></app-left-icon>
+      <h1 class="text-md font-medium leading-6 text-gray-900 w-full text-center">
+        <span>{{ getRangoFechaCorte()[0] | date: 'dd LLLL yyyy' | mesEs }}</span>
+        <span class="mx-5">-</span>
+        <span>{{ getRangoFechaCorte()[1] | date: 'dd LLLL yyyy' | mesEs }}</span>
+      </h1>
+      <app-right-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(1)"></app-right-icon>
+    </div>
+  </div>
   
 
   <div *ngIf="transacciones.length > 0" class="p-4 bg-white shadow-sm mt-2">

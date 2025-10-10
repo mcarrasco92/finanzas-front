@@ -9,6 +9,7 @@ export class Tarjeta {
   orden: number = 0;
   activa: boolean = true;
   transacciones: boolean = false;
+  pagoPendiente: number = 0;
 
 
     limpiar() {

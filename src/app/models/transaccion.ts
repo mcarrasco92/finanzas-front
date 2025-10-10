@@ -10,6 +10,7 @@ export class Transaccion {
   descripcion: string = '';
   concepto: string = '';
   necesario: string = '';
+  transferencia: boolean = false;
 
     limpiar() {
         this.id = '';
@@ -23,6 +24,7 @@ export class Transaccion {
         this.descripcion = '';
         this.concepto = '';
         this.necesario = '';
+        this.transferencia = false;
     }
 
     getImporte(): string {
