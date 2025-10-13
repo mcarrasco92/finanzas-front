@@ -18,11 +18,12 @@ import { PerfilService } from '../../services/perfil/perfil-service';
 import { Perfil } from '../../models/perfil';
 import { Transferencias } from '../transferencias/transferencias';
 import { TransferenciasService } from '../../services/transferencias/transferencias';
+import { PagoTarjeta } from '../pago-tarjeta/pago-tarjeta';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Loading, Transferencias],
+  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Loading, Transferencias, PagoTarjeta],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -45,7 +46,7 @@ export class Dashboard {
   mostrarTransaccionesModal: boolean = false;
   mostrarCategoriasModal: boolean = false;
   mostrarTransferenciasModal: boolean = false;
-  isLoading: boolean = false; 
+  mostrarPagoTarjetaModal: boolean = false;
 
   cuentasSuscription: Subscription | null = null;
   tarjetasSuscription: Subscription | null = null;
@@ -53,7 +54,6 @@ export class Dashboard {
   cargaTransaccionSuscription: Subscription | null = null;
   cargaTransferenciaSuscription: Subscription | null = null;
   categoriasModalSuscription: Subscription | null = null;
-  isLoadingSuscription: Subscription | null = null;
 
   tipoTransaccion: string = '';
 
@@ -87,6 +87,13 @@ export class Dashboard {
       }
     });
 
+    this.cargaTransferenciaSuscription = this.transferenciaService.transferencia$.subscribe(transferencia => {
+      if(transferencia.tipoCuentaDestino == 'Tarjeta'){
+        this.mostrarPagoTarjetaModal = true;
+        this.menuAbierto = false;
+      }
+    });  
+
     
 
     this.categoriasModalSuscription = this.categoriasService.abrirCategoriasModal$.subscribe(abrir => {
@@ -94,10 +101,6 @@ export class Dashboard {
         this.mostrarCategoriasModal = true;
       }
     }); 
-
-    this.isLoadingSuscription = this.generalService.isLoading$.subscribe(loading => {
-      this.isLoading = loading;
-    });
 
     /// Determinar la pestaña activa según la ruta actual al cargar el componente
     this.rutaActual = this.router.url;
@@ -189,5 +192,9 @@ export class Dashboard {
   cerrarCategoriasModal() {
     this.mostrarCategoriasModal = false;
   } 
+
+  cerrarPagoTarjetaModal() {
+    this.mostrarPagoTarjetaModal = false;
+  }
 
 }

@@ -80,5 +80,13 @@ export class TransferenciasService {
   setTransferenciaId(transferenciaId: String) {
     this.cargaTransferenciaId.next(transferenciaId);  
   }
+
+  private cargaPagoTarjeta = new BehaviorSubject<Transferencia>(new Transferencia());
+  transferencia$ = this.cargaPagoTarjeta.asObservable();
+
+  setTransferencia(transferencia: Transferencia) {
+    this.cargaPagoTarjeta.next(transferencia);  
+  }
+
   
 }

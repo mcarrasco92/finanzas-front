@@ -15,7 +15,6 @@ import { CategoriasService } from '../../services/categorias/categorias';
 })
 export class Ajustes {
 
-  isLoading = false;
   mostrarCategoriasModal = false;
   
   constructor(private router: Router, private categoriasService: CategoriasService) { }

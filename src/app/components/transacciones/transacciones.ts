@@ -28,7 +28,6 @@ export class Transacciones {
   @Output() cerrar = new EventEmitter<void>();
   @Input() tipo: string = ''; // Propiedad que recibirá el valor desde el padre
 
-  isLoading: boolean = false;
   editar: boolean = true;
   confirmModal: boolean = false;
 

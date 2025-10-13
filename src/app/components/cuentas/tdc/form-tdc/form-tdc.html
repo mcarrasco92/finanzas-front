@@ -71,7 +71,7 @@
 
         <div class="text-center">
           <div class="input-form-radio">
-            <input id="saldoTotal" type="radio" name="pagoTDC"/>
+            <input [(ngModel)]="pagoSeleccionado" [value]="'saldoTotal'" id="saldoTotal" type="radio" name="pagoTDC"/>
             <label for="saldoTotal" class="mx-3 block text-sm/6 font-medium text-gray-900">Saldo total: </label>
           </div>
           <div>
@@ -81,7 +81,7 @@
 
         <div class="text-center">
           <div class="input-form-radio">
-            <input id="pagoPendiente" checked type="radio" name="pagoTDC"/>
+            <input [(ngModel)]="pagoSeleccionado" [value]="'pagoPendiente'" id="pagoPendiente" checked type="radio" name="pagoTDC"/>
             <label for="pagoPendiente" class="mx-3 block text-sm/6 font-medium text-gray-900">Pago pendiente: </label>
           </div>
           <div>
@@ -92,14 +92,14 @@
 
         <div class="flex items-center">
           <div class="input-form-radio">
-            <input id="otro" type="radio" name="pagoTDC" />
+            <input [(ngModel)]="pagoSeleccionado" [value]="'otro'" id="otro" type="radio" name="pagoTDC" />
             <label for="otro" class="mx-3 block text-sm/6 font-medium text-gray-900">Otro: </label>
           </div>
           <div>
             <div class="input-form-currency w-30">
               <div>$</div>
               <input [(ngModel)]="otroSaldo" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" />
-              <p *ngIf="">Este campo es obligatorio</p>
+              <p *ngIf="valOtroSaldo">Este campo es obligatorio</p>
             </div>
           </div>
         </div>

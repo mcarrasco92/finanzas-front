@@ -4,7 +4,7 @@ export class Transferencia {
   importe: number = 0;
   cuentaOrigenId: string = '';
   cuentaDestinoId: string = '';
-  tipoCuentaDestino: string = ''; // 'Cuenta' o 'Tarjeta'
+  tipoCuentaDestino: String = 'Cuenta'; // 'Cuenta' o 'Tarjeta'
   concepto: string = '';
 
     limpiar() {
@@ -13,7 +13,7 @@ export class Transferencia {
         this.importe = 0;
         this.cuentaOrigenId = '';
         this.cuentaDestinoId = '';
-        this.tipoCuentaDestino = '';
+        this.tipoCuentaDestino = 'Cuenta';
         this.concepto = '';
     }
 

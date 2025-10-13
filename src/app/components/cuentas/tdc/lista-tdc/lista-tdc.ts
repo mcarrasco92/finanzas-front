@@ -28,7 +28,6 @@ export class ListaTDC {
 
 
   tarjetasDesactivadas: boolean = false;
-  isLoading: boolean = false;
   tarjetas: Tarjeta[] = [];
 
   tarjetasSuscription: Subscription | null = null;
@@ -102,7 +101,6 @@ export class ListaTDC {
 
   ngOnDestroy() {
     this.tarjetasSuscription?.unsubscribe();
-    this.isLoading = false;
     this.toast.clear();
   }
 

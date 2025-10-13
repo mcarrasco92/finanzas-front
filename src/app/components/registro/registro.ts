@@ -30,7 +30,6 @@ export class Registro {
 
   lenPassword: boolean = false;
 
-  isLoading: boolean = false;
 
   constructor(private authService: Auth,
     private toastService: ToastService,
@@ -108,11 +107,9 @@ export class Registro {
 
     };
 
-    this.isLoading = true;
 
     this.authService.registrarUsuario(datos).subscribe(
       response => {
-        this.isLoading = false;
 
         if(response.coderr === "0000"){
           this.toastService.show("Operación exitosa",response.message, TypeToast.success);
@@ -123,9 +120,6 @@ export class Registro {
       },
       error => {
         this.toastService.show("No se pudo realizar el registro","Error al registrar el usuario", TypeToast.danger);
-      },
-      () => {
-        this.isLoading = false;
       }
 
 

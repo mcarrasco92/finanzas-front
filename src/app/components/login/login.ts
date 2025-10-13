@@ -28,7 +28,6 @@ export class Login {
   email: string = ''; // Almacena el email 
   valEmail: boolean = false;
   valPassword: boolean = false;
-  isLoading: boolean = false;
 
   validaFormulario(): boolean {
 
@@ -45,7 +44,6 @@ export class Login {
 
   loginGoogle(): void {
 
-    this.isLoading = true;
     this.authService.loginGoogle().subscribe(
       response => {
         if (response.coderr === "0000") {
@@ -56,9 +54,6 @@ export class Login {
       },
       error => {
         this.toastService.show("Error al iniciar sesión", "Error desconocido", TypeToast.danger);
-      },
-      () => {
-        this.isLoading = false;
       }
 
 
@@ -73,7 +68,7 @@ export class Login {
       email: this.email,
       password: this.password
     };
-    this.isLoading = true
+
     this.authService.loginUsuario(datos).subscribe(
       response => {
         console.log(response)
@@ -86,8 +81,6 @@ export class Login {
       },
       error => {
         this.toastService.show("Error al iniciar sesión", "Error desconocido", TypeToast.danger);
-      },() => {
-        this.isLoading = false;
       }
 
 
@@ -96,7 +89,6 @@ export class Login {
   }
 
   ngDestroy() {
-    this.isLoading = false;
     this.toastService.clear();
   }
 

@@ -1,4 +1,3 @@
-<app-loading *ngIf="isLoading"></app-loading>
 <app-confirm-modal *ngIf="confirmModal" [titulo]="'Eliminar movimiento'" [mensaje]="'¿Estás seguro de que deseas eliminar este movimiento?'" [fondoOscuro]="false" (cerrar)="confirmModal=false" (confirmar)="eliminaTransaccion()"></app-confirm-modal>
 
 <div>

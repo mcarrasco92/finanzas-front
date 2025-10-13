@@ -18,6 +18,8 @@ import { OptionsMenu } from '../../../../shared/options-menu/options-menu';
 import { Subscription } from 'rxjs';
 import { TrashIcon } from '../../../../shared/icons/trash-icon/trash-icon';
 import { Router } from '@angular/router';
+import { Transferencia } from '../../../../models/transferencia';
+import { TransferenciasService } from '../../../../services/transferencias/transferencias';
 
 
 @Component({
@@ -44,6 +46,7 @@ export class FormTDC {
   valInstitucion: boolean = false;
   valDpago: boolean = false;
   valDcorte: boolean = false;
+  valOtroSaldo: boolean = false;
 
   fechaActual: Date = new Date();
 
@@ -59,6 +62,7 @@ export class FormTDC {
   totalEgresos: number = 0;
   balance: number = 0;
 
+  pagoSeleccionado: string = 'pagoPendiente'; // Valor inicial
   otroSaldo: string = '';
 
 
@@ -68,7 +72,8 @@ export class FormTDC {
     private route: ActivatedRoute,
     private generalService: GeneralService,
     private transaccionesService: TransaccionesService,
-    private router: Router
+    private router: Router,
+    private transferenciaService: TransferenciasService
   ) { }
 
   getFechas(): string[] {
@@ -109,18 +114,25 @@ export class FormTDC {
   }
 
   pagar(){
-    this.modalPagar = true;
-    let pago: Transaccion  = new Transaccion();
 
-    pago.tipo = 'Ingreso';
-    pago.concepto = 'Pago tarjeta de crédito ' + this.tarjeta.nombre;
-    pago.importe = 10;
+    if(this.pagoSeleccionado === 'otro'){
+      if(this.otroSaldo.trim() === '' || isNaN(Number(this.otroSaldo.replace(/,/g, ''))) || Number(this.otroSaldo.replace(/,/g, '')) <= 0){
+        this.valOtroSaldo = true;
+        return;
+      }
+    }
+
+    let pago: Transferencia  = new Transferencia();
+    pago.tipoCuentaDestino = 'Tarjeta';
+    pago.importe = this.pagoSeleccionado === 'saldoTotal' ? this.tarjeta.saldo : (this.pagoSeleccionado === 'pagoPendiente' ? this.tarjeta.pagoPendiente : Number(this.otroSaldo.replace(/,/g, '')));
+
+
     pago.fecha = this.fechaActual.getFullYear() + '-' +
       String(this.fechaActual.getMonth() + 1).padStart(2, '0') + '-' +
       String(this.fechaActual.getDate()).padStart(2, '0');
-    pago.tarjetaId = this.tarjeta.id;
+    pago.cuentaDestinoId = this.tarjeta.id;
 
-    this.transaccionesService.setPago(pago);
+    this.transferenciaService.setTransferencia(pago);
 
   }
 
@@ -346,7 +358,18 @@ export class FormTDC {
       return;
     }
 
-    this.transaccionesService.setTransaccion(trans)
+    console.log(trans);
+
+    if(trans.transferencia){
+      let pago = new Transferencia();
+      pago.id = trans.id;
+      pago.tipoCuentaDestino = 'Tarjeta';
+      console.log(pago);
+      this.transferenciaService.setTransferencia(pago)
+    }else{
+      this.transaccionesService.setTransaccion(trans)
+    }
+    
   }
 
   showConfirmModal(trans: any): void {

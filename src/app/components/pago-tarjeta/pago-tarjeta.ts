@@ -17,12 +17,12 @@ import { ConfirmModal } from '../../shared/confirm-modal/confirm-modal';
 import { GeneralService } from '../../services/general-service';
 
 @Component({
-  selector: 'app-transferencias',
+  selector: 'app-pago-tarjeta',
   imports: [CommonModule, FormsModule, Toast, TrashIcon, ConfirmModal],
-  templateUrl: './transferencias.html',
-  styleUrl: './transferencias.css'
+  templateUrl: './pago-tarjeta.html',
+  styleUrl: './pago-tarjeta.css'
 })
-export class Transferencias {
+export class PagoTarjeta {
   @Output() cerrar = new EventEmitter<void>();
   @Input() tipo: string = ''; // Propiedad que recibirá el valor desde el padre
 
@@ -30,9 +30,11 @@ export class Transferencias {
   confirmModal: boolean = false;
 
   CuentasSuscription: Subscription | null = null;
+  TarjetasSuscription: Subscription | null = null;
   transferenciaSuscription: Subscription | null = null;
 
   cuentas: Cuenta[] = [];
+  tarjetas: Tarjeta[] = [];
 
   importe: string = '';
 
@@ -68,10 +70,33 @@ export class Transferencias {
       this.cuentas = cuentas;
     });
 
+    this.TarjetasSuscription = this.tarjetasService.tarjetasList$.subscribe((tarjetas) => {
+      this.tarjetas = tarjetas;
+    });
     
-    this.transferenciaSuscription = this.transferenciasService.transferenciaId$.subscribe(transferenciaId => {
-      if(transferenciaId && transferenciaId != ''){
-        this.consultaTransferencia(transferenciaId);  
+    this.transferenciaSuscription = this.transferenciasService.transferencia$.subscribe(transferencia => {
+      console.log(transferencia);
+      if(transferencia){
+
+        if(transferencia.id && transferencia.id != ''){
+          this.consultaTransferencia(transferencia.id);
+          return;
+        }
+
+        this.transferencia = Object.assign(new Transferencia(), transferencia);
+        this.transferenciaOriginal = Object.assign(new Transferencia(), transferencia);
+  
+        this.importe = this.transferencia.getImporte();
+        this.cdr.detectChanges();
+      }else{
+        this.transferencia = new Transferencia();
+        this.transferenciaOriginal = new Transferencia();
+        this.transferencia.tipoCuentaDestino = "Tarjeta";
+        this.transferenciaOriginal.tipoCuentaDestino = "Tarjeta";
+  
+        this.importe = '';
+        this.editar = true;
+        this.cdr.detectChanges();
       }
     });
     
@@ -127,10 +152,9 @@ export class Transferencias {
     
     
     if(this.transferencia.id && this.transferencia.id != ''){ //Actualiza
-
-      this.transferencia.tipoCuentaDestino ="Cuenta";
       
       console.log(this.transferencia);
+
       document.body.style.cursor = 'wait';
       this.transferenciasService.actualizaTransferencia( this.transferencia.id ,this.transferencia).subscribe(response => {
         document.body.style.cursor = 'default';
@@ -143,9 +167,6 @@ export class Transferencias {
       });
       
     }else{ // Agrega
-
-      this.transferencia.tipoCuentaDestino ="Cuenta";
-
 
       console.log(this.transferencia);
 

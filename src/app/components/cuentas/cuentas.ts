@@ -28,7 +28,6 @@ export class Cuentas {
     private generalService: GeneralService
 ) { }
 
-  isLoading: boolean = false;
   btnNuevaCuenta: boolean = true;
   btnNuevaTDC: boolean = true;
 

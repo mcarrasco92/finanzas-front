@@ -27,7 +27,6 @@ export class ListaDebito {
     private generalService: GeneralService
   ) { }
 
-  isLoading: boolean = false;
   cuentas: Cuenta[] = [];
   saldoDisponible: number = 0;
   saldoInvertido: number = 0;
@@ -72,13 +71,11 @@ export class ListaDebito {
 
   consultarCuentas(){
 
-    this.isLoading = true;
 
     this.cuentasService.getCuentas().subscribe(response => {
 
       if(response.coderr !== '0000') {
         this.toast.show('Error al consultar las cuentas', response.message, TypeToast.danger);
-        this.isLoading = false;
         this.cdr.detectChanges();
         return;
       }
@@ -97,10 +94,8 @@ export class ListaDebito {
 
     }, error => {
       this.toast.show('Error al consultar las cuentas', 'Error: ' + error.status, TypeToast.danger);
-      this.isLoading = false;
       this.cdr.detectChanges();
     }, () => {
-      this.isLoading = false;
       this.cdr.detectChanges();
     }
 
@@ -171,7 +166,6 @@ export class ListaDebito {
     this.saldoDisponibleSubscription?.unsubscribe();
     this.saldoInvertidoSubscription?.unsubscribe();
     this.saldoTotalSubscription?.unsubscribe();
-    this.isLoading = false;
     this.toast.clear();
   }
   
