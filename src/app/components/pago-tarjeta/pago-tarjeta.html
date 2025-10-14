@@ -47,7 +47,7 @@
                   <option *ngIf="tarjeta.activa && transferencia.cuentaOrigenId != tarjeta.id" [value]=tarjeta.id>{{tarjeta.nombre}}</option>
                 </ng-container>
               </select>
-              <p *ngIf="valCuentaOrigen">Este campo es obligatorio</p>
+              <p *ngIf="valCuentaDestino">Este campo es obligatorio</p>
           </div>
 
           <div class="input-form-currency">

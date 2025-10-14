@@ -238,6 +238,7 @@ export class FormTDC {
         this.totalIngresos = this.transacciones.filter(t => t.tipo === 'Ingreso').reduce((acc, t) => acc + t.importe, 0);
         this.totalEgresos = this.transacciones.filter(t => t.tipo === 'Egreso').reduce((acc, t) => acc + t.importe, 0);
         this.balance = this.totalIngresos - this.totalEgresos;
+        this.transacciones.sort((a, b) => b.fecha.localeCompare(a.fecha));
         this.agrupaRegistos()
       }
       this.cdr.detectChanges();

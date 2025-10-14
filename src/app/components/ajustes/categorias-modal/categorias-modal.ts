@@ -5,10 +5,14 @@ import { FormsModule } from '@angular/forms';
 import { Toast } from '../../../shared/toast/toast';
 import { ToastService, TypeToast } from '../../../shared/toast/service/toast-service';
 import { Categoria } from '../../../models/categoria';
+import { Subscription } from 'rxjs';
+import { TrashIcon } from '../../../shared/icons/trash-icon/trash-icon';
+import { ConfirmModal } from '../../../shared/confirm-modal/confirm-modal';
+
 
 @Component({
   selector: 'app-categorias-modal',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Toast, TrashIcon, ConfirmModal],
   templateUrl: './categorias-modal.html',
   styleUrl: './categorias-modal.css'
 })
@@ -19,9 +23,12 @@ export class CategoriasModal {
   editar: boolean = false;
   valNombre = false;
   valTipo = false;
+  confirmModal: boolean = false;
 
   categoria: Categoria = new Categoria();
   categoriaOriginal: Categoria = new Categoria();
+
+  categoriasSuscription: Subscription | null = null;
 
   constructor(private categoriasService: CategoriasService,
     private toast: ToastService,
@@ -30,7 +37,7 @@ export class CategoriasModal {
 
   ngOnInit() {
 
-    this.categoriasService.data$.subscribe(id => {
+    this.categoriasSuscription = this.categoriasService.data$.subscribe(id => {
       if (id) {
         
         this.categoriasService.getCategoriaById(id).subscribe(response => {
@@ -170,11 +177,29 @@ export class CategoriasModal {
         
         this.toast.show('Error al actualizar la categoria', error.error.message, TypeToast.danger);
       });
-    } 
+    }
+
+    eliminaCategoria(): void {
+      this.confirmModal = false;
+    document.body.style.cursor = 'wait';
+    this.categoriasService.deleteCategoria(this.categoria.id).subscribe(response => {
+      document.body.style.cursor = 'default';
+      if (response.coderr === '0000') {
+        this.cerrarModal();
+        this.toast.show('Categoría eliminada correctamente', '', TypeToast.success);  
+      } else {
+        this.toast.show('Error al eliminar la categoría', response.message, TypeToast.danger);
+      }
+    });
+    }
 
   cerrarModal(): void {
     this.categoriasService.setData(null);
     this.cerrar.emit();
   }
+
+  ngOnDestroy(): void {
+    this.categoriasSuscription?.unsubscribe();
+  } 
 
 }

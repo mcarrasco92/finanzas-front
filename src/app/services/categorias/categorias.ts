@@ -104,9 +104,16 @@ export class CategoriasService {
 
 
    //Eliminar categoria
-   deleteCategoria(categoriaId: string) {
-    // Lógica para eliminar una categoria
-  }
+   deleteCategoria(categoriaId: string): Observable<any> {
+      return this.http.delete(this.baseUrl + `/api/categorias/eliminar/${categoriaId}`).pipe(
+        tap(() => {
+          this.getCategoriasSubscription?.unsubscribe();
+          this.getCategoriasSubscription = this.getCategorias().subscribe();
+        }),
+        catchError((error) => {
+          throw error;
+        }));
+    }
 
 
 

@@ -88,16 +88,17 @@
                   <label for="cuenta">Cuenta / Tarjeta</label>
                   <select [(ngModel)]="cuentasYTarjetas" [disabled]="!editar && transaccion.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"  id="cuenta" name="cuenta" class="pl-10" >
                     <option value="" disabled selected>Selecciona una opción</option>
-                    <optgroup label="Cuentas de débito">
-                      <ng-container *ngFor="let cuenta of cuentas">
-                        <option *ngIf="cuenta.activa" [value]="'C' + cuenta.id">{{cuenta.nombre}}</option>
-                      </ng-container>
-                    </optgroup>
                     <optgroup label="Tarjetas de crédito">
                       <ng-container *ngFor="let tarjeta of tarjetas">
                         <option *ngIf="tarjeta.activa" [value]="'T' + tarjeta.id">{{tarjeta.nombre}}</option>
                       </ng-container>
                     </optgroup>
+                    <optgroup label="Cuentas de débito">
+                      <ng-container *ngFor="let cuenta of cuentas">
+                        <option *ngIf="cuenta.activa" [value]="'C' + cuenta.id">{{cuenta.nombre}}</option>
+                      </ng-container>
+                    </optgroup>
+                    
                   </select>
                   <p *ngIf="valCuentaTarjeta">Este campo es obligatorio</p>
                 </div>

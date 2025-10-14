@@ -4,6 +4,7 @@ export class Categoria {
   tipo: string = '';
   orden: number = 0;
   activa: boolean = true;
+  transacciones: boolean = false;
 
 
     limpiar() {
@@ -12,6 +13,7 @@ export class Categoria {
         this.tipo = '';
         this.orden = 0;
         this.activa = true;
+        this.transacciones = false;
     }
 
 }

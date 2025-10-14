@@ -115,6 +115,8 @@ export class Transferencias {
 
   enviaDatos() {
 
+    this.actualizaSaldo();
+
     this.valFecha = this.transferencia.fecha.trim() === '';
     this.valImporte = this.importe.trim() === '';
     this.valConcepto = this.transferencia.concepto.trim() === '';

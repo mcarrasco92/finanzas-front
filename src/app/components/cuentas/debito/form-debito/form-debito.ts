@@ -109,6 +109,7 @@ export class FormDebito {
   agrupaRegistos(){
     this.agrupadosPorFecha = this.transacciones.reduce((acc: any, transaccion) => {
       //const fecha = new Date(transaccion.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+
       const fecha = transaccion.fecha;
       if (!acc[fecha]) {
         acc[fecha] = [];
@@ -192,6 +193,9 @@ export class FormDebito {
         this.totalIngresos = this.transacciones.filter(t => t.tipo === 'Ingreso').reduce((acc, t) => acc + t.importe, 0);
         this.totalEgresos = this.transacciones.filter(t => t.tipo === 'Egreso').reduce((acc, t) => acc + t.importe, 0);
         this.balance = this.totalIngresos - this.totalEgresos;
+
+        this.transacciones.sort((a, b) => b.fecha.localeCompare(a.fecha));
+        
         this.agrupaRegistos()
       }
       this.cdr.detectChanges();
@@ -241,6 +245,8 @@ export class FormDebito {
 
 
   enviaDatos(): void {
+
+    this.actualizaSaldo();
 
     this.valNombre = this.cuenta.nombre.trim() === '';
 

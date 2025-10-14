@@ -131,6 +131,8 @@ export class Transacciones {
 
   enviaDatos() {
 
+    this.actualizaSaldo();
+
     this.valFecha = this.transaccion.fecha.trim() === '';
     this.valImporte = this.importe.trim() === '';
     this.valConcepto = this.transaccion.concepto.trim() === '';
