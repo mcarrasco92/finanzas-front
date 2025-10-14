@@ -10,6 +10,8 @@ export class Tarjeta {
   activa: boolean = true;
   transacciones: boolean = false;
   pagoPendiente: number = 0;
+  saldoPeriodoActual: number = 0;
+
 
 
     limpiar() {

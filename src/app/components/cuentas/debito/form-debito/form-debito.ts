@@ -334,7 +334,14 @@ export class FormDebito {
     }
 
     if(trans.transferencia){
-      this.transferenciaService.setTransferenciaId(trans.id);
+      if(trans.tipo === 'Egreso' && trans.descripcion.includes('Pago a ')){
+        let pago = new Transferencia();
+        pago.id = trans.id;
+        pago.tipoCuentaDestino = 'Tarjeta';
+        this.transferenciaService.setTransferencia(pago)
+      }else{
+        this.transferenciaService.setTransferenciaId(trans.id);
+      }
       return;
     }
     

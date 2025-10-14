@@ -6,10 +6,6 @@
   background-color: rgb(237	233	225);
 }
 
-body{
-  /*background-color: rgb(240	228	214	);*/
-  background-color: rgb(237	233	225);
-}
 
 .select-form {
   @apply relative;
@@ -17,7 +13,7 @@ body{
     @apply absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-900;
   }
   select {
-    @apply block w-full rounded-md px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6;
+    @apply block w-full rounded-md px-3 py-2 text-base outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6;
   }
 
   p {
@@ -32,7 +28,7 @@ body{
     @apply absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-900;
   }
   input {
-    @apply block w-full rounded-md px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400  sm:text-sm/6 focus:outline-2 focus:-outline-offset-2 ;
+    @apply block w-full rounded-md px-3 pt-1.5 text-base outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400  sm:text-sm/6 focus:outline-2 focus:-outline-offset-2 ;
   }
 
   p {
@@ -45,14 +41,14 @@ body{
   @apply relative;
 
   div{
-    @apply absolute mt-[6px] ml-3 shrink-0 text-base text-gray-500 select-none sm:text-sm/6
+    @apply absolute mt-[4px] ml-3 shrink-0 text-base text-gray-500 select-none sm:text-sm/6
   }
 
   label {
     @apply absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-900;
   }
   input {
-    @apply pl-7 block w-full rounded-md px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-300 sm:text-sm/6;
+    @apply pl-7 block w-full rounded-md px-3 py-1 text-base outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-300 sm:text-sm/6;
   }
 
   p {

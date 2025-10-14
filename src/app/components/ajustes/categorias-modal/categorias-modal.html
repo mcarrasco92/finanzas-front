@@ -5,7 +5,7 @@
   <div *ngIf="!confirmModal" class="fixed inset-0 z-50 flex items-center justify-center">
 
     <div class="bg-white rounded-lg shadow-lg w-150 p-6">
-      <h2 class="relative text-lg font-semibold text-gray-900 mb-4 border-b border-gray-900/10 pb-5">{{categoria.id ? 'Consultar ': 'Nuevo '}} Categoría
+      <h2 class="relative text-lg font-semibold text-gray-900 mb-4 border-b border-gray-900/10 pb-5">{{categoria.id ? 'Información': 'Nueva'}} categoría
         <div class="absolute top-0 right-1 cursor-pointer" (click)="cerrarModal()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor" class="size-6">
@@ -18,7 +18,7 @@
 
         <div class="select-form">
           <label for="tipo">Tipo</label>
-          <select [(ngModel)]="categoria.tipo" id="tipo" name="tipo" class="pl-10" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" [disabled]="!editar && categoria.id">
+          <select [(ngModel)]="categoria.tipo" id="tipo" name="tipo" class="pl-10" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" [disabled]="!editar && categoria.id">
             <option value="">Selecciona una opción</option>
             <option value="I">Ingreso</option>
             <option value="E">Egreso</option>
@@ -28,7 +28,7 @@
 
         <div class="input-form-text mt-4">
           <label for="nombreCategoria">Nombre</label>
-          <input [(ngModel)]="categoria.nombre" id="nombreCategoria" type="text" name="nombreCategoria" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" [disabled]="!editar && categoria.id"
+          <input [(ngModel)]="categoria.nombre" id="nombreCategoria" type="text" name="nombreCategoria" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" [disabled]="!editar && categoria.id"
             autocomplete="off" />
           <p *ngIf="valNombre">Este campo es obligatorio</p>
         </div>
@@ -37,11 +37,10 @@
           <div class="flex-grow flex justify-start space-x-4">
             <button *ngIf="categoria.id && !categoria.transacciones" (click)="confirmModal = true" type="button" class="btn-danger">
               <div class="flex items-center space-x-2">
-                <app-trash-icon></app-trash-icon>
-                <div>Eliminar transferencia</div>
+                <div>Eliminar</div>
               </div>
             </button>
-            <button *ngIf="categoria.id" type="button" class="btn-danger" (click)="activaDesactivaCategoria()" >{{categoria.activa ? "Desactivar categoría" : "Activar categoría"}}</button>
+            <button *ngIf="categoria.id" type="button" class="btn-danger" (click)="activaDesactivaCategoria()" >{{categoria.activa ? "Desactivar" : "Activar"}}</button>
           </div>
           <button *ngIf="editar && categoria.id" (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
           <button *ngIf="editar || !categoria.id" type="submit" class="btn-primary" (click)="enviaDatos()">Guardar</button>

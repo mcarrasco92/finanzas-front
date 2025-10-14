@@ -99,6 +99,7 @@ export class Transacciones {
         this.transaccionOriginal = Object.assign(new Transaccion(), tran);
 
         this.importe = this.transaccion.getImporte();
+        this.tipo = this.transaccion.tipo;
         if (this.transaccion.tipo == 'Egreso') {
           if (this.transaccion.cuentaId != '') {
             this.cuentasYTarjetas = 'C' + this.transaccion.cuentaId;

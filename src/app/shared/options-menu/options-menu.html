@@ -1,13 +1,17 @@
 <div>
     <app-vertical-dots class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="tooggleMenu()"></app-vertical-dots>
     <div *ngIf="showMenu"
-        class="absolute right-0 mt-2 w-32 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+        class="absolute right-5 mt-2 w-40 bg-white border border-gray-300 rounded-md shadow-lg z-10">
         <ul class="py-1">
-            <li class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" (click)="editarClick()">
+            <li class="px-4 py-1 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" (click)="editarClick()">
                 <app-pencil-icon class="w-4"></app-pencil-icon>
                 <span>Editar</span>
             </li>
-            <li class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" (click)="eliminarClick()">
+            <li class="px-4 py-1 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" (click)="activarClick()">
+                <app-checks class="w-4"></app-checks>
+                <span>{{activarLabel}}</span>
+            </li>
+            <li *ngIf="eliminarEnabled" class="px-4 py-1 text-sm text-red-600 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" (click)="eliminarClick()">
                 <app-trash-icon class="w-4"></app-trash-icon>
                 <span>Eliminar</span>
             </li>

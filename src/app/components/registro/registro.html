@@ -1,23 +1,22 @@
 <app-toast></app-toast>
 
-<div class="flex flex-col justify-center items-center fondo my-1">
-  <div class="flex min-h-full flex-col justify-center py-8 sm:px-6 lg:px-8 w-150">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-      <img src="assets/logo.jpeg" alt="logo"
-        class="mx-auto h-30 w-auto" />
-      <h2 class="mt-0 text-center text-2xl/9 font-bold tracking-tight text-orange-900">Finanzas con sentido</h2>
-    </div>
+<div class="flex flex-col justify-center items-center fondo h-screen">
+  <div class="flex flex-col justify-center py-8 sm:px-6 lg:px-8 w-150">
+    <div class="sm:mx-auto sm:w-full sm:max-w-[480px]">
+      <div class="bg-white px-6 py-8 shadow-sm sm:rounded-lg sm:px-12">
 
-    <div class="mt-6 sm:mx-auto sm:w-full sm:max-w-[480px]">
-      <div
-        class="bg-white px-6 py-10 shadow-sm sm:rounded-lg sm:px-12">
+        <div class="sm:mx-auto sm:w-full sm:max-w-md mb-3">
+          <img src="assets/Color-nombre.png" alt="logo"
+            class="mx-auto h-30 w-auto" />
+        </div>
+
         <form (ngSubmit)="enviarDatos()" method="POST" class="space-y-4">
 
           <div>
             <label for="name" class="block text-sm/6 font-medium text-gray-900">Nombre completo</label>
             <div class="mt-1">
               <input id="name" type="text" name="name" required autocomplete [(ngModel)]="name" (input)="validaCaracteres($event)"
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-400 sm:text-sm/6" />
             </div>
             <p *ngIf="valName" class="text-sm text-red-600">Este campo es obligatorio</p>
 
@@ -28,7 +27,7 @@
               electrónico</label>
             <div class="mt-1">
               <input id="email" type="text" name="email" required autocomplete [(ngModel)]="email" (blur)="validaCorreo()"
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-400 sm:text-sm/6" />
             </div>
             <p *ngIf="valEmail" class="text-sm text-red-600">Este campo es obligatorio</p>
             <p *ngIf="valEmailChar" class="text-sm text-red-600">Correo inválido</p>
@@ -40,7 +39,7 @@
             <div class="mt-1">
               <input id="password" type="password" name="password" required [(ngModel)]="password"
                 (input)="verificarContrasenas()"
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-400 sm:text-sm/6" />
             </div>
             <p *ngIf="lenPassword" class="text-sm text-red-600">La contraseña debe contener al menos 8 caracteres</p>
             <p *ngIf="valPassword" class="text-sm text-red-600">Este campo es obligatorio</p>
@@ -52,7 +51,7 @@
             <div class="mt-1">
               <input id="confirm-password" type="password" name="confirm-password" required
                 [(ngModel)]="confirmPassword" (input)="verificarContrasenas()"
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-400 sm:text-sm/6" />
             </div>
             <p *ngIf="valConfirmPassword" class="text-sm text-red-600">Este campo es obligatorio</p>
             <p *ngIf="mostrarEtiqueta" id="confirm-password-error" class="text-sm text-red-600">Las contraseñas no coinciden</p>
@@ -60,11 +59,11 @@
 
           <div class="mt-5">
             <button type="submit"
-              class="flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 bg-gray-700 text-white hover:bg-gray-500">Registrarme</button>
+              class="flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400 bg-gray-700 text-white hover:bg-gray-600">Registrarme</button>
           </div>
         </form>
         <p class="mt-5 text-center text-sm/6 text-gray-500">
-          <a routerLink="login" class="font-semibold">Regresar</a>
+          <a routerLink="login" class="font-semibold focus:outline-1 focus:outline-gray-400 p-1">Regresar</a>
         </p>
       </div>
     </div>

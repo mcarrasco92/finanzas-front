@@ -8,8 +8,8 @@
 
     <div class="bg-white rounded-lg shadow-lg w-220 p-6">
       <h2 class="relative text-lg font-semibold text-gray-900 mb-4 border-b border-gray-900/10 pb-5"> 
-        <span *ngIf="transferencia.tipoCuentaDestino == 'Cuenta'">{{transferencia.id ? 'Consultar ': 'Nueva '}} transferencia</span>
-        <span *ngIf="transferencia.tipoCuentaDestino != 'Cuenta'">{{transferencia.id ? 'Consultar ': 'Nuevo '}} pago tarjeta</span>
+        <span *ngIf="transferencia.tipoCuentaDestino == 'Cuenta'">{{transferencia.id ? 'Información ': 'Nueva '}} transferencia</span>
+        <span *ngIf="transferencia.tipoCuentaDestino != 'Cuenta'">{{transferencia.id ? 'Información ': 'Nuevo '}} pago tarjeta</span>
         <div class="absolute top-0 right-1 cursor-pointer" (click)="cerrarModal()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor" class="size-6">
@@ -23,7 +23,7 @@
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
             <div class="input-form-text">
                 <label for="fecha">Fecha</label>
-                <input [(ngModel)]="transferencia.fecha" id="fecha" type="date" name="fecha" [disabled]="!editar && transferencia.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"
+                <input [(ngModel)]="transferencia.fecha" id="fecha" type="date" name="fecha" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"
                   autocomplete="off" />
                 <p *ngIf="valFecha">Este campo es obligatorio</p>
             </div>
@@ -32,7 +32,7 @@
 
             <div class="select-form">
                 <label for="cuentaOrigen">Cuenta origen</label>
-                <select [(ngModel)]="transferencia.cuentaOrigenId" [disabled]="!editar && transferencia.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"  id="cuentaOrigen" name="cuentaOrigen" class="pl-10" >
+                <select [(ngModel)]="transferencia.cuentaOrigenId" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"  id="cuentaOrigen" name="cuentaOrigen" class="pl-10" >
                   <option value="" disabled selected>Selecciona una opción</option>
                   <ng-container *ngFor="let cuenta of cuentas">
                     <option *ngIf="cuenta.activa && transferencia.cuentaDestinoId != cuenta.id" [value]=cuenta.id>{{cuenta.nombre}}</option>
@@ -43,7 +43,7 @@
 
             <div class="select-form">
               <label for="cuentaDestino">Cuenta destino</label>
-              <select [(ngModel)]="transferencia.cuentaDestinoId" [disabled]="!editar && transferencia.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"  id="cuentaDestino" name="cuentaDestino" class="pl-10" >
+              <select [(ngModel)]="transferencia.cuentaDestinoId" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"  id="cuentaDestino" name="cuentaDestino" class="pl-10" >
                 <option value="" disabled selected>Selecciona una opción</option>
                 <ng-container *ngFor="let cuenta of cuentas">
                   <option *ngIf="cuenta.activa && transferencia.cuentaOrigenId != cuenta.id" [value]=cuenta.id>{{cuenta.nombre}}</option>
@@ -56,7 +56,7 @@
             <div>$</div>
 
             <label for="saldo">Importe</label>
-            <input [(ngModel)]="importe" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" (blur)="actualizaSaldo()" [disabled]="!editar && transferencia.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" />
+            <input [(ngModel)]="importe" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" (blur)="actualizaSaldo()" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" />
             <p *ngIf="valImporte">Este campo es obligatorio</p>
           </div>
 
@@ -69,7 +69,7 @@
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
           <div class="input-form-text">
             <label for="concepto">Concepto</label>
-            <input [(ngModel)]="transferencia.concepto"   id="concepto" type="text" name="concepto"  [disabled]="!editar && transferencia.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"
+            <input [(ngModel)]="transferencia.concepto"   id="concepto" type="text" name="concepto"  [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"
               autocomplete="off" />
             <p *ngIf="valConcepto">Este campo es obligatorio</p>
           </div>
@@ -80,8 +80,7 @@
           <div class="flex-grow flex justify-start space-x-4">
             <button *ngIf="transferencia.id" (click)="confirmModal = true" type="button" class="btn-danger">
               <div class="flex items-center space-x-2">
-                <app-trash-icon></app-trash-icon>
-                <div>Eliminar transferencia</div>
+                <div>Eliminar</div>
               </div>
             </button>
           </div>

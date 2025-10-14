@@ -1,11 +1,10 @@
 <div class="flex bg-white h-screen">
-  <div class="flex w-60 flex-col fixed h-full">
-    <div class="relative flex grow flex-col overflow-y-auto border-r border-gray-200 bg-white px-6">
-      <div class="relative flex h-20 shrink-0 items-center justify-center mt-2">
-        <img src="assets/logoBlanco.jpeg" alt="Your Company" class="h-20 w-auto" />
+  <div class="flex w-50 flex-col fixed h-full">
+    <div class="relative flex grow flex-col overflow-y-auto border-r border-gray-200 bg-white px-4">
+      <div class="relative flex h-20 shrink-0 items-center justify-center mt-4">
+        <img src="assets/Color-nombre.png" alt="Your Company" class="h-23 w-auto" />
       </div>
-      <p class="text-md font-semibold text-orange-900 text-center">Finanzas con sentido</p>
-      <nav class="relative flex flex-1 flex-col mt-5">
+      <nav class="relative flex flex-1 flex-col mt-4">
         <ul role="list" class="flex flex-1 flex-col gap-y-7">
           <li>
             <ul role="list" class="-mx-2 space-y-1">
@@ -16,46 +15,25 @@
             </ul>
           </li>
 
-          <li class="-mx-6 mt-auto">
-            <a (click)="togglePerfil()"
-              class="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-50 cursor-pointer relative">
+          <li class="-mx-4 mt-auto">
+            <a (click)="cerrarSesion()"
+              class="flex items-center gap-x-4 px-6 py-2 text-sm/6 text-gray-900 hover:bg-gray-50 cursor-pointer relative">
               <div
-                class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 border border-gray-300 text-xs font-medium text-gray-600">
+                class="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 border border-gray-300 text-xs font-medium text-gray-600">
                 {{ perfil.displayName?.slice(0, 1)?.toUpperCase() }}
               </div>
-              <span aria-hidden="true">{{perfil.displayName?.slice(0, 18)}}</span>
+              <span aria-hidden="true">Cerrar sesión</span>
             </a>
-
-
-            <div *ngIf="openPerfil"
-              class="absolute bottom-15 left-0 w-50 bg-white border border-gray-200 border-t-0 rounded-b-md shadow-md z-10 cursor-pointer hover:bg-gray-50">
-              <ul class="text-sm text-gray-700">
-                <li (click)="cerrarSesion()">
-                  <a routerLink="/dashboard/cuentas"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm/6 text-gray-600 hover:bg-gray-50">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                      stroke="currentColor" class="size-6 shrink-0">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
-                    </svg>
-                    Cerrar sesión
-                  </a>
-                </li>
-              </ul>
-            </div>
           </li>
-
-
-
         </ul>
       </nav>
     </div>
 
   </div>
-  <div class="flex flex-col bg-gray-50 flex-1 ml-60 h-full overflow-y-auto pb-18">
+  <div class="flex flex-col bg-gray-50 flex-1 ml-50 h-full overflow-y-auto pb-18">
     <!-- Replace with your content -->
 
-    <div class="p-2">
+    <div class="py-2 px-4">
       <router-outlet></router-outlet>
     </div>
 

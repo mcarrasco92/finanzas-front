@@ -29,6 +29,9 @@ export class ListaTDC {
 
   tarjetasDesactivadas: boolean = false;
   tarjetas: Tarjeta[] = [];
+  saldoTotal: number = 0;
+  saldoMensual: number = 0;
+  saldoAPagar: number = 0;
 
   tarjetasSuscription: Subscription | null = null;
 
@@ -38,6 +41,21 @@ export class ListaTDC {
 
     this.tarjetasSuscription = this.tarjetaService.tarjetasList$.subscribe((tarjetas) => {
       this.tarjetas = tarjetas;
+      this.cdr.detectChanges();
+    });
+
+    this.tarjetasSuscription = this.tarjetaService.saldoTotal$.subscribe((saldo) => {
+      this.saldoTotal = saldo;
+      this.cdr.detectChanges();
+    });
+
+    this.tarjetasSuscription = this.tarjetaService.saldoMensual$.subscribe((saldo) => {
+      this.saldoMensual = saldo;
+      this.cdr.detectChanges();
+    });
+
+    this.tarjetasSuscription = this.tarjetaService.saldoAPagar$.subscribe((saldo) => {
+      this.saldoAPagar = saldo;
       this.cdr.detectChanges();
     });
 

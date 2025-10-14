@@ -1,6 +1,6 @@
 <app-toast></app-toast>
 
-<div class="my-4">
+<div class="my-2">
 
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 align-right">
 
@@ -18,7 +18,7 @@
         <p class="ml-16 truncate text-sm font-medium text-gray-500">Saldo a pagar</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900">$ 0.00</p>
+        <p class="text-2xl font-semibold text-gray-900">$ {{saldoAPagar | number:'1.2-2'}}</p>
       </dd>
     </div>
 
@@ -34,10 +34,10 @@
               stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </div>
-        <p class="ml-16 truncate text-sm font-medium text-gray-500">Saldo restante</p>
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Gastos del mes</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900">$ 0.00</p>
+        <p class="text-2xl font-semibold text-gray-900">$ {{saldoMensual | number:'1.2-2'}}</p>
       </dd>
     </div>
 
@@ -56,14 +56,14 @@
         <p class="ml-16 truncate text-sm font-medium text-gray-500">Saldo total</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900">$ 0.00</p>
+        <p class="text-2xl font-semibold text-gray-900">$ {{saldoTotal | number:'1.2-2'}}</p>
       </dd>
     </div>
   </dl>
 </div>
 
 
-<div class="flex justify-end mb-4 mr-15">
+<div class="flex justify-end mb-2 mr-4 text-sm">
   <div class="input-form-check">
     <span class="span-label">
         <label id="inversion-label">Mostrar tarjetas desactivadas</label>
@@ -89,7 +89,7 @@
                 <th scope="col" class="text-center">Día de corte</th>
                 <th scope="col" class="text-center">Día de pago</th>
                 <th scope="col" class="text-center">Saldo a pagar</th>
-                <th scope="col" class="text-center">Saldo restante</th>
+                <th scope="col" class="text-center">Periodo actual</th>
                 <th scope="col" class="text-center">Saldo total</th>
               </tr>
             </thead>
@@ -108,8 +108,8 @@
                   <td class="text-gray-500">{{tarjeta.institucion}}</td>
                   <td class="text-center text-gray-500">{{ tarjeta.dcorte }}</td>
                   <td class="text-center text-gray-500">{{tarjeta.dpago}}</td>
-                  <td class="text-center text-gray-500">$ {{0 | number:'1.2-2' }}</td>
-                  <td class="text-center text-gray-500">$ {{0 | number:'1.2-2' }}</td>
+                  <td class="text-center text-gray-500">$ {{tarjeta.pagoPendiente| number:'1.2-2' }}</td>
+                  <td class="text-center text-gray-500">$ {{tarjeta.saldoPeriodoActual| number:'1.2-2' }}</td>
                   <td class="text-center text-gray-500">{{tarjeta.saldo | currency}}</td>
                   <td (mousedown)="onMouseDown()" (mouseleave)="onMouseUp()" class="cursor-move text-center" (click)="$event.stopPropagation()">
                     <app-drag-icon></app-drag-icon>

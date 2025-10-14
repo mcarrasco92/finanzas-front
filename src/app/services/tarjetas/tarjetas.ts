@@ -34,6 +34,9 @@ export class TarjetasService {
         const tarejtasList:Tarjeta[] = response.data.tarjetas;
         tarejtasList.sort((a, b) => a.orden - b.orden);
         this.setTarjetasList(tarejtasList);
+        this.setSaldoTotal(response.data.saldoTotal);
+        this.setSaldoMensual(response.data.saldoMensual);
+        this.setSaldoAPagar(response.data.saldoAPagar);
       }
     }),
     catchError((error) => {
@@ -101,10 +104,30 @@ deleteTarjeta(tarjetaId: string): Observable<any>{
 }
 
 private tarjetasList = new BehaviorSubject<Tarjeta[]>([]);
+private saldoTotal = new BehaviorSubject<number>(0);
+private saldoMensual = new BehaviorSubject<number>(0);
+private saldoAPagar = new BehaviorSubject<number>(0);
+
+
 tarjetasList$ = this.tarjetasList.asObservable();
+saldoTotal$ = this.saldoTotal.asObservable();
+saldoMensual$ = this.saldoMensual.asObservable();
+saldoAPagar$ = this.saldoAPagar.asObservable();
 
 setTarjetasList(tarjetas: Tarjeta[]) {
   this.tarjetasList.next(tarjetas);
+}
+
+setSaldoTotal(saldo: number) {
+  this.saldoTotal.next(saldo);
+}
+
+setSaldoMensual(saldo: number) {
+  this.saldoMensual.next(saldo);
+}
+
+setSaldoAPagar(saldo: number) {
+  this.saldoAPagar.next(saldo);
 }
 
 

@@ -359,13 +359,10 @@ export class FormTDC {
       return;
     }
 
-    console.log(trans);
-
     if(trans.transferencia){
       let pago = new Transferencia();
       pago.id = trans.id;
       pago.tipoCuentaDestino = 'Tarjeta';
-      console.log(pago);
       this.transferenciaService.setTransferencia(pago)
     }else{
       this.transaccionesService.setTransaccion(trans)
@@ -445,7 +442,12 @@ export class FormTDC {
 
       this.cdr.detectChanges();
 
-      this.toast.show('TDC activada exitosamente', "", TypeToast.success);
+      if(this.tarjeta.activa){
+        this.toast.show('TDC activada exitosamente', "", TypeToast.success);
+      }else{
+        this.toast.show('TDC desactivada exitosamente', "", TypeToast.success);
+      }
+      
 
 
     }, error => {

@@ -3,28 +3,42 @@
 <app-confirm-modal *ngIf="confirmModalEliminaCuenta" [titulo]="'Eliminar cuenta'" [mensaje]="'¿Estás seguro de que deseas eliminar esta cuenta?'" [fondoOscuro]="true" (cerrar)="confirmModalEliminaCuenta=false" (confirmar)="eliminaCuenta()"></app-confirm-modal>
 
 <div class="px-4 py-6 bg-white shadow-sm">
-    
-    <h1 class="text-lg font-medium leading-6 text-gray-900 mb-10 w-full text-center border-b border-gray-900/10 pb-4" >{{cuenta.id ? "Consulta" : "Alta"}} de cuenta</h1>
+
+    <div class="flex justify-center">
+      <div class="w-full mb-6">
+        <h1 class="text-lg font-medium leading-6 text-gray-900 w-full text-center border-gray-900/10" >{{cuenta.id ? "Información" : "Alta"}} de cuenta</h1>
+        <p *ngIf="cuenta.id" class="text-sm text-gray-500 w-full text-center">{{cuenta.activa ? "Activa": "Desactivada"}}</p>
+      </div>
+      <div class="flex justify-end">
+        <app-options-menu *ngIf="cuenta.id" 
+        [eliminarEnabled]="!cuenta.transacciones"
+        [activarLabel]="cuenta.activa ? 'Desactivar cuenta' : 'Activar cuenta'"
+        (editar)="editar = true" (activar)="activaDesactivaCuenta()" (eliminar)="showConfirmModalEliminarCuenta()"
+        ></app-options-menu>
+      </div>
+    </div>
+
+
     <form (ngSubmit)="enviaDatos()" method="POST" class="space-y-8">
 
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
             
             <div class="input-form-text">
                 <label for="nombreCuenta">Nombre</label>
-                <input [(ngModel)]="cuenta.nombre" id="nombreCuenta" type="text" name="nombreCuenta" autocomplete="off" [disabled]="!editar && cuenta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" class="!focus:outline-blue-600"/>
+                <input [(ngModel)]="cuenta.nombre" id="nombreCuenta" type="text" name="nombreCuenta" autocomplete="off" [disabled]="!editar && cuenta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" class="!focus:outline-blue-600"/>
                 <p *ngIf="valNombre">Este campo es obligatorio</p>
             </div>
             
 
             <div class="input-form-text">
                 <label for="descipcion">Descripción</label>
-                <input [(ngModel)]="cuenta.descripcion" id="descipcion" type="text" name="descipcion" autocomplete="off" [disabled]="!editar && cuenta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" />
+                <input [(ngModel)]="cuenta.descripcion" id="descipcion" type="text" name="descipcion" autocomplete="off" [disabled]="!editar && cuenta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" />
                 <p *ngIf="valDescripcion">Este campo es obligatorio</p>
             </div>
 
             <div class="input-form-text">
                 <label for="institucion">Institución</label>
-                <input [(ngModel)]="cuenta.institucion" id="institucion" type="text" name="institucion" autocomplete="off" [disabled]="!editar && cuenta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"/>
+                <input [(ngModel)]="cuenta.institucion" id="institucion" type="text" name="institucion" autocomplete="off" [disabled]="!editar && cuenta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
                 <p *ngIf="valInstitucion">Este campo es obligatorio</p>
             </div>
 
@@ -33,7 +47,7 @@
               <div>$</div>
 
               <label for="saldo">Saldo</label>
-              <input [(ngModel)]="saldo" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" (blur)="actualizaSaldo()" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" [disabled]="cuenta.id !== ''" [ngClass]="{'bg-gray-100': cuenta.id}" />
+              <input [(ngModel)]="saldo" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" (blur)="actualizaSaldo()" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" [disabled]="!editar && cuenta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" />
               <p *ngIf="valSaldo">Este campo es obligatorio</p>
             </div>
             
@@ -68,7 +82,8 @@
 
         </div>
 
-        <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10">
+        <div class="flex items-center justify-end gap-x-6 border-gray-900/10 relative">
+          <!--
             <div class="flex-grow flex justify-start space-x-4">
               <button *ngIf="cuenta.id && !cuenta.transacciones" (click)="showConfirmModalEliminarCuenta()" type="button" class="btn-danger">
                 <div class="flex items-center space-x-2">
@@ -79,38 +94,35 @@
               
               <button *ngIf="cuenta.id" (click)="activaDesactivaCuenta()" type="button" class="btn-danger">{{cuenta.activa ? "Desactivar cuenta" : "Activar cuenta"}}</button>
             </div>
+
+            -->
             <button *ngIf="editar && cuenta.id" (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
             <button *ngIf="editar || !cuenta.id" type="submit" class="btn-primary">Guardar</button>
+            <!--
             <button *ngIf="!editar && cuenta.id && cuenta.activa" (click)="editar=true" type="button" class="btn-primary">Editar</button>
+            -->
           </div>
     </form>
 </div>
 
 
 <div *ngIf="cuenta.id">
-  <h1 class="text-lg font-medium leading-6 text-gray-900 w-full text-center mt-4">Resumen Mensual</h1>
-  <div class="flex justify-center mt-3">
-    <div class="flex items-center space-x-4">
-      <app-left-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(-1)"></app-left-icon>
-      <h1 class="text-md font-medium leading-6 text-gray-900 w-full text-center">{{fechaActual | date: 'LLLL yyyy' | mesEs}}</h1>
-      <app-right-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(1)"></app-right-icon>
-    </div>
-  </div>
 
   <nav class="bg-white shadow-sm mt-4 py-2">
+    <h1 class="text-lg font-medium leading-6 text-gray-900 w-full text-center mb-2">Resumen Mensual</h1>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-12 justify-center space-x-40">
         <div class="flex flex-col justify-center">
           <h2 class="text-sm font-medium text-gray-500 text-center">Ingresos</h2>
-          <p class="text-lg font-semibold text-green-600">{{ totalIngresos| currency:'USD':'symbol-narrow' }}</p>
+          <p class="text-sm/6 font-semibold text-green-600">{{ totalIngresos| currency:'USD':'symbol-narrow' }}</p>
         </div>
         <div class="flex flex-col justify-center">
           <h2 class="text-sm font-medium text-gray-500 text-center">Egresos</h2>
-          <p class="text-lg font-semibold text-red-600">{{ totalEgresos | currency:'USD':'symbol-narrow' }}</p>
+          <p class="text-sm/6 font-semibold text-red-600">{{ totalEgresos | currency:'USD':'symbol-narrow' }}</p>
         </div>
         <div class="flex flex-col justify-center">
           <h2 class="text-sm font-medium text-gray-500 text-center">Balance</h2>
-          <p [ngClass]="{'text-blue-400': balance >= 0, 'text-gray-600': balance < 0}" class="text-lg font-semibold">{{ balance | currency:'USD':'symbol-narrow' }}</p>
+          <p [ngClass]="{'text-blue-400': balance >= 0, 'text-gray-600': balance < 0}" class="text-sm/6 font-semibold">{{ balance | currency:'USD':'symbol-narrow' }}</p>
         </div>
       </div>
     </div>
@@ -118,6 +130,16 @@
 
   <nav class="bg-white shadow-sm mt-2 pt-4">
     <h1 class="text-lg font-medium text-gray-900 w-full text-center">Movimientos</h1>
+
+    <div class="flex justify-center my-3 text-md">
+      <div class="flex items-center space-x-4">
+        <app-left-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(-1)"></app-left-icon>
+        <h1 class="text-md font-medium leading-6 text-gray-900 w-full text-center">{{fechaActual | date: 'LLLL yyyy' | mesEs}}</h1>
+        <app-right-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(1)"></app-right-icon>
+      </div>
+    </div>
+
+
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-12 justify-between">
         <div class="flex justify-center w-full">

@@ -1,6 +1,6 @@
-<li class="hover:bg-gray-100 rounded-md duration-300 ease-in-out text-gray-600">
-    <a [routerLink]="link" [ngClass]="{'bg-indigo-100 text-gray-800': nombre == activo}" class="group flex gap-x-3 rounded-md p-2 text-sm/6 text-gray-600">
-
+<li class="hover:bg-gray-50 rounded-md duration-300 ease-in-out text-gray-600">
+    <a [routerLink]="link" [ngClass]="{'bg-gray-100 item-selected': nombre == activo}" class="group flex gap-x-3 rounded-md py-1 px-2 text-sm/6 text-gray-600">
+        
         <!--Cuentas-->
         <div *ngIf="nombre === 'Cuentas'">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -27,3 +27,4 @@
         {{nombre}}
     </a>
 </li>
+

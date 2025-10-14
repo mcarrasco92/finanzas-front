@@ -69,39 +69,6 @@ export class ListaDebito {
     
   }
 
-  consultarCuentas(){
-
-
-    this.cuentasService.getCuentas().subscribe(response => {
-
-      if(response.coderr !== '0000') {
-        this.toast.show('Error al consultar las cuentas', response.message, TypeToast.danger);
-        this.cdr.detectChanges();
-        return;
-      }
-
-      this.saldoDisponible = response.data.saldoDisponible;
-      this.saldoInvertido = response.data.saldoInvertido;
-      this.saldoTotal = response.data.saldoTotal;
-
-      this.porcentajeInvertido = response.data.saldoTotal > 0 ? (response.data.saldoInvertido / response.data.saldoTotal) * 100 : 0;
-
-      this.cuentas = response.data.cuentas;
-
-      this.cuentas.sort((a, b) => a.orden - b.orden);
-
-
-
-    }, error => {
-      this.toast.show('Error al consultar las cuentas', 'Error: ' + error.status, TypeToast.danger);
-      this.cdr.detectChanges();
-    }, () => {
-      this.cdr.detectChanges();
-    }
-
-    );
-  }
-
   consultaCuenta(id: String) {
     this.router.navigate(['/dashboard/cuentas/debitof/' + id]);
   }

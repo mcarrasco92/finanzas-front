@@ -3,47 +3,60 @@
 <app-confirm-modal *ngIf="confirmModalEliminaTarjeta" [titulo]="'Eliminar tarjeta'" [mensaje]="'¿Estás seguro de que deseas eliminar esta tarjeta?'" [fondoOscuro]="true" (cerrar)="confirmModalEliminaTarjeta=false" (confirmar)="eliminaTarjeta()"></app-confirm-modal>
 
 <div class="px-4 py-6 bg-white shadow-sm">
+    <div class="flex justify-center">
+      <div class="w-full mb-6">
+        <h1 class="text-lg font-medium leading-6 text-gray-900 w-full text-center border-gray-900/10" >{{tarjeta.id ? "Información" : "Alta"}} de TDC</h1>
+        <p *ngIf="tarjeta.id" class="text-sm text-gray-500 w-full text-center">{{tarjeta.activa ? "Activa": "Desactivada"}}</p>
+      </div>
+      <div class="flex justify-end">
+        <app-options-menu *ngIf="tarjeta.id" 
+        [eliminarEnabled]="!tarjeta.transacciones"
+        [activarLabel]="tarjeta.activa ? 'Desactivar TDC' : 'Activar TDC'"
+        (editar)="editar = true" (activar)="activaDesactivaTarjeta()" (eliminar)="showConfirmModalEliminarTarjeta()"
+        ></app-options-menu>
+      </div>
+    </div>
     
-    <h1 class="text-lg font-medium leading-6 text-gray-900 mb-10 w-full text-center border-b border-gray-900/10 pb-4" >{{tarjeta.id ? "Consulta" : "Alta"}} de tarjeta de crédito</h1>
     <form (ngSubmit)="enviaDatos()" method="POST" class="space-y-8">
 
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
             
             <div class="input-form-text">
                 <label for="nombreTDC">Nombre</label>
-                <input [(ngModel)]="tarjeta.nombre" id="nombreTDC" type="text" name="nombreTDC" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" />
+                <input [(ngModel)]="tarjeta.nombre" id="nombreTDC" type="text" name="nombreTDC" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" />
                 <p *ngIf="valNombre">Este campo es obligatorio</p>
             </div>
             
 
             <div class="input-form-text">
                 <label for="descipcion">Descripción</label>
-                <input [(ngModel)]="tarjeta.descripcion" id="descipcion" type="text" name="descipcion" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}" />
+                <input [(ngModel)]="tarjeta.descripcion" id="descipcion" type="text" name="descipcion" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" />
                 <p *ngIf="valDescripcion">Este campo es obligatorio</p>
             </div>
 
             <div class="input-form-text">
                 <label for="institucion">Institución</label>
-                <input [(ngModel)]="tarjeta.institucion" id="institucion" type="text" name="institucion" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"/>
+                <input [(ngModel)]="tarjeta.institucion" id="institucion" type="text" name="institucion" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
                 <p *ngIf="valInstitucion">Este campo es obligatorio</p>
             </div>
 
             <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                 <div class="input-form-text">
                     <label for="dpago">Día de pago</label>
-                    <input [(ngModel)]="tarjeta.dpago" (input)="validarDia($event)" id="dpago" type="number" name="dpago" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"/>
+                    <input [(ngModel)]="tarjeta.dpago" (input)="validarDia($event)" id="dpago" type="number" name="dpago" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
                     <p *ngIf="valDpago">Este campo es obligatorio</p>
                 </div>
                 <div class="input-form-text">
                     <label for="dcorte">Día de corte</label>
-                    <input [(ngModel)]="tarjeta.dcorte" (input)="validarDia($event)" id="dcorte" type="number" name="dcorte" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'bg-gray-100': !editar, 'bg-white': editar}"/>
+                    <input [(ngModel)]="tarjeta.dcorte" (input)="validarDia($event)" id="dcorte" type="number" name="dcorte" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
                     <p *ngIf="valDcorte">Este campo es obligatorio</p>
                 </div>
             </div>
 
         </div>
-
-        <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10">
+        
+        <div class="flex items-center justify-end gap-x-6 border-gray-900/10 relative">
+          <!--
           <div class="flex-grow flex justify-start space-x-4">
             <button *ngIf="tarjeta.id && !tarjeta.transacciones" (click)="showConfirmModalEliminarTarjeta()" type="button" class="btn-danger">
               <div class="flex items-center space-x-2">
@@ -54,11 +67,15 @@
             
             <button *ngIf="tarjeta.id" (click)="activaDesactivaTarjeta()" type="button" class="btn-danger">{{tarjeta.activa ? "Desactivar" : "Activar"}} TDC</button>
           </div>
+          -->
             
             <button *ngIf="editar && tarjeta.id" (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
             <button *ngIf="editar || !tarjeta.id" type="submit" class="btn-primary">Guardar</button>
+            <!--
             <button *ngIf="!editar && tarjeta.id && tarjeta.activa" (click)="editar=true" type="button" class="btn-primary">Editar</button>
+            -->
           </div>
+          
     </form>
 </div>
 
@@ -75,7 +92,7 @@
             <label for="saldoTotal" class="mx-3 block text-sm/6 font-medium text-gray-900">Saldo total: </label>
           </div>
           <div>
-            <span class="text-lg font-semibold text-green-600 text-center">{{ tarjeta.saldo | currency:'USD':'symbol-narrow' }}</span>
+            <span class="text-sm/6 font-semibold text-green-600 text-center">{{ tarjeta.saldo | currency:'USD':'symbol-narrow' }}</span>
           </div>
         </div>
 
@@ -85,7 +102,7 @@
             <label for="pagoPendiente" class="mx-3 block text-sm/6 font-medium text-gray-900">Pago pendiente: </label>
           </div>
           <div>
-            <span class="text-lg font-semibold text-red-600 text-center">{{ tarjeta.pagoPendiente | currency:'USD':'symbol-narrow' }}</span>
+            <span class="text-sm/6 font-semibold text-red-600 text-center">{{ tarjeta.pagoPendiente | currency:'USD':'symbol-narrow' }}</span>
           </div>
         </div>
 
@@ -115,6 +132,20 @@
 
   <nav class="bg-white shadow-sm mt-2 pt-4">
     <h1 class="text-lg font-medium text-gray-900 w-full text-center">Movimientos</h1>
+
+    <div class="flex justify-center my-3 text-md">
+      <div class="flex items-center space-x-4">
+        <app-left-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(-1)"></app-left-icon>
+        <h1 class="text-md font-medium leading-6 text-gray-900 w-full text-center">
+          <span>{{ getRangoFechaCorte()[0] | date: 'dd LLLL yyyy' | mesEs }}</span>
+          <span class="mx-5">-</span>
+          <span>{{ getRangoFechaCorte()[1] | date: 'dd LLLL yyyy' | mesEs }}</span>
+        </h1>
+        <app-right-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(1)"></app-right-icon>
+      </div>
+    </div>
+
+
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-12 justify-between">
         <div class="flex justify-center w-full">
@@ -125,18 +156,6 @@
       </div>
     </div>
   </nav>
-
-  <div class="flex justify-center mt-6">
-    <div class="flex items-center space-x-4">
-      <app-left-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(-1)"></app-left-icon>
-      <h1 class="text-md font-medium leading-6 text-gray-900 w-full text-center">
-        <span>{{ getRangoFechaCorte()[0] | date: 'dd LLLL yyyy' | mesEs }}</span>
-        <span class="mx-5">-</span>
-        <span>{{ getRangoFechaCorte()[1] | date: 'dd LLLL yyyy' | mesEs }}</span>
-      </h1>
-      <app-right-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(1)"></app-right-icon>
-    </div>
-  </div>
   
 
   <div *ngIf="transacciones.length > 0" class="p-4 bg-white shadow-sm mt-2">
