@@ -64,6 +64,7 @@ export class ListaDebito {
 
     this.saldoTotalSubscription = this.cuentasService.saldoTotal$.subscribe((saldo) => {
       this.saldoTotal = saldo;
+      this.porcentajeInvertido = this.saldoTotal > 0 ? (this.saldoInvertido / this.saldoTotal) * 100 : 0;
       this.cdr.detectChanges();
     });
     
