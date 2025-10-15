@@ -20,6 +20,8 @@ import { TrashIcon } from '../../../../shared/icons/trash-icon/trash-icon';
 import { Router } from '@angular/router';
 import { TransferenciasService } from '../../../../services/transferencias/transferencias';
 import { Transferencia } from '../../../../models/transferencia';
+import { CategoriasService } from '../../../../services/categorias/categorias';
+import { Categoria } from '../../../../models/categoria';
 
 
 @Component({
@@ -37,7 +39,8 @@ export class FormDebito {
     private route: ActivatedRoute,
     private generalService: GeneralService,
     private router: Router,
-    private transferenciaService: TransferenciasService
+    private transferenciaService: TransferenciasService,
+    private categoriasService: CategoriasService
   ) { }
 
   editar: boolean = false;
@@ -64,6 +67,11 @@ export class FormDebito {
   cargandoMovimientos: boolean = false;
 
   generalSubscription: Subscription | null = null;
+  categoriasIngresosSuscription : Subscription | null = null;
+  categoriasEgresosSuscription : Subscription | null = null;
+
+  categoriasIngresos: Categoria[] = [];
+  categoriasEgresos: Categoria[] = [];
 
   agrupadosPorFecha: { [key: string]: Transaccion[] } = {};
 
@@ -87,6 +95,18 @@ export class FormDebito {
 
     if(id){
       this.generalService.setScreen('form-debito-id');
+
+      this.categoriasIngresosSuscription = this.categoriasService.categoriasIngresos$.subscribe(categorias => {
+        this.categoriasIngresos = categorias;
+        this.cdr.detectChanges();
+      });
+  
+      this.categoriasEgresosSuscription = this.categoriasService.categoriasEgresos$.subscribe(categorias => {
+        this.categoriasEgresos = categorias;
+        this.cdr.detectChanges();
+      });
+
+
       this.consultaDetalle(id);
 
     }else{
@@ -143,6 +163,8 @@ export class FormDebito {
     this.toast.clear();
     this.generalService.setScreen('');
     this.generalSubscription?.unsubscribe();
+    this.categoriasIngresosSuscription?.unsubscribe();
+    this.categoriasEgresosSuscription?.unsubscribe();
   }
 
   consultaDetalle(cuentaId: string): void {
@@ -200,6 +222,19 @@ export class FormDebito {
       }
       this.cdr.detectChanges();
     });
+  }
+
+  getDescripcionCategoria(transaccion: Transaccion): string {
+    let categoria = null;
+    if(transaccion.tipo === 'Ingreso'){
+      categoria = this.categoriasIngresos.find(cat => cat.id === transaccion.catIngresoId);  
+    }else if(transaccion.tipo === 'Egreso'){
+      categoria = this.categoriasEgresos.find(cat => cat.id === transaccion.catEgresoId);
+    }else{
+      return '';
+    }
+
+    return categoria ? categoria.nombre : '-';
   }
 
   cambiaMes(option: number): void {
@@ -310,15 +345,9 @@ export class FormDebito {
 
         this.toast.show('Cuenta creada exitosamente', "", TypeToast.success);
 
-        
-
         if (response.data && response.data.id) {
 
-          this.cuenta = Object.assign(new Cuenta(), response.data);
-          this.cuentaOriginal = Object.assign(new Cuenta(), response.data);
-          this.saldo = this.cuenta.getSaldo();
-
-          this.cdr.detectChanges();
+          this.router.navigate(['/dashboard/cuentas/debitof/' + response.data.id]);
         }
 
       }, error => {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import  { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
+import  { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Auth } from '../../services/auth';
 import { ItemMenu } from '../../shared/item-menu/item-menu';
@@ -12,7 +12,6 @@ import { TarjetasService } from '../../services/tarjetas/tarjetas';
 import { TransaccionesService } from '../../services/transacciones/transacciones';
 import { filter } from 'rxjs/operators';
 import { CategoriasModal } from '../ajustes/categorias-modal/categorias-modal';
-import { Loading } from '../../shared/loading/loading';
 import { GeneralService } from '../../services/general-service';
 import { PerfilService } from '../../services/perfil/perfil-service';
 import { Perfil } from '../../models/perfil';
@@ -23,7 +22,7 @@ import { PagoTarjeta } from '../pago-tarjeta/pago-tarjeta';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ RouterOutlet, RouterLink, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Loading, Transferencias, PagoTarjeta],
+  imports: [ RouterOutlet, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Transferencias, PagoTarjeta],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

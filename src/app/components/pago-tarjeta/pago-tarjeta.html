@@ -40,7 +40,7 @@
             </div>
 
             <div class="select-form">
-              <label for="cuentaDestino">Tarjeta destino d</label>
+              <label for="cuentaDestino">Tarjeta destino</label>
               <select [(ngModel)]="transferencia.cuentaDestinoId" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"  id="cuentaDestino" name="cuentaDestino" class="pl-10" >
                 <option value="" disabled selected>Selecciona una opción</option>
                 <ng-container *ngFor="let tarjeta of tarjetas">

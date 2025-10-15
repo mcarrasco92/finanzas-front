@@ -20,6 +20,8 @@ import { TrashIcon } from '../../../../shared/icons/trash-icon/trash-icon';
 import { Router } from '@angular/router';
 import { Transferencia } from '../../../../models/transferencia';
 import { TransferenciasService } from '../../../../services/transferencias/transferencias';
+import { CategoriasService } from '../../../../services/categorias/categorias';
+import { Categoria } from '../../../../models/categoria';
 
 
 @Component({
@@ -56,6 +58,11 @@ export class FormTDC {
   cargandoMovimientos: boolean = false;
 
   generalSubscription: Subscription | null = null;
+  categoriasIngresosSuscription : Subscription | null = null;
+  categoriasEgresosSuscription : Subscription | null = null;
+
+  categoriasIngresos: Categoria[] = [];
+  categoriasEgresos: Categoria[] = [];
 
   agrupadosPorFecha: { [key: string]: Transaccion[] } = {};
   totalIngresos: number = 0;
@@ -73,7 +80,8 @@ export class FormTDC {
     private generalService: GeneralService,
     private transaccionesService: TransaccionesService,
     private router: Router,
-    private transferenciaService: TransferenciasService
+    private transferenciaService: TransferenciasService,
+    private categoriasService: CategoriasService
   ) { }
 
   getFechas(): string[] {
@@ -96,7 +104,7 @@ export class FormTDC {
 
     if (fechaActual.getDate() < diaCorte) {
       // Si el día actual es menor que el día de corte, retroceder un mes
-      fechaInicio = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth() - 1, diaCorte);
+      fechaInicio = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth() - 1, fechaInicio.getDate());
     }
 
     // Calcular la fecha de fin (un mes después de la fecha de inicio)
@@ -145,6 +153,18 @@ export class FormTDC {
     const id = this.route.snapshot.paramMap.get('id'); // Obtiene el parámetro 'id'
     if (id) {
       this.generalService.setScreen('form-tdc-id');
+
+      this.categoriasIngresosSuscription = this.categoriasService.categoriasIngresos$.subscribe(categorias => {
+        this.categoriasIngresos = categorias;
+        this.cdr.detectChanges();
+      });
+  
+      this.categoriasEgresosSuscription = this.categoriasService.categoriasEgresos$.subscribe(categorias => {
+        this.categoriasEgresos = categorias;
+        this.cdr.detectChanges();
+      });
+
+
       this.consultaDetalle(id); // Llama a un método para cargar datos con el ID
     }else {
       this.generalService.setScreen('form-tdc');
@@ -245,6 +265,19 @@ export class FormTDC {
     });
   }
 
+  getDescripcionCategoria(transaccion: Transaccion): string {
+    let categoria = null;
+    if(transaccion.tipo === 'Ingreso'){
+      categoria = this.categoriasIngresos.find(cat => cat.id === transaccion.catIngresoId);  
+    }else if(transaccion.tipo === 'Egreso'){
+      categoria = this.categoriasEgresos.find(cat => cat.id === transaccion.catEgresoId);
+    }else{
+      return '';
+    }
+
+    return categoria ? categoria.nombre : '-';
+  }
+
   cambiaMes(option: number): void {
 
     this.fechaActual = new Date(this.fechaActual.setMonth(this.fechaActual.getMonth() + option));
@@ -339,10 +372,7 @@ export class FormTDC {
 
         if (response.data && response.data.id) {
 
-          this.tarjeta = Object.assign(new Tarjeta(), response.data);
-          this.tarjetaOriginal = Object.assign(new Tarjeta(), response.data);
-
-          this.cdr.detectChanges();
+          this.router.navigate(['/dashboard/cuentas/tdcf/' + response.data.id]);
         }
 
       }, error => {
@@ -465,6 +495,8 @@ export class FormTDC {
     this.toast.clear();
     this.generalService.setScreen('');
     this.generalSubscription?.unsubscribe();
+    this.categoriasIngresosSuscription?.unsubscribe();
+    this.categoriasEgresosSuscription?.unsubscribe();
   }
 
   esBorrado: boolean = false; // Variable para rastrear si se presionó una tecla de borrado
