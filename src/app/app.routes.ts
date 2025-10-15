@@ -10,6 +10,7 @@ import { ListaTDC } from './components/cuentas/tdc/lista-tdc/lista-tdc';
 import { FormTDC } from './components/cuentas/tdc/form-tdc/form-tdc';
 import { Categorias } from './components/ajustes/categorias/categorias';
 import { Ajustes } from './components/ajustes/ajustes';
+import { Msi } from './components/msi/msi';
 
 export const routes: Routes = [
   {path: 'registro', component: Registro}, // Ruta para el componente de registro
@@ -22,6 +23,7 @@ export const routes: Routes = [
       {path: 'tdcf', component: FormTDC},
       {path: 'tdcf/:id', component: FormTDC},
     ]},
+    {path: 'msi', component: Msi},
     {path: 'ajustes', component: Ajustes, children: [
       {path: 'categorias', component: Categorias}
     ] }

@@ -10,6 +10,7 @@
             <ul role="list" class="-mx-2 space-y-1">
 
               <app-item-menu nombre="Cuentas" link="/dashboard/cuentas/debito" activo={{tabActivo}}></app-item-menu>
+              <app-item-menu nombre="Meses sin interéses" link="/dashboard/msi" activo={{tabActivo}}></app-item-menu>
               <app-item-menu nombre="Ajustes" link="/dashboard/ajustes/categorias" activo={{tabActivo}}></app-item-menu>
 
             </ul>
@@ -48,30 +49,34 @@
         </button>
 
         <!-- Menú desplegable -->
-        <div *ngIf="menuAbierto" class="absolute bottom-16 right-0 bg-white shadow-lg rounded-md w-48">
+        <div *ngIf="menuAbierto" class="absolute bottom-16 right-0 bg-white shadow-lg rounded-md w-52">
           <ul class="py-2">
             <li>
               <button (click)="nuevoIngreso()"
-                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                Nuevo ingreso
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
+                <app-arrow-right></app-arrow-right>
+                <span>Nuevo ingreso</span>
               </button>
             </li>
             <li>
               <button (click)="nuevoEgreso()"
-                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                Nuevo egreso
-              </button>
-            </li>
-            <li>
-              <button (click)="nuevaCategoria()"
-                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                Nueva categoría
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
+                <app-arrow-left></app-arrow-left>
+                <span>Nuevo egreso</span>
               </button>
             </li>
             <li>
               <button (click)="nuevaTransferencia()"
-                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                Nueva transferencia
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
+                <app-arrow-left-right></app-arrow-left-right>
+                <span>Nueva transferencia</span>
+              </button>
+            </li>
+            <li>
+              <button (click)="nuevaCategoria()"
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
+                <app-tag></app-tag>
+                <span>Nueva categoría</span>
               </button>
             </li>
           </ul>

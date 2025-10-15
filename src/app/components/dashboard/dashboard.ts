@@ -18,11 +18,15 @@ import { Perfil } from '../../models/perfil';
 import { Transferencias } from '../transferencias/transferencias';
 import { TransferenciasService } from '../../services/transferencias/transferencias';
 import { PagoTarjeta } from '../pago-tarjeta/pago-tarjeta';
+import { ArrowLeft } from '../../shared/icons/arrow-left/arrow-left';
+import { ArrowRight } from '../../shared/icons/arrow-right/arrow-right';
+import { ArrowLeftRight } from '../../shared/icons/arrow-left-right/arrow-left-right';
+import { Tag } from '../../shared/icons/tag/tag';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ RouterOutlet, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Transferencias, PagoTarjeta],
+  imports: [ RouterOutlet, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Transferencias, PagoTarjeta, ArrowLeft, ArrowRight, ArrowLeftRight, Tag ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
