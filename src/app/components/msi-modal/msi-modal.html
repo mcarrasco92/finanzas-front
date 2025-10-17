@@ -58,7 +58,7 @@
                   <select [(ngModel)]="msi.tarjetaId" [disabled]="!editar && msi.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"  id="cuenta" name="cuenta" class="pl-10" >
                     <option value="" disabled selected>Selecciona una opción</option>
                     <ng-container *ngFor="let tarjeta of tarjetas">
-                    <option *ngIf="tarjeta.activa" [value]="'T' + tarjeta.id">{{tarjeta.nombre}}</option>
+                    <option *ngIf="tarjeta.activa" [value]="tarjeta.id">{{tarjeta.nombre}}</option>
                     </ng-container>
                   </select>
                   <p *ngIf="valTarjeta">Este campo es obligatorio</p>

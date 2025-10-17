@@ -22,6 +22,7 @@ import { Transferencia } from '../../../../models/transferencia';
 import { TransferenciasService } from '../../../../services/transferencias/transferencias';
 import { CategoriasService } from '../../../../services/categorias/categorias';
 import { Categoria } from '../../../../models/categoria';
+import { MsiService } from '../../../../services/msi/msi';
 
 
 @Component({
@@ -81,7 +82,8 @@ export class FormTDC {
     private transaccionesService: TransaccionesService,
     private router: Router,
     private transferenciaService: TransferenciasService,
-    private categoriasService: CategoriasService
+    private categoriasService: CategoriasService,
+    private msiService: MsiService
   ) { }
 
   getFechas(): string[] {
@@ -394,6 +396,8 @@ export class FormTDC {
       pago.id = trans.id;
       pago.tipoCuentaDestino = 'Tarjeta';
       this.transferenciaService.setTransferencia(pago)
+    }else if(trans.msiId && trans.msiId !== ''){
+      this.msiService.setMsi(trans.msiId);
     }else{
       this.transaccionesService.setTransaccion(trans)
     }

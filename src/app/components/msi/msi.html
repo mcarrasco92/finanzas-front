@@ -1,23 +1,62 @@
 <app-toast></app-toast>
-<app-msi-modal *ngIf="msiModal" (cerrar)="msiModal = false"></app-msi-modal>
+
 
 <nav class="relative bg-white shadow-sm">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-16 justify-between">
-        <div class="flex">
-          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-            <a
-              class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 !border-green-500 text-gray-900" 
-              >Meses sin interéses</a>
-          </div>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 justify-between">
+      <div class="flex">
+        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+          <a
+            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 !border-green-500 text-gray-900">Meses
+            sin interéses</a>
         </div>
-  
-        <div class="flex items-center">
-  
-          <div class="hidden sm:ml-6 sm:flex sm:items-center">
-            <button type="button" (click)="abrirMsiModal()" class="btn-green">Nueva compra a MSI</button>
-          </div>
+      </div>
+
+      <div class="flex items-center">
+
+        <div class="hidden sm:ml-6 sm:flex sm:items-center">
+          <button type="button" (click)="abrirMsiModal()" class="btn-green">Nueva compra a MSI</button>
         </div>
       </div>
     </div>
-  </nav>
+  </div>
+</nav>
+
+
+<div class="p-4 bg-white shadow-sm mt-4">
+
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="mt-1 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <table class="general-table">
+            <thead>
+              <tr>
+                <th scope="col" class="text-center">Fecha</th>
+                <th scope="col" class="text-center">Concepto</th>
+                <th scope="col" class="text-center">Tarjeta</th>
+                <th scope="col" class="text-center">Monto total</th>
+                <th scope="col" class="text-center">Meses</th>
+                <th scope="col" class="text-center">Mensualidad</th>
+              </tr>
+            </thead>
+            <tbody>
+                
+              <ng-container *ngFor="let msi of msis; let i = index" >
+                <tr class="hover:bg-gray-200 cursor-pointer" (click)="consultaMsi(msi.id)">
+                  <td class="text-center text-gray-900">{{msi.fecha}}</td>
+                  <td class="text-center text-gray-900">{{msi.concepto}}</td>
+                  <td class="text-center text-gray-500">{{consultaTarjeta(msi.tarjetaId)}}</td>
+                  <td class="text-center text-gray-500">$ {{ msi.importe | number:'1.2-2' }}</td>
+                  <td class="text-center text-gray-500">{{ msi.meses }}</td>
+                  <td class="text-center text-gray-500">$ {{(msi.importe / msi.meses)| number:'1.2-2' }}</td>
+                </tr>
+              </ng-container>
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

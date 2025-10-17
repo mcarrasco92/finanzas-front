@@ -22,11 +22,13 @@ import { ArrowLeft } from '../../shared/icons/arrow-left/arrow-left';
 import { ArrowRight } from '../../shared/icons/arrow-right/arrow-right';
 import { ArrowLeftRight } from '../../shared/icons/arrow-left-right/arrow-left-right';
 import { Tag } from '../../shared/icons/tag/tag';
+import { MsiModal } from '../msi-modal/msi-modal';
+import { MsiService } from '../../services/msi/msi';  
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ RouterOutlet, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Transferencias, PagoTarjeta, ArrowLeft, ArrowRight, ArrowLeftRight, Tag ],
+  imports: [ RouterOutlet, CommonModule, ItemMenu,Transacciones, FormsModule, CategoriasModal, Transferencias, PagoTarjeta, ArrowLeft, ArrowRight, ArrowLeftRight, Tag, MsiModal ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -40,7 +42,8 @@ export class Dashboard {
     private transaccionService: TransaccionesService,
     private generalService: GeneralService,
     private perfilService: PerfilService,
-    private transferenciaService: TransferenciasService
+    private transferenciaService: TransferenciasService,
+    private msiService: MsiService
   ) {}
 
   perfil: Perfil = new Perfil();
@@ -50,6 +53,7 @@ export class Dashboard {
   mostrarCategoriasModal: boolean = false;
   mostrarTransferenciasModal: boolean = false;
   mostrarPagoTarjetaModal: boolean = false;
+  mostrarMsiModal: boolean = false;
 
   cuentasSuscription: Subscription | null = null;
   tarjetasSuscription: Subscription | null = null;
@@ -57,6 +61,7 @@ export class Dashboard {
   cargaTransaccionSuscription: Subscription | null = null;
   cargaTransferenciaSuscription: Subscription | null = null;
   categoriasModalSuscription: Subscription | null = null;
+  msiModalSuscription: Subscription | null = null;
 
   tipoTransaccion: string = '';
 
@@ -97,13 +102,17 @@ export class Dashboard {
       }
     });  
 
-    
-
     this.categoriasModalSuscription = this.categoriasService.abrirCategoriasModal$.subscribe(abrir => {
       if(abrir) {
         this.mostrarCategoriasModal = true;
       }
-    }); 
+    });
+    
+    this.msiModalSuscription = this.msiService.msi$.subscribe(msiId => {
+      if(msiId && msiId !== '') {
+        this.mostrarMsiModal = true;
+      }
+    });
 
     /// Determinar la pestaña activa según la ruta actual al cargar el componente
     this.rutaActual = this.router.url;
@@ -198,6 +207,10 @@ export class Dashboard {
 
   cerrarPagoTarjetaModal() {
     this.mostrarPagoTarjetaModal = false;
+  }
+
+  cerrarMsiModal() {
+    this.mostrarMsiModal = false;
   }
 
 }

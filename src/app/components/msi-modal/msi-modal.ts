@@ -28,7 +28,8 @@ export class MsiModal {
     private tarjetasService: TarjetasService,
     private toast: ToastService,
     private cdr: ChangeDetectorRef,
-    private generalService: GeneralService
+    private generalService: GeneralService,
+    private msiService: MsiService
   ) {}
 
   editar: boolean = true;
@@ -54,10 +55,117 @@ export class MsiModal {
   msi: MsiModel = new MsiModel();
   msiOriginal: MsiModel = new MsiModel();
 
-  enviaDatos(){}
+  ngOnInit(): void {
+
+    this.generalService.setActualizaPantalla(false);
+
+    const fechaLocal = new Date();
+    this.msi.fecha = fechaLocal.getFullYear() + '-' +
+      String(fechaLocal.getMonth() + 1).padStart(2, '0') + '-' +
+      String(fechaLocal.getDate()).padStart(2, '0');
+
+    this.catEgresosSuscription = this.categoriasService.categoriasEgresos$.subscribe(categorias => {
+      this.catEgresos = categorias;
+    });
+
+    this.TarejtasSuscription = this.tarjetasService.tarjetasList$.subscribe(tarjetas => {
+      this.tarjetas = tarjetas;
+    });
+
+    this.msiService.msi$.subscribe(msiId => {
+      if(msiId && msiId !== '') {
+        if(msiId === '0'){ // Nuevo
+          this.importe = '';
+          this.editar = true;
+          this.cdr.detectChanges();
+        }else{ // Editar
+          this.msiService.getMsi().subscribe(response =>{
+            if(response.coderr === "0000"){
+              const msiData = response.data.find((m: MsiModel) => m.id === msiId);
+              if(msiData){
+                this.msi = Object.assign(new MsiModel(), msiData);
+                this.importe = this.msi.getImporte();
+                this.msiOriginal = Object.assign(new MsiModel(), msiData);
+                this.editar = false;
+                this.cdr.detectChanges();
+              }else{
+                this.toast.show("No se encontró el MSI",'', TypeToast.danger);
+              }
+            }else{
+              this.toast.show("Ocurrio un error al consultar MSI",'', response.message);
+            } 
+          });
+        }
+      }
+    });
+
+  }
+
+  ngOnDestroy(): void {
+    this.generalService.setActualizaPantalla(true);
+    this.catEgresosSuscription?.unsubscribe();
+    this.TarejtasSuscription?.unsubscribe();
+  }
+
+  enviaDatos(){
+    this.actualizaSaldo();
+
+    this.valFecha = this.msi.fecha.trim() === '';
+    this.valImporte = this.importe.trim() === '';
+    this.valConcepto = this.msi.concepto.trim() === '';
+    this.valDescripcion = this.msi.descripcion.trim() === '';
+    this.valCatEgreso = this.msi.catEgresoId.trim() === '';
+    this.valTarjeta = this.msi.tarjetaId.trim() === '';
+    this.valMeses = this.msi.meses <= 0;
+    this.valNecesario = !this.msi.necesario;
+
+    if (this.valFecha || this.valImporte || this.valConcepto || this.valDescripcion || this.valCatEgreso || this.valTarjeta || this.valMeses || this.valNecesario) {
+      this.toast.show('Por favor, complete todos los campos obligatorios.','', TypeToast.danger);
+      return;
+    }
+
+    if(this.msi.id && this.msi.id !== ''){ // Actualiza
+
+      document.body.style.cursor = 'wait';
+      this.msiService.updateMsi(this.msi.id ,this.msi).subscribe(response => {
+        document.body.style.cursor = 'default';
+        if (response.coderr === '0000') {
+          this.cerrarModal()
+          this.toast.show('MSI actualizado correctamente', '', TypeToast.success);
+        } else {
+          this.toast.show('Error al actualizar el MSI', response.message, TypeToast.danger);
+        }
+      });
+
+    }else{ // Nuevo
+      document.body.style.cursor = 'wait';
+      this.msiService.addMsi(this.msi).subscribe(response => {
+        document.body.style.cursor = 'default';
+        if (response.coderr === '0000') {
+          this.cerrarModal()
+          this.toast.show('MSI agregados correctamente', '', TypeToast.success);
+        } else {
+          this.toast.show('Error al agregar los MSI', response.message, TypeToast.danger);
+        }
+      });
+    }
+
+  }
 
   eliminaMsi() {
+    this.confirmModal = false;
+    document.body.style.cursor = 'wait';
 
+    this.msiService.deleteMsi(this.msi.id).subscribe(response => {
+      document.body.style.cursor = 'default';
+      if (response.coderr === '0000') {
+        this.cerrarModal();
+        this.toast.show('Compra a MSI eliminada correctamente', '', TypeToast.success);  
+      } else {
+        this.toast.show('Error al eliminar la compra a MSI', response.message, TypeToast.danger);
+      }
+    });
+    
   }
 
   cerrarModal() {
@@ -66,7 +174,7 @@ export class MsiModal {
 
 
   cancelaEdicion(): void {
-    this.msi = this.msiOriginal;
+    this.msi = Object.assign(new MsiModel(), this.msiOriginal);
     this.importe = this.msi.getImporte();
     this.editar = false;
     this.cdr.detectChanges(); 

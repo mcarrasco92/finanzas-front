@@ -8,6 +8,7 @@ export class MsiModel{
     descripcion: string = '';
     meses: number = 0;
     necesario: Boolean = false;
+    msiId: string = '';
 
     limpiar() {
         this.id = '';
@@ -19,6 +20,7 @@ export class MsiModel{
         this.descripcion = '';
         this.meses = 0;
         this.necesario = false;
+        this.msiId = '';
     }
 
     getImporte(): string {
