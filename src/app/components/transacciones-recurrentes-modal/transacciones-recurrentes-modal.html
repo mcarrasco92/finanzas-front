@@ -1,0 +1,210 @@
+<app-confirm-modal *ngIf="confirmModal" [titulo]="'Eliminar cargo recurrente'"
+  [mensaje]="'¿Estás seguro de que deseas eliminar este cargo recurrente?'" [fondoOscuro]="false"
+  (cerrar)="confirmModal=false" (confirmar)="eliminaTransaccionRecurrente()"></app-confirm-modal>
+
+<div>
+
+  <div class="fixed inset-0 z-49 flex items-center justify-center backdrop-blur-sm absolute bg-black opacity-50"></div>
+  <div class="fixed inset-0 z-49 flex items-center justify-center backdrop-blur-sm absolute"></div>
+  <div *ngIf="!confirmModal" class="fixed inset-0 z-50 flex items-center justify-center">
+
+    <div class="bg-white rounded-lg shadow-lg w-220 p-6">
+      <h2 class="relative text-lg font-semibold text-gray-900 mb-4 border-b border-gray-900/10 pb-5"> {{(transRec.id ? 'Información' : 'Nuevo ') +  (tipoMovimiento == "Egreso" ? "cargo" : "ingreso") + " recurrente"}}
+        <div class="absolute top-0 right-1 cursor-pointer" (click)="cerrarModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </div>
+      </h2>
+
+      <form class="pt-4 space-y-8">
+
+        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
+
+
+          <div class="select-form">
+            <label for="periodicidad">Periodicidad</label>
+            <select [(ngModel)]="transRec.periodicidad" [disabled]="!editar && transRec.id"
+              [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="periodicidad"
+              name="periodicidad" class="pl-10">
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option value="Semanal">Semanal</option>
+              <option value="Mensual">Mensual</option>
+              <option value="Bimestral">Bimestral</option>
+              <option value="Semestral">Semestral</option>
+              <option value="Anual">Anual</option>
+            </select>
+            <p *ngIf="valPeriodicidad">Este campo es obligatorio</p>
+          </div>
+
+
+          <div class="input-form-text" *ngIf="transRec.periodicidad != 'Semanal'">
+            <label for="fecha">Fecha</label>
+            <input [(ngModel)]="transRec.fecha" id="fecha" type="date" name="fecha" [disabled]="!editar && transRec.id"
+              [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
+            <p *ngIf="valFecha">Este campo es obligatorio</p>
+            <p *ngIf="valFechaActual">La fecha no puede ser anterior a la fecha actual</p>
+          </div>
+
+          <div class="select-form" *ngIf="transRec.periodicidad == 'Semanal'">
+            <label for="dia">Día de la semana</label>
+            <select [(ngModel)]="transRec.dia" [disabled]="!editar && transRec.id"
+              [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="dia"
+              name="dia" class="pl-10">
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option value="Lunes">Lunes</option>
+              <option value="Martes">Martes</option>
+              <option value="Miercoles">Miércoles</option>
+              <option value="Jueves">Jueves</option>
+              <option value="Viernes">Viernes</option>
+              <option value="Sabado">Sábado</option>
+              <option value="Domingo">Domingo</option>
+            </select>
+            <p *ngIf="valDia">Este campo es obligatorio</p>
+          </div>
+
+          <div class="input-form-currency">
+            <div>$</div>
+
+            <label for="saldo">Importe</label>
+            <input [(ngModel)]="importe" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)"
+              (blur)="actualizaSaldo()" [disabled]="!editar && transRec.id"
+              [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" placeholder="0.00"
+              id="saldo" type="text" name="saldo" autocomplete="off" />
+            <p *ngIf="valImporte">Este campo es obligatorio</p>
+          </div>
+
+          
+
+          <div *ngIf="tipoMovimiento == 'Ingreso'">
+
+            <div class="select-form">
+              <label for="cuenta">Cuenta</label>
+              <select [(ngModel)]="transRec.cuentaId" [disabled]="!editar && transRec.id"
+                [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="cuenta" name="cuenta"
+                class="pl-10">
+                <option value="" disabled selected>Selecciona una opción</option>
+                <ng-container *ngFor="let cuenta of cuentas">
+                  <option *ngIf="cuenta.activa" [value]=cuenta.id>{{cuenta.nombre}}</option>
+                </ng-container>
+              </select>
+              <p *ngIf="valCuenta">Este campo es obligatorio</p>
+            </div>
+
+          </div>
+
+
+          <div *ngIf="tipoMovimiento == 'Egreso'">
+
+            <div class="select-form">
+              <label for="cuenta">Cuenta / Tarjeta</label>
+              <select [(ngModel)]="cuentasYTarjetas" [disabled]="!editar && transRec.id"
+                [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="cuenta" name="cuenta"
+                class="pl-10">
+                <option value="" disabled selected>Selecciona una opción</option>
+                <optgroup label="Tarjetas de crédito">
+                  <ng-container *ngFor="let tarjeta of tarjetas">
+                    <option *ngIf="tarjeta.activa" [value]="'T' + tarjeta.id">{{tarjeta.nombre}}</option>
+                  </ng-container>
+                </optgroup>
+                <optgroup label="Cuentas de débito">
+                  <ng-container *ngFor="let cuenta of cuentas">
+                    <option *ngIf="cuenta.activa" [value]="'C' + cuenta.id">{{cuenta.nombre}}</option>
+                  </ng-container>
+                </optgroup>
+
+              </select>
+              <p *ngIf="valCuentaTarjeta">Este campo es obligatorio</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
+
+          <div *ngIf="tipoMovimiento == 'Ingreso'">
+
+            <div class="select-form">
+              <label for="categoria">Categoria</label>
+              <select [(ngModel)]="transRec.catIngresoId" [disabled]="!editar && transRec.id"
+                [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="categoria"
+                name="categoria" class="pl-10">
+                <option value="" disabled selected>Selecciona una opción</option>
+                <ng-container *ngFor="let cat of catIngresos">
+                  <option *ngIf="cat.activa || transRec.catIngresoId == cat.id" [value]=cat.id>{{cat.nombre}}</option>
+                </ng-container>
+              </select>
+              <p *ngIf="valCatIngreso">Este campo es obligatorio</p>
+            </div>
+
+          </div>
+
+          <div *ngIf="tipoMovimiento == 'Egreso'">
+
+            <div class="select-form">
+              <label for="categoria">Categoria</label>
+              <select [(ngModel)]="transRec.catEgresoId" [disabled]="!editar && transRec.id"
+                [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="categoria"
+                name="categoria" class="pl-10">
+                <option value="" disabled selected>Selecciona una opción</option>
+                <ng-container *ngFor="let cat of catEgresos">
+                  <option *ngIf="cat.activa" [value]=cat.id>{{cat.nombre}}</option>
+                </ng-container>
+
+              </select>
+              <p *ngIf="valCatEgreso">Este campo es obligatorio</p>
+            </div>
+
+          </div>
+
+          <div class="input-form-text">
+            <label for="concepto">Concepto</label>
+            <input [(ngModel)]="transRec.concepto" id="concepto" type="text" name="concepto"
+              [disabled]="!editar && transRec.id"
+              [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
+            <p *ngIf="valConcepto">Este campo es obligatorio</p>
+          </div>
+
+          <div class="input-form-text">
+            <label for="descripcion">Descripción</label>
+            <input [(ngModel)]="transRec.descripcion" id="descripcion" type="text" name="descripcion"
+              [disabled]="!editar && transRec.id"
+              [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
+            <p *ngIf="valDescripcion">Este campo es obligatorio</p>
+          </div>
+
+          
+
+          <div *ngIf="tipoMovimiento=='Egreso'" class="select-form">
+            <label for="necesario">¿Es un gasto necesario?</label>
+            <select [(ngModel)]="transRec.necesario" [disabled]="!editar && transRec.id"
+              [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="necesario"
+              name="necesario" class="pl-10">
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option value="Si">Si</option>
+              <option value="No">No</option>
+            </select>
+            <p *ngIf="valNecesario">Este campo es obligatorio</p>
+          </div>
+
+        </div>
+
+        <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10 mt-7">
+          <div class="flex-grow flex justify-start space-x-4">
+            <button *ngIf="transRec.id" (click)="confirmModal = true" type="button" class="btn-danger">
+              <div class="flex items-center space-x-2">
+                <div>Eliminar</div>
+              </div>
+            </button>
+          </div>
+          <button *ngIf="editar && transRec.id" (click)="cancelaEdicion()" type="button"
+            class="btn-secondary">Cancelar</button>
+          <button *ngIf="editar || !transRec.id" type="submit" class="btn-primary"
+            (click)="enviaDatos()">Guardar</button>
+          <button *ngIf="!editar && transRec.id" (click)="editar=true" type="button" class="btn-primary">Editar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

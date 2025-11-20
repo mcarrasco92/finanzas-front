@@ -37,6 +37,7 @@ export class MsiModal {
 
   catEgresosSuscription: Subscription | null = null;
   TarejtasSuscription: Subscription | null = null;
+  MsiSuscription: Subscription | null = null;
 
   catEgresos: Categoria[] = [];
   tarjetas: Tarjeta[] = [];
@@ -72,7 +73,7 @@ export class MsiModal {
       this.tarjetas = tarjetas;
     });
 
-    this.msiService.msi$.subscribe(msiId => {
+    this.MsiSuscription = this.msiService.msi$.subscribe(msiId => {
       if(msiId && msiId !== '') {
         if(msiId === '0'){ // Nuevo
           this.importe = '';
@@ -105,6 +106,7 @@ export class MsiModal {
     this.generalService.setActualizaPantalla(true);
     this.catEgresosSuscription?.unsubscribe();
     this.TarejtasSuscription?.unsubscribe();
+    this.MsiSuscription?.unsubscribe();
   }
 
   enviaDatos(){

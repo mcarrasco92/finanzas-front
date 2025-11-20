@@ -11,6 +11,7 @@ import { FormTDC } from './components/cuentas/tdc/form-tdc/form-tdc';
 import { Categorias } from './components/ajustes/categorias/categorias';
 import { Ajustes } from './components/ajustes/ajustes';
 import { Msi } from './components/msi/msi';
+import { TransaccionesRecurrentes } from './components/transacciones-recurrentes/transacciones-recurrentes';
 
 export const routes: Routes = [
   {path: 'registro', component: Registro}, // Ruta para el componente de registro
@@ -26,7 +27,8 @@ export const routes: Routes = [
     {path: 'msi', component: Msi},
     {path: 'ajustes', component: Ajustes, children: [
       {path: 'categorias', component: Categorias}
-    ] }
+    ] },
+    {path: 'transacciones-recurrentes', component: TransaccionesRecurrentes}
   ]}, // Ruta para el componente de dashboard
   {path: '', component: Login}, // Ruta por defecto que carga el componente de login 
   { path: '**', redirectTo: '' } // Redirige cualquier ruta no encontrada al login
