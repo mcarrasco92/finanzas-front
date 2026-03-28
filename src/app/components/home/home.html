@@ -1,0 +1,101 @@
+
+<section class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between">
+        <!-- Texto descriptivo -->
+        <div class="text-center md:text-left">
+          <h2 class="text-sm font-semibold text-blue-600 uppercase">Resumen de Octubre</h2>
+          <h1 class="text-4xl font-bold text-gray-900 mt-2">Tu ahorro creció un 12.4%</h1>
+          <p class="mt-4 text-gray-600">
+            Este mes has optimizado tus gastos discrecionales, permitiéndote proyectar una meta de inversión mayor para el próximo trimestre.
+          </p>
+        </div>
+        <!-- Tarjeta de Tasa de Ahorro -->
+        <div class="mt-6 md:mt-0 bg-green-600 text-white rounded-lg p-6 flex items-center space-x-4">
+          <div>
+            <p class="text-sm font-medium">Tasa de Ahorro</p>
+            <p class="text-3xl font-bold">24.5%</p>
+          </div>
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h11M9 21l-6-6m0 0l6-6m-6 6h18" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-semibold text-gray-900">Gastos por Categoría</h2>
+        <div class="flex flex-col md:flex-row items-center justify-between mt-6">
+          <!-- Gráfica de Donut -->
+          <div class="w-full md:w-1/2 flex justify-center">
+            <apx-chart
+                [series]="chartOptions.series || []"
+                [chart]="chartOptions.chart || {type: 'radialBar'}"
+                [labels]="chartOptions.labels || []"
+                [plotOptions]="chartOptions.plotOptions || {}"
+                [fill]="chartOptions.fill || {}"
+                [stroke]="chartOptions.stroke || {}"
+            ></apx-chart>
+          </div>
+          <!-- Leyenda y detalles -->
+          <div class="w-full md:w-1/2 mt-6 md:mt-0">
+            <div class="flex justify-center md:justify-start space-x-4 mb-4">
+              <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">Necesarios</span>
+              <span class="bg-gray-200 text-gray-800 text-sm font-medium px-3 py-1 rounded-full">Discrecionales</span>
+            </div>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-700">Vivienda</span>
+                <div class="w-2/3 bg-gray-200 h-2 rounded-full overflow-hidden">
+                  <div class="bg-blue-600 h-full" style="width: 35%;"></div>
+                </div>
+                <span class="text-sm font-medium text-gray-700">35%</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-700">Alimentación</span>
+                <div class="w-2/3 bg-gray-200 h-2 rounded-full overflow-hidden">
+                  <div class="bg-gray-400 h-full" style="width: 22%;"></div>
+                </div>
+                <span class="text-sm font-medium text-gray-700">22%</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-700">Transporte</span>
+                <div class="w-2/3 bg-gray-200 h-2 rounded-full overflow-hidden">
+                  <div class="bg-blue-500 h-full" style="width: 15%;"></div>
+                </div>
+                <span class="text-sm font-medium text-gray-700">15%</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-700">Entretenimiento</span>
+                <div class="w-2/3 bg-gray-200 h-2 rounded-full overflow-hidden">
+                  <div class="bg-green-600 h-full" style="width: 28%;"></div>
+                </div>
+                <span class="text-sm font-medium text-gray-700">28%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!--
+
+<div style="text-align:center" class="mt-8">
+    <apx-chart
+      [series]="chartOptions.series || []"
+      [chart]="chartOptions.chart || {type: 'line'}"
+      [xaxis]="chartOptions.xaxis || {}"
+      [title]="chartOptions.title || {}"
+    ></apx-chart>
+</div>
+
+-->

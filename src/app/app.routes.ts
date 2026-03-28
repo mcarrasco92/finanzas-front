@@ -12,6 +12,7 @@ import { Categorias } from './components/ajustes/categorias/categorias';
 import { Ajustes } from './components/ajustes/ajustes';
 import { Msi } from './components/msi/msi';
 import { TransaccionesRecurrentes } from './components/transacciones-recurrentes/transacciones-recurrentes';
+import { Home } from './components/home/home';
 
 export const routes: Routes = [
   {path: 'registro', component: Registro}, // Ruta para el componente de registro
@@ -28,7 +29,8 @@ export const routes: Routes = [
     {path: 'ajustes', component: Ajustes, children: [
       {path: 'categorias', component: Categorias}
     ] },
-    {path: 'transacciones-recurrentes', component: TransaccionesRecurrentes}
+    {path: 'transacciones-recurrentes', component: TransaccionesRecurrentes},
+    {path: 'home', component: Home}
   ]}, // Ruta para el componente de dashboard
   {path: '', component: Login}, // Ruta por defecto que carga el componente de login 
   { path: '**', redirectTo: '' } // Redirige cualquier ruta no encontrada al login

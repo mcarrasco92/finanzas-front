@@ -33,6 +33,9 @@
             ],
             "polyfills": [
               "@angular/localize/init"
+            ],
+            "scripts": [
+              "node_modules/apexcharts/dist/apexcharts.min.js"
             ]
           },
           "configurations": {
