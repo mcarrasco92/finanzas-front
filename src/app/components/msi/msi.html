@@ -11,45 +11,77 @@
 
 </div>
 
+
+<!-- Summary cards -->
 @if (msis.length > 0) {
-  <div class="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-4 mb-4">
-    <div class="flex items-center justify-between mb-2">
-      <p class="text-sm font-medium text-gray-500">Pagos mensuales proyectados</p>
-      <div class="flex items-center gap-3">
-        <button (click)="anteriorAnio()"
-          class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+  <dl class="mt-2 mb-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+
+    <!-- Pago este mes -->
+    <div class="relative overflow-hidden rounded-lg bg-white px-4 pt-5 pb-6 shadow-sm sm:px-6 sm:pt-6">
+      <dt>
+        <div class="absolute rounded-md bg-indigo-500 p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-white">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
           </svg>
-        </button>
-        <span class="text-sm font-semibold text-gray-700 w-10 text-center">{{ anioSeleccionado }}</span>
-        <button (click)="siguienteAnio()"
-          class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-          </svg>
-        </button>
-      </div>
+        </div>
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Pago este mes</p>
+      </dt>
+      <dd class="ml-16 flex items-baseline">
+        <p class="text-2xl font-semibold text-gray-900">${{ pagoMesActual | number:'1.2-2' }}</p>
+      </dd>
     </div>
-    <apx-chart
-      [series]="chartOptions.series!"
-      [chart]="chartOptions.chart!"
-      [xaxis]="chartOptions.xaxis!"
-      [yaxis]="chartOptions.yaxis!"
-      [stroke]="chartOptions.stroke!"
-      [markers]="chartOptions.markers!"
-      [colors]="chartOptions.colors!"
-      [dataLabels]="chartOptions.dataLabels!"
-      [grid]="chartOptions.grid!"
-      [tooltip]="chartOptions.tooltip!"
-    ></apx-chart>
+
+    <!-- Saldo por liquidar -->
+    <div class="relative overflow-hidden rounded-lg bg-white px-4 pt-5 pb-6 shadow-sm sm:px-6 sm:pt-6">
+      <dt>
+        <div class="absolute rounded-md bg-indigo-500 p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-white">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+          </svg>
+        </div>
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Saldo por liquidar</p>
+      </dt>
+      <dd class="ml-16 flex items-baseline">
+        <p class="text-2xl font-semibold text-gray-900">${{ saldoPorLiquidar | number:'1.2-2' }}</p>
+      </dd>
+    </div>
+
+    <!-- Compras activas -->
+    <div class="relative overflow-hidden rounded-lg bg-white px-4 pt-5 pb-6 shadow-sm sm:px-6 sm:pt-6">
+      <dt>
+        <div class="absolute rounded-md bg-indigo-500 p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-white">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+          </svg>
+        </div>
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Compras activas</p>
+      </dt>
+      <dd class="ml-16 flex items-baseline">
+        <p class="text-2xl font-semibold text-gray-900">{{ comprasActivas }}</p>
+        <p class="ml-2 text-sm text-gray-500">de {{ msis.length }}</p>
+      </dd>
+    </div>
+
+  </dl>
+}
+
+@if (totalVencidos > 0) {
+  <div class="input-form-check mt-2 mb-4 justify-end">
+    <span class="span-label">
+      <label>Mostrar vencidos ({{ totalVencidos }})</label>
+    </span>
+    <div class="check-switch check-default group bg-gray-200 has-checked:bg-indigo-500">
+      <span class="span-border"></span>
+      <input type="checkbox" [(ngModel)]="mostrarVencidos" />
+    </div>
   </div>
 }
 
 <div class="space-y-3 mt-4">
-  @for (msi of msis; track msi.id) {
+  @for (msi of msisFiltrados; track msi.id) {
     <div
       class="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-3 flex items-center gap-4 cursor-pointer transition-shadow hover:shadow-md"
+      [class.opacity-50]="isVencido(msi)"
       (click)="consultaMsi(msi.id)">
 
       <!-- Avatar -->
@@ -64,6 +96,9 @@
         <div class="flex items-center gap-2 flex-wrap">
           <span class="font-semibold text-gray-900 text-sm">{{ msi.concepto }}</span>
           <span class="badge-meses">{{ msi.meses }} meses</span>
+          @if (getMensualidadActual(msi) !== null) {
+            <span class="badge-mensualidad">{{ getMensualidadActual(msi) }} / {{ msi.meses }}</span>
+          }
         </div>
         <p class="text-sm text-gray-400 mt-0.5">{{ consultaTarjeta(msi.tarjetaId) }} · {{ formatearFecha(msi.fecha) }}</p>
       </div>

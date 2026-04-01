@@ -13,6 +13,7 @@ import { Ajustes } from './components/ajustes/ajustes';
 import { Msi } from './components/msi/msi';
 import { TransaccionesRecurrentes } from './components/transacciones-recurrentes/transacciones-recurrentes';
 import { Home } from './components/home/home';
+import { Movimientos } from './components/movimientos/movimientos';
 
 export const routes: Routes = [
   {path: 'registro', component: Registro}, // Ruta para el componente de registro
@@ -30,6 +31,7 @@ export const routes: Routes = [
       {path: 'categorias', component: Categorias}
     ] },
     {path: 'transacciones-recurrentes', component: TransaccionesRecurrentes},
+    {path: 'movimientos', component: Movimientos},
     {path: 'home', component: Home}
   ]}, // Ruta para el componente de dashboard
   {path: '', component: Login}, // Ruta por defecto que carga el componente de login 

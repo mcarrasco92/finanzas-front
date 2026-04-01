@@ -109,6 +109,8 @@ export class Transacciones {
             this.cuentasYTarjetas = '';
           }
         }
+        console.log(this.transaccion);
+        console.log(this.cuentasYTarjetas);
         this.editar = false;
       }
       this.cdr.detectChanges();

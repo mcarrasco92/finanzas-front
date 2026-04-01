@@ -9,28 +9,10 @@ import { Subscription } from 'rxjs';
 import { Tarjeta } from '../../models/tarjeta';
 import { TarjetasService } from '../../services/tarjetas/tarjetas';
 import { GeneralService } from '../../services/general-service';
-import { NgApexchartsModule } from 'ng-apexcharts';
-import {
-  ApexAxisChartSeries, ApexChart, ApexXAxis, ApexYAxis,
-  ApexStroke, ApexMarkers, ApexDataLabels, ApexGrid, ApexTooltip
-} from 'ng-apexcharts';
-
-export type ChartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  xaxis: ApexXAxis;
-  yaxis: ApexYAxis;
-  stroke: ApexStroke;
-  markers: ApexMarkers;
-  colors: string[];
-  dataLabels: ApexDataLabels;
-  grid: ApexGrid;
-  tooltip: ApexTooltip;
-};
 
 @Component({
   selector: 'app-msi',
-  imports: [CommonModule, FormsModule, Toast, NgApexchartsModule],
+  imports: [CommonModule, FormsModule, Toast],
   templateUrl: './msi.html',
   styleUrl: './msi.css'
 })
@@ -45,9 +27,7 @@ export class Msi {
 
   msis: MsiModel[] = [];
   tarejtas: Tarjeta[] = [];
-  chartOptions: Partial<ChartOptions> = {};
-  anioSeleccionado: number = new Date().getFullYear();
-
+  mostrarVencidos = false;
   tarejtasSuscription: Subscription | null = null;
   generalSubscription: Subscription | null = null;
 
@@ -68,7 +48,6 @@ export class Msi {
     this.msiService.getMsi().subscribe(response => {
       if (response.coderr === "0000") {
         this.msis = response.data;
-        this.calcularGrafica();
         this.cdr.detectChanges();
       } else {
         this.toast.show("Ocurrio un error al consultar MSI", '', response.message);
@@ -76,59 +55,68 @@ export class Msi {
     });
   }
 
-  calcularGrafica(): void {
-    if (this.msis.length === 0) return;
-
-    const mesesNombres = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    const months = Array.from({ length: 12 }, (_, i) => new Date(this.anioSeleccionado, i, 1));
-
-    const totals = months.map(month => {
-      let total = 0;
-      for (const msi of this.msis) {
-        const [y, m] = msi.fecha.split('-').map(Number);
-        const start = new Date(y, m - 1, 1);
-        const end = new Date(y, m - 1 + msi.meses - 1, 1);
-        if (month >= start && month <= end) {
-          total += msi.importe / msi.meses;
-        }
-      }
-      return Math.round(total * 100) / 100;
-    });
-
-    const labels = mesesNombres;
-
-    this.chartOptions = {
-      series: [{ name: 'Pago MSI', data: totals }],
-      chart: { type: 'line', height: 250, toolbar: { show: false }, zoom: { enabled: false } },
-      xaxis: { categories: labels },
-      yaxis: {
-        labels: {
-          formatter: (val: number) => `$${val.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
-        }
-      },
-      stroke: { curve: 'smooth', width: 2 },
-      markers: { size: 4 },
-      colors: ['#6366f1'],
-      dataLabels: { enabled: false },
-      grid: { borderColor: '#f1f1f1' },
-      tooltip: {
-        y: {
-          formatter: (val: number) => `$${val.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-        }
-      }
-    };
+  get pagoMesActual(): number {
+    const now = new Date();
+    const cy = now.getFullYear(), cm = now.getMonth();
+    return Math.round(
+      this.msis
+        .filter(msi => {
+          const [y, m] = msi.fecha.split('-').map(Number);
+          const s = y * 12 + (m - 1), e = s + msi.meses - 1, c = cy * 12 + cm;
+          return c >= s && c <= e;
+        })
+        .reduce((acc, msi) => acc + msi.importe / msi.meses, 0)
+      * 100) / 100;
   }
 
-  anteriorAnio(): void {
-    this.anioSeleccionado--;
-    this.calcularGrafica();
-    this.cdr.detectChanges();
+  get saldoPorLiquidar(): number {
+    const now = new Date();
+    const c = now.getFullYear() * 12 + now.getMonth();
+    let total = 0;
+    for (const msi of this.msis) {
+      const [y, m] = msi.fecha.split('-').map(Number);
+      const s = y * 12 + (m - 1), e = s + msi.meses - 1;
+      if (c <= e) {
+        const remaining = e - Math.max(c, s) + 1;
+        total += remaining * (msi.importe / msi.meses);
+      }
+    }
+    return Math.round(total * 100) / 100;
   }
 
-  siguienteAnio(): void {
-    this.anioSeleccionado++;
-    this.calcularGrafica();
-    this.cdr.detectChanges();
+  isVencido(msi: MsiModel): boolean {
+    const now = new Date();
+    const c = now.getFullYear() * 12 + now.getMonth();
+    const [y, m] = msi.fecha.split('-').map(Number);
+    return c > y * 12 + (m - 1) + msi.meses - 1;
+  }
+
+  get msisFiltrados(): MsiModel[] {
+    return this.mostrarVencidos ? this.msis : this.msis.filter(msi => !this.isVencido(msi));
+  }
+
+  get totalVencidos(): number {
+    return this.msis.filter(msi => this.isVencido(msi)).length;
+  }
+
+  getMensualidadActual(msi: MsiModel): number | null {
+    const now = new Date();
+    const c = now.getFullYear() * 12 + now.getMonth();
+    const [y, m] = msi.fecha.split('-').map(Number);
+    const s = y * 12 + (m - 1);
+    const e = s + msi.meses - 1;
+    if (c < s || c > e) return null;
+    return c - s + 1;
+  }
+
+  get comprasActivas(): number {
+    const now = new Date();
+    const c = now.getFullYear() * 12 + now.getMonth();
+    return this.msis.filter(msi => {
+      const [y, m] = msi.fecha.split('-').map(Number);
+      const s = y * 12 + (m - 1);
+      return c >= s && c <= s + msi.meses - 1;
+    }).length;
   }
 
   ngOnDestroy(): void {

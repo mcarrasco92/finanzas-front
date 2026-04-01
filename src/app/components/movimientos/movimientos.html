@@ -1,0 +1,156 @@
+<div class="px-6 py-2 space-y-4">
+
+  <!-- Header con navegación de mes -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-900 tracking-tight">Movimientos</h1>
+      <p class="text-sm text-gray-500 mt-0.5 font-medium">{{ mesNombre }} {{ anio }}</p>
+    </div>
+    <div class="flex items-center gap-1">
+      <button (click)="anteriorMes()"
+        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+      </button>
+      <span class="text-sm font-semibold text-gray-700 w-36 text-center select-none">{{ mesNombre }} {{ anio }}</span>
+      <button (click)="siguienteMes()"
+        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  @if (!cargando) {
+    <dl class="grid grid-cols-3 gap-4">
+
+      <!-- Ingresos -->
+      <div class="relative overflow-hidden rounded-xl bg-white px-4 pt-5 pb-5 shadow-sm border border-gray-100">
+        <dt>
+          <div class="absolute rounded-md bg-indigo-500 p-2.5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5 text-white">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+            </svg>
+          </div>
+          <p class="ml-14 truncate text-xs font-medium text-gray-500">Ingresos</p>
+        </dt>
+        <dd class="ml-14">
+          <p class="text-xl font-semibold text-gray-900">${{ totalIngresos | number:'1.2-2' }}</p>
+        </dd>
+      </div>
+
+      <!-- Egresos -->
+      <div class="relative overflow-hidden rounded-xl bg-white px-4 pt-5 pb-5 shadow-sm border border-gray-100">
+        <dt>
+          <div class="absolute rounded-md bg-indigo-500 p-2.5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5 text-white">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" />
+            </svg>
+          </div>
+          <p class="ml-14 truncate text-xs font-medium text-gray-500">Egresos</p>
+        </dt>
+        <dd class="ml-14">
+          <p class="text-xl font-semibold text-gray-900">${{ totalEgresos | number:'1.2-2' }}</p>
+        </dd>
+      </div>
+
+      <!-- Balance -->
+      <div class="relative overflow-hidden rounded-xl px-4 pt-5 pb-5 shadow-sm border"
+        [ngClass]="{
+          'bg-green-50 border-green-100': balance > 0,
+          'bg-rose-50 border-rose-100':   balance < 0,
+          'bg-white border-gray-100':      balance === 0
+        }">
+        <dt>
+          <div class="absolute rounded-md p-2.5"
+            [ngClass]="{
+              'bg-green-500': balance > 0,
+              'bg-rose-500':  balance < 0,
+              'bg-gray-400':  balance === 0
+            }">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5 text-white">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0 0 12 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52 2.62 4.285-1.9.7M18.75 4.97l-2.62 4.285 1.9.7M5.25 4.97A48.416 48.416 0 0 1 12 4.5m-6.75.47-3 .52m3-.52L2.63 9.255l1.9.7M5.25 4.97l2.62 4.285-1.9.7" />
+            </svg>
+          </div>
+          <p class="ml-14 truncate text-xs font-medium text-gray-500">Balance</p>
+        </dt>
+        <dd class="ml-14">
+          <p class="text-xl font-semibold"
+            [ngClass]="{
+              'text-green-700': balance > 0,
+              'text-rose-700':  balance < 0,
+              'text-gray-700':  balance === 0
+            }">
+            ${{ balance | number:'1.2-2' }}
+          </p>
+        </dd>
+      </div>
+
+    </dl>
+  }
+
+  <!-- Lista agrupada por fecha -->
+  <div class="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-4">
+
+    @if (cargando) {
+      <div class="flex justify-center items-center py-16">
+        <div class="animate-spin rounded-full h-7 w-7 border-b-2 border-indigo-600"></div>
+      </div>
+    } @else if (getFechas().length === 0) {
+      <div class="flex flex-col items-center justify-center py-14 text-gray-400">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mb-3 text-gray-200">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+        </svg>
+        <p class="text-sm">Sin movimientos en este período</p>
+      </div>
+    } @else {
+      <div class="space-y-5">
+        @for (fecha of getFechas(); track fecha) {
+          <div>
+            <!-- Encabezado de fecha -->
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+              {{ formatFechaHeader(fecha) }}
+            </p>
+
+            <!-- Movimientos del día -->
+            <div class="space-y-0.5">
+              @for (row of agrupadosPorFecha[fecha]; track row.transaccion.id) {
+                <div class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                  (click)="abrirDetalle(row)">
+
+                  <!-- Dot tipo -->
+                  <div class="flex-shrink-0 w-2 h-2 rounded-full mt-0.5"
+                    [ngClass]="row.transaccion.tipo === 'Ingreso' ? 'bg-green-500' : 'bg-rose-400'">
+                  </div>
+
+                  <!-- Concepto + cuenta + categoría -->
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ row.transaccion.concepto }}</p>
+                    <p class="text-xs text-gray-400 truncate">
+                      {{ row.cuenta }}
+                      @if (row.transaccion.categoria) {
+                        · <span class="badge-categoria">{{ row.transaccion.categoria.nombre }}</span>
+                      }
+                    </p>
+                  </div>
+
+                  <!-- Importe -->
+                  <span class="text-sm font-semibold whitespace-nowrap flex-shrink-0"
+                    [ngClass]="row.transaccion.tipo === 'Ingreso' ? 'text-green-600' : 'text-rose-500'">
+                    {{ row.transaccion.tipo === 'Ingreso' ? '+' : '-' }}${{ row.transaccion.importe | number:'1.2-2' }}
+                  </span>
+
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+
+</div>

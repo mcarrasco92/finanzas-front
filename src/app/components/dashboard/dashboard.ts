@@ -215,6 +215,7 @@ export class Dashboard {
         this.tipoTransaccion = transaccion.tipo;
         this.mostrarTransaccionesModal = true;
         this.menuAbierto = false;
+        this.cdr.detectChanges();
       }
     });
 
@@ -222,6 +223,7 @@ export class Dashboard {
       if (transferencia && transferencia !== '') {
         this.mostrarTransferenciasModal = true;
         this.menuAbierto = false;
+        this.cdr.detectChanges();
       }
     });
 
@@ -229,6 +231,7 @@ export class Dashboard {
       if (transferencia.tipoCuentaDestino == 'Tarjeta') {
         this.mostrarPagoTarjetaModal = true;
         this.menuAbierto = false;
+        this.cdr.detectChanges();
       }
     });
 
@@ -314,6 +317,7 @@ export class Dashboard {
     if (url.includes('cuentas')) return 'Cuentas';
     if (url.includes('msi')) return 'Meses sin intereses';
     if (url.includes('transacciones-recurrentes')) return 'Mov. recurrentes';
+    if (url.includes('movimientos')) return 'Movimientos';
     if (url.includes('home')) return 'Home';
     return '';
   }
