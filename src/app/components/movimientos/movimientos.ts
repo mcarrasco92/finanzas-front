@@ -10,6 +10,7 @@ import { TarjetasService } from '../../services/tarjetas/tarjetas';
 import { Transaccion } from '../../models/transaccion';
 import { Transferencia } from '../../models/transferencia';
 import { MsiService } from '../../services/msi/msi';
+import { GeneralService } from '../../services/general-service';
 
 export interface MovimientoRow {
   transaccion: ResumenTransaccion;
@@ -31,6 +32,7 @@ export class Movimientos {
     private cuentasService: CuentasService,
     private tarjetasService: TarjetasService,
     private msiService: MsiService,
+    private generalService: GeneralService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -46,6 +48,7 @@ export class Movimientos {
 
   private cuentasSub: Subscription | null = null;
   private tarjetasSub: Subscription | null = null;
+  private actualizaSub: Subscription | null = null;
 
   get mesNombre(): string { return this.MESES[this.mes - 1]; }
 
@@ -80,12 +83,16 @@ export class Movimientos {
   ngOnInit(): void {
     this.cuentasSub = this.cuentasService.cuentasList$.subscribe();
     this.tarjetasSub = this.tarjetasService.tarjetasList$.subscribe();
+    this.actualizaSub = this.generalService.actualizaPantalla$.subscribe(actualiza => {
+      if (actualiza) this.cargar();
+    });
     this.cargar();
   }
 
   ngOnDestroy(): void {
     this.cuentasSub?.unsubscribe();
     this.tarjetasSub?.unsubscribe();
+    this.actualizaSub?.unsubscribe();
   }
 
   cargar(): void {

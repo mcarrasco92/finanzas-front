@@ -53,8 +53,6 @@ export class Transacciones {
   valCuentaTarjeta: boolean = false;
   valDescripcion: boolean = false;
   valConcepto: boolean = false;
-  valNecesario: boolean = false;
-
   transaccion: Transaccion = new Transaccion();
   transaccionOriginal: Transaccion = new Transaccion();
 
@@ -143,10 +141,8 @@ export class Transacciones {
     if (this.tipo == 'Egreso') {
       this.valCatEgreso = this.transaccion.catEgresoId.trim() === '';
       this.valCuentaTarjeta = this.cuentasYTarjetas.trim() === '';
-      this.valNecesario = this.transaccion.necesario === '';
 
-
-      if (this.valFecha || this.valImporte || this.valCatEgreso || this.valCuentaTarjeta || this.valConcepto || this.valNecesario) {
+      if (this.valFecha || this.valImporte || this.valCatEgreso || this.valCuentaTarjeta || this.valConcepto) {
         return;
       }
 

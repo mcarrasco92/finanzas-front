@@ -88,6 +88,10 @@ export class TransaccionesRecurrentes {
     this.consultaTransacciones();
   }
 
+  get sinTransaccionesDelTipo(): boolean {
+    return !this.transacciones.some(t => t.tipo === this.tipoMovimiento);
+  }
+
   getInitials(trans: TransaccionRecurrenteModel): string {
     const firstWord = trans.concepto.split(' ')[0];
     return firstWord.length <= 2 ? firstWord.toUpperCase() : firstWord[0].toUpperCase();

@@ -50,7 +50,6 @@ export class MsiModal {
   valTarjeta: boolean = false;
   valDescripcion: boolean = false;
   valConcepto: boolean = false;
-  valNecesario: boolean = false;
   valMeses: boolean = false;
 
   msi: MsiModel = new MsiModel();
@@ -119,9 +118,7 @@ export class MsiModal {
     this.valCatEgreso = this.msi.catEgresoId.trim() === '';
     this.valTarjeta = this.msi.tarjetaId.trim() === '';
     this.valMeses = this.msi.meses <= 0;
-    this.valNecesario = !this.msi.necesario;
-
-    if (this.valFecha || this.valImporte || this.valConcepto || this.valDescripcion || this.valCatEgreso || this.valTarjeta || this.valMeses || this.valNecesario) {
+    if (this.valFecha || this.valImporte || this.valConcepto || this.valDescripcion || this.valCatEgreso || this.valTarjeta || this.valMeses) {
       this.toast.show('Por favor, complete todos los campos obligatorios.','', TypeToast.danger);
       return;
     }

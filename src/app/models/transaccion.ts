@@ -9,7 +9,6 @@ export class Transaccion {
   tarjetaId: string = '';
   descripcion: string = '';
   concepto: string = '';
-  necesario: string = '';
   transferencia: boolean = false;
 
     limpiar() {
@@ -23,7 +22,6 @@ export class Transaccion {
         this.tarjetaId = '';
         this.descripcion = '';
         this.concepto = '';
-        this.necesario = '';
         this.transferencia = false;
     }
 

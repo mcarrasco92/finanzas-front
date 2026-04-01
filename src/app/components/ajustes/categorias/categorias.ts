@@ -142,6 +142,14 @@ export class Categorias {
     this.isDraggable = false;
   }
 
+  get sinCategoriasIngresos(): boolean {
+    return this.categoriasIngresos.length === 0 || (!this.categoriasDesactivadas && !this.categoriasIngresos.some(c => c.activa));
+  }
+
+  get sinCategoriasEgresos(): boolean {
+    return this.categoriasEgresos.length === 0 || (!this.categoriasDesactivadas && !this.categoriasEgresos.some(c => c.activa));
+  }
+
   ngOnDestroy() {
     this.IngresosSusbscription?.unsubscribe();
     this.EgresosSusbscription?.unsubscribe();

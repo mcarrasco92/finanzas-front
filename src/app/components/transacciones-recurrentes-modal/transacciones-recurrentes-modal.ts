@@ -57,7 +57,6 @@ export class TransaccionesRecurrentesModal {
     valCatEgreso: boolean = false;
     valDescripcion: boolean = false;
     valConcepto: boolean = false;
-    valNecesario: boolean = false;
     valCuentaTarjeta: boolean = false;
     valCatIngreso: boolean = false;
     valCuenta: boolean = false;
@@ -138,7 +137,6 @@ export class TransaccionesRecurrentesModal {
       this.valDescripcion = this.transRec.descripcion.trim() === '';
       this.valCatEgreso = this.transRec.catEgresoId.trim() === '';
       this.valCuentaTarjeta = this.cuentasYTarjetas.trim() === '';
-      this.valNecesario = !this.transRec.necesario;
       this.valPeriodicidad = this.transRec.periodicidad.trim() === '';
 
       if(this.transRec.periodicidad === 'Semanal'){
@@ -167,10 +165,7 @@ export class TransaccionesRecurrentesModal {
       if (this.tipoMovimiento == 'Egreso') {
         this.valCatEgreso = this.transRec.catEgresoId.trim() === '';
         this.valCuentaTarjeta = this.cuentasYTarjetas.trim() === '';
-        this.valNecesario = this.transRec.necesario === '';
-  
-  
-        if (this.valFecha || this.valImporte || this.valCatEgreso || this.valCuentaTarjeta || this.valConcepto || this.valNecesario) {
+        if (this.valFecha || this.valImporte || this.valCatEgreso || this.valCuentaTarjeta || this.valConcepto) {
           return;
         }
   

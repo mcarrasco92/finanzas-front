@@ -9,7 +9,6 @@ export class TransaccionRecurrenteModel {
   cuentaId: string = '';
   concepto: string = '';
   descripcion: string = '';
-  necesario: string  = '';
   periodicidad: string = '';
   tipo: string = ''; // 'Ingreso' o 'Egreso'
 
@@ -24,7 +23,6 @@ export class TransaccionRecurrenteModel {
     this.cuentaId = '';
     this.concepto = '';
     this.descripcion = '';
-    this.necesario = '';
     this.periodicidad = '';
   }
 

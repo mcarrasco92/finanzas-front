@@ -137,6 +137,10 @@ export class ListaDebito {
     this.isDraggable = false;
   }
 
+  get sinCuentas(): boolean {
+    return this.cuentas.length === 0 || (!this.cuentasDesactivadas && this.cuentas.every(c => !c.activa));
+  }
+
   getInitials(cuenta: Cuenta): string {
     const firstWord = cuenta.nombre.split(' ')[0];
     return firstWord.length <= 2 ? firstWord.toUpperCase() : firstWord[0].toUpperCase();

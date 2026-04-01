@@ -28,6 +28,14 @@
 </div>
 
 <div class="space-y-3 mt-4">
+  @if (sinTransaccionesDelTipo) {
+    <div class="flex flex-col items-center justify-center py-14 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mb-3 text-gray-200">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+      </svg>
+      <p class="text-sm">Sin {{ tipoMovimiento === 'Egreso' ? 'cargos' : 'ingresos' }} recurrentes</p>
+    </div>
+  }
   @for (trans of transacciones; track trans.id) {
     @if (tipoMovimiento == trans.tipo) {
       <div

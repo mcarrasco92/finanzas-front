@@ -125,6 +125,10 @@ export class ListaTDC {
     this.isDraggable = false;
   }
 
+  get sinTarjetas(): boolean {
+    return this.tarjetas.length === 0 || (!this.tarjetasDesactivadas && this.tarjetas.every(t => !t.activa));
+  }
+
   getInitials(tarjeta: Tarjeta): string {
     const firstWord = tarjeta.nombre.split(' ')[0];
     return firstWord.length <= 2 ? firstWord.toUpperCase() : firstWord[0].toUpperCase();

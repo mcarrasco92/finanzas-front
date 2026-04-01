@@ -36,7 +36,7 @@
       </div>
 
       <!-- Form -->
-      <form class="px-6 py-5 space-y-5">
+      <form class="px-6 py-5 space-y-5" (ngSubmit)="enviaDatos()">
 
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
 
@@ -160,21 +160,7 @@
             <input [(ngModel)]="transRec.descripcion" id="descripcion" type="text" name="descripcion" [disabled]="!editar && transRec.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
           </div>
 
-          @if (tipoMovimiento == 'Egreso') {
-            <div class="select-form">
-              <label for="necesario">¿Es un gasto necesario?</label>
-              <select [(ngModel)]="transRec.necesario" [disabled]="!editar && transRec.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="necesario" name="necesario" class="pl-10">
-                <option value="" disabled selected>Selecciona una opción</option>
-                <option value="Si">Si</option>
-                <option value="No">No</option>
-              </select>
-              @if (valNecesario) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
-            </div>
-          }
-
         </div>
-
-      </form>
 
       <!-- Footer -->
       <div class="flex items-center justify-between px-6 pb-6 pt-2 border-t border-gray-100">
@@ -188,13 +174,14 @@
             <button (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
           }
           @if (editar || !transRec.id) {
-            <button type="submit" class="btn-primary" (click)="enviaDatos()">Guardar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
           }
           @if (!editar && transRec.id) {
             <button (click)="editar=true" type="button" class="btn-primary">Editar</button>
           }
         </div>
       </div>
+      </form>
 
     </div>
   </div>

@@ -10,7 +10,6 @@ export interface ResumenTransaccion {
   importe: number;
   concepto: string;
   descripcion: string;
-  necesario: boolean | string;
   fecha: string;
   msiId: string | null;
   categoria: ResumenCategoria | null;

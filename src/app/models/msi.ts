@@ -7,7 +7,6 @@ export class MsiModel{
     concepto: string = '';
     descripcion: string = '';
     meses: number = 0;
-    necesario: Boolean = false;
     msiId: string = '';
 
     limpiar() {
@@ -19,7 +18,6 @@ export class MsiModel{
         this.concepto = '';
         this.descripcion = '';
         this.meses = 0;
-        this.necesario = false;
         this.msiId = '';
     }
 

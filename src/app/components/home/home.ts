@@ -331,36 +331,31 @@ export class Home {
     const egresos = this.getEgresos(data);
     if (egresos.length === 0) { this.barChartOptions = {}; return; }
 
-    const map = new Map<string, { necesario: number; noNecesario: number }>();
+    const map = new Map<string, number>();
     for (const t of egresos) {
       if (!t.categoria) continue;
       const nombre = t.categoria.nombre;
-      if (!map.has(nombre)) map.set(nombre, { necesario: 0, noNecesario: 0 });
-      const entry = map.get(nombre)!;
-      const esNecesario = t.necesario === true || t.necesario === 'Sí' || t.necesario === 'Si';
-      if (esNecesario) entry.necesario += t.importe;
-      else entry.noNecesario += t.importe;
+      map.set(nombre, (map.get(nombre) || 0) + t.importe);
     }
 
     const sorted = [...map.entries()]
-      .map(([nombre, v]) => ({ nombre, ...v }))
-      .sort((a, b) => (b.necesario + b.noNecesario) - (a.necesario + a.noNecesario));
+      .map(([nombre, total]) => ({ nombre, total }))
+      .sort((a, b) => b.total - a.total);
 
     this.barChartOptions = {
       series: [
-        { name: 'Necesario', data: sorted.map(c => Math.round(c.necesario * 100) / 100) },
-        { name: 'No necesario', data: sorted.map(c => Math.round(c.noNecesario * 100) / 100) }
+        { name: 'Total', data: sorted.map(c => Math.round(c.total * 100) / 100) }
       ],
-      chart: { type: 'bar', height: Math.max(220, sorted.length * 48 + 70), stacked: true, toolbar: { show: false } },
+      chart: { type: 'bar', height: Math.max(220, sorted.length * 48 + 70), stacked: false, toolbar: { show: false } },
       plotOptions: { bar: { horizontal: true, barHeight: '55%', borderRadius: 3 } },
       xaxis: {
         categories: sorted.map(c => c.nombre),
         labels: { formatter: (v: string) => `$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` }
       },
       yaxis: { labels: { style: { fontSize: '12px', colors: ['#6b7280'] } } },
-      colors: ['#60a5fa', '#94a3b8'],
+      colors: ['#60a5fa'],
       dataLabels: { enabled: false },
-      legend: { position: 'top', horizontalAlign: 'left', fontSize: '12px', offsetY: 4 },
+      legend: { show: false },
       tooltip: { y: { formatter: (v: number) => `$${v.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` } },
       grid: { borderColor: '#f1f1f1', xaxis: { lines: { show: true } }, yaxis: { lines: { show: false } } }
     };
