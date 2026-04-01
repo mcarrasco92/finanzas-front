@@ -1,31 +1,26 @@
 <div class="flex bg-white h-screen">
   <div class="flex w-50 flex-col fixed h-full">
-    <div class="relative flex grow flex-col overflow-y-auto border-r border-gray-200 bg-white px-4">
+    <div class="relative flex grow flex-col overflow-y-auto border-r border-gray-100 bg-white px-3">
       <div class="relative flex h-20 shrink-0 items-center justify-center mt-4">
         <img src="assets/Color-nombre.png" alt="Your Company" class="h-23 w-auto" />
       </div>
-      <nav class="relative flex flex-1 flex-col mt-4">
-        <ul role="list" class="flex flex-1 flex-col gap-y-7">
+      <div class="mt-2 mb-4 mx-1 border-b border-gray-100"></div>
+      <nav class="relative flex flex-1 flex-col">
+        <ul role="list" class="flex flex-1 flex-col">
           <li>
-            <ul role="list" class="-mx-2 space-y-1">
+            <p class="px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Menú</p>
+            <ul role="list" class="space-y-0.5">
               <app-item-menu nombre="Home" link="/dashboard/home" activo={{tabActivo}}></app-item-menu>
               <app-item-menu nombre="Cuentas" link="/dashboard/cuentas/debito" activo={{tabActivo}}></app-item-menu>
               <app-item-menu nombre="Meses sin intereses" link="/dashboard/msi" activo={{tabActivo}}></app-item-menu>
               <app-item-menu nombre="Mov. recurrentes" link="/dashboard/transacciones-recurrentes" activo={{tabActivo}}></app-item-menu>
-              <app-item-menu nombre="Ajustes" link="/dashboard/ajustes/categorias" activo={{tabActivo}}></app-item-menu>
-
             </ul>
           </li>
-
-          <li class="-mx-4 mt-auto">
-            <a (click)="cerrarSesion()"
-              class="flex items-center gap-x-4 px-6 py-2 text-sm/6 text-gray-900 hover:bg-gray-50 cursor-pointer relative">
-              <div
-                class="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 border border-gray-300 text-xs font-medium text-gray-600">
-                {{ perfil.displayName?.slice(0, 1)?.toUpperCase() }}
-              </div>
-              <span aria-hidden="true">Cerrar sesión</span>
-            </a>
+          <li class="mt-6">
+            <p class="px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Configuración</p>
+            <ul role="list" class="space-y-0.5">
+              <app-item-menu nombre="Ajustes" link="/dashboard/ajustes/categorias" activo={{tabActivo}}></app-item-menu>
+            </ul>
           </li>
         </ul>
       </nav>
@@ -33,12 +28,14 @@
 
   </div>
   <div class="flex flex-col bg-gray-50 flex-1 ml-50 h-full overflow-y-auto pb-18">
-    
+
     <!-- Navbar -->
-    <nav class="bg-white px-6 py-4 flex items-center justify-between">
+    <nav class="sticky top-0 z-10 bg-white px-6 py-2 flex items-center justify-between">
       <!-- Search Bar -->
-      <div class="relative w-1/2">
+      <div class="relative w-1/2" #searchWrapper>
         <input
+          [formControl]="searchControl"
+          (focus)="onSearchFocus()"
           type="text"
           placeholder="Buscar cuentas, tarjetas..."
           class="w-full px-4 py-2 pl-12 text-sm text-gray-600 bg-gray-50 border-none rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -57,20 +54,40 @@
             d="M21 21l-4.35-4.35m0 0a7.5 7.5 0 111.414-1.414l4.35 4.35z"
           />
         </svg>
+        @if (showSearch) {
+          <app-search-results
+            [results]="searchResults"
+            [query]="searchControl.value || ''"
+            (resultSelected)="onSearchResultSelected($event)"
+            (verTodos)="onVerTodos($event)"
+            (closed)="showSearch = false"
+          ></app-search-results>
+        }
       </div>
 
-      <!-- Notification and Profile -->
-      <div class="flex items-center space-x-6">
-        <!-- Profile -->
-        <div class="flex items-center space-x-3">
-          <div>
-            <p class="text-sm font-medium text-gray-900">{{perfil.displayName}}</p>
+      <!-- Profile with dropdown -->
+      <div class="relative" #perfilWrapper>
+        <button
+          (click)="togglePerfil()"
+          class="flex items-center space-x-3 cursor-pointer rounded-full px-2 py-1 hover:bg-gray-50 transition-colors">
+          <p class="text-sm font-medium text-gray-900">{{perfil.displayName}}</p>
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 border border-gray-300 text-sm font-medium text-gray-600">
+            {{ perfil.displayName?.slice(0, 1)?.toUpperCase() }}
           </div>
-          <div
-                class="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 border border-gray-300 text-xs font-medium text-gray-600">
-                {{ perfil.displayName?.slice(0, 1)?.toUpperCase() }}
-              </div>
-        </div>
+        </button>
+
+        @if (openPerfil) {
+          <div class="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-xl shadow-lg z-50 py-1">
+            <button
+              (click)="cerrarSesion()"
+              class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-gray-400">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+              </svg>
+              Cerrar sesión
+            </button>
+          </div>
+        }
       </div>
     </nav>
 
@@ -83,7 +100,7 @@
 
     <!-- Botón flotante -->
     <div class="fixed bottom-6 right-6">
-      <div class="relative">
+      <div class="relative" #menuWrapper>
         <!-- Botón principal -->
         <button (click)="toggleMenu()"
           class="w-12 h-12 rounded-full bg-indigo-600 text-white shadow-lg flex items-center justify-center hover:bg-indigo-700 focus:outline-none cursor-pointer shadow-md">
@@ -91,45 +108,57 @@
         </button>
 
         <!-- Menú desplegable -->
-        <div *ngIf="menuAbierto" class="absolute bottom-16 right-0 bg-white shadow-lg rounded-md w-52">
-          <ul class="py-2">
-            <li>
-              <button (click)="nuevoIngreso()"
-                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
-                <app-arrow-right></app-arrow-right>
-                <span>Nuevo ingreso</span>
-              </button>
-            </li>
-            <li>
-              <button (click)="nuevoEgreso()"
-                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
-                <app-arrow-left></app-arrow-left>
-                <span>Nuevo egreso</span>
-              </button>
-            </li>
-            <li>
-              <button (click)="nuevaTransferencia()"
-                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
-                <app-arrow-left-right></app-arrow-left-right>
-                <span>Nueva transferencia</span>
-              </button>
-            </li>
-            <li>
-              <button (click)="nuevaCategoria()"
-                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
-                <app-tag></app-tag>
-                <span>Nueva categoría</span>
-              </button>
-            </li>
-          </ul>
-        </div>
+        @if (menuAbierto) {
+          <div class="absolute bottom-16 right-0 bg-white shadow-lg rounded-md w-52">
+            <ul class="py-2">
+              <li>
+                <button (click)="nuevoIngreso()"
+                  class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
+                  <app-arrow-right></app-arrow-right>
+                  <span>Nuevo ingreso</span>
+                </button>
+              </li>
+              <li>
+                <button (click)="nuevoEgreso()"
+                  class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
+                  <app-arrow-left></app-arrow-left>
+                  <span>Nuevo egreso</span>
+                </button>
+              </li>
+              <li>
+                <button (click)="nuevaTransferencia()"
+                  class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
+                  <app-arrow-left-right></app-arrow-left-right>
+                  <span>Nueva transferencia</span>
+                </button>
+              </li>
+              <li>
+                <button (click)="nuevaCategoria()"
+                  class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 group flex gap-x-3">
+                  <app-tag></app-tag>
+                  <span>Nueva categoría</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        }
       </div>
     </div>
 
   </div>
 </div>
-<app-transferencias *ngIf="mostrarTransferenciasModal" (cerrar)="cerrarTransferenciasModal()"></app-transferencias>
-<app-transacciones *ngIf="mostrarTransaccionesModal" (cerrar)="cerrarTransaccionesModal()" [tipo]=tipoTransaccion></app-transacciones>
-<app-categorias-modal *ngIf="mostrarCategoriasModal" (cerrar)="cerrarCategoriasModal()"></app-categorias-modal>
-<app-pago-tarjeta *ngIf="mostrarPagoTarjetaModal" (cerrar)="cerrarPagoTarjetaModal()"></app-pago-tarjeta>
-<app-msi-modal *ngIf="mostrarMsiModal" (cerrar)="cerrarMsiModal()"></app-msi-modal>
+@if (mostrarTransferenciasModal) {
+  <app-transferencias (cerrar)="cerrarTransferenciasModal()"></app-transferencias>
+}
+@if (mostrarTransaccionesModal) {
+  <app-transacciones (cerrar)="cerrarTransaccionesModal()" [tipo]=tipoTransaccion></app-transacciones>
+}
+@if (mostrarCategoriasModal) {
+  <app-categorias-modal (cerrar)="cerrarCategoriasModal()"></app-categorias-modal>
+}
+@if (mostrarPagoTarjetaModal) {
+  <app-pago-tarjeta (cerrar)="cerrarPagoTarjetaModal()"></app-pago-tarjeta>
+}
+@if (mostrarMsiModal) {
+  <app-msi-modal (cerrar)="cerrarMsiModal()"></app-msi-modal>
+}

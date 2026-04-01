@@ -20,6 +20,20 @@ export class GeneralService {
     this.actualizaPantalla.next(actualiza);
   }
 
+  private mostrarDesactivadas = new BehaviorSubject<boolean>(false);
+  mostrarDesactivadas$ = this.mostrarDesactivadas.asObservable();
+
+  setMostrarDesactivadas(value: boolean) {
+    this.mostrarDesactivadas.next(value);
+  }
+
+  private mostrarCategoriasDesactivadas = new BehaviorSubject<boolean>(false);
+  mostrarCategoriasDesactivadas$ = this.mostrarCategoriasDesactivadas.asObservable();
+
+  setMostrarCategoriasDesactivadas(value: boolean) {
+    this.mostrarCategoriasDesactivadas.next(value);
+  }
+
   constructor() { }
   
 }

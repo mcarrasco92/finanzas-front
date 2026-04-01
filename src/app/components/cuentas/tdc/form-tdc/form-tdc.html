@@ -1,206 +1,190 @@
 <app-toast></app-toast>
-<app-confirm-modal *ngIf="confirmModal" [titulo]="'Eliminar movimiento'" [mensaje]="'¿Estás seguro de que deseas eliminar este movimiento?'" [fondoOscuro]="true" (cerrar)="confirmModal=false" (confirmar)="eliminaTransaccion()"></app-confirm-modal>
-<app-confirm-modal *ngIf="confirmModalEliminaTarjeta" [titulo]="'Eliminar tarjeta'" [mensaje]="'¿Estás seguro de que deseas eliminar esta tarjeta?'" [fondoOscuro]="true" (cerrar)="confirmModalEliminaTarjeta=false" (confirmar)="eliminaTarjeta()"></app-confirm-modal>
+@if (confirmModal) {
+  <app-confirm-modal [titulo]="'Eliminar movimiento'" [mensaje]="'¿Estás seguro de que deseas eliminar este movimiento?'" [fondoOscuro]="true" (cerrar)="confirmModal=false" (confirmar)="eliminaTransaccion()"></app-confirm-modal>
+}
+@if (confirmModalEliminaTarjeta) {
+  <app-confirm-modal [titulo]="'Eliminar tarjeta'" [mensaje]="'¿Estás seguro de que deseas eliminar esta tarjeta?'" [fondoOscuro]="true" (cerrar)="confirmModalEliminaTarjeta=false" (confirmar)="eliminaTarjeta()"></app-confirm-modal>
+}
 
-<div class="px-4 py-6 bg-white shadow-sm">
-    <div class="flex justify-center">
-      <div class="w-full mb-6">
-        <h1 class="text-lg font-medium leading-6 text-gray-900 w-full text-center border-gray-900/10" >{{tarjeta.id ? "Información" : "Alta"}} de TDC</h1>
-        <p *ngIf="tarjeta.id" class="text-sm text-gray-500 w-full text-center">{{tarjeta.activa ? "Activa": "Desactivada"}}</p>
-      </div>
-      <div class="flex justify-end">
-        <app-options-menu *ngIf="tarjeta.id" 
+<!-- Info / Form -->
+<div class="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-4 mb-4">
+  <div class="flex items-start justify-between mb-4">
+    <div>
+      <h2 class="text-base font-semibold text-gray-900">{{ tarjeta.id ? 'Información' : 'Alta' }} de tarjeta de crédito</h2>
+      @if (tarjeta.id) {
+        <span [ngClass]="tarjeta.activa ? 'badge-activa' : 'badge-desactivada'">
+          {{ tarjeta.activa ? 'Activa' : 'Desactivada' }}
+        </span>
+      }
+    </div>
+    @if (tarjeta.id) {
+      <app-options-menu
         [eliminarEnabled]="!tarjeta.transacciones"
         [activarLabel]="tarjeta.activa ? 'Desactivar TDC' : 'Activar TDC'"
-        (editar)="editar = true" (activar)="activaDesactivaTarjeta()" (eliminar)="showConfirmModalEliminarTarjeta()"
-        ></app-options-menu>
+        (editar)="editar = true" (activar)="activaDesactivaTarjeta()" (eliminar)="showConfirmModalEliminarTarjeta()">
+      </app-options-menu>
+    }
+  </div>
+
+  <form (ngSubmit)="enviaDatos()" method="POST" class="space-y-6">
+    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
+      <div class="input-form-text">
+        <label for="nombreTDC">Nombre</label>
+        <input [(ngModel)]="tarjeta.nombre" id="nombreTDC" type="text" name="nombreTDC" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" />
+        @if (valNombre) { <p>Este campo es obligatorio</p> }
+      </div>
+      <div class="input-form-text">
+        <label for="descipcion">Descripción</label>
+        <input [(ngModel)]="tarjeta.descripcion" id="descipcion" type="text" name="descipcion" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" />
+        @if (valDescripcion) { <p>Este campo es obligatorio</p> }
+      </div>
+      <div class="input-form-text">
+        <label for="institucion">Institución</label>
+        <input [(ngModel)]="tarjeta.institucion" id="institucion" type="text" name="institucion" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
+        @if (valInstitucion) { <p>Este campo es obligatorio</p> }
+      </div>
+      <div class="grid grid-cols-2 gap-x-4">
+        <div class="input-form-text">
+          <label for="dpago">Día de pago</label>
+          <input [(ngModel)]="tarjeta.dpago" (input)="validarDia($event)" id="dpago" type="number" name="dpago" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
+          @if (valDpago) { <p>Este campo es obligatorio</p> }
+        </div>
+        <div class="input-form-text">
+          <label for="dcorte">Día de corte</label>
+          <input [(ngModel)]="tarjeta.dcorte" (input)="validarDia($event)" id="dcorte" type="number" name="dcorte" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
+          @if (valDcorte) { <p>Este campo es obligatorio</p> }
+        </div>
       </div>
     </div>
-    
-    <form (ngSubmit)="enviaDatos()" method="POST" class="space-y-8">
 
-        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
-            
-            <div class="input-form-text">
-                <label for="nombreTDC">Nombre</label>
-                <input [(ngModel)]="tarjeta.nombre" id="nombreTDC" type="text" name="nombreTDC" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" />
-                <p *ngIf="valNombre">Este campo es obligatorio</p>
-            </div>
-            
-
-            <div class="input-form-text">
-                <label for="descipcion">Descripción</label>
-                <input [(ngModel)]="tarjeta.descripcion" id="descipcion" type="text" name="descipcion" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" />
-                <p *ngIf="valDescripcion">Este campo es obligatorio</p>
-            </div>
-
-            <div class="input-form-text">
-                <label for="institucion">Institución</label>
-                <input [(ngModel)]="tarjeta.institucion" id="institucion" type="text" name="institucion" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
-                <p *ngIf="valInstitucion">Este campo es obligatorio</p>
-            </div>
-
-            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                <div class="input-form-text">
-                    <label for="dpago">Día de pago</label>
-                    <input [(ngModel)]="tarjeta.dpago" (input)="validarDia($event)" id="dpago" type="number" name="dpago" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
-                    <p *ngIf="valDpago">Este campo es obligatorio</p>
-                </div>
-                <div class="input-form-text">
-                    <label for="dcorte">Día de corte</label>
-                    <input [(ngModel)]="tarjeta.dcorte" (input)="validarDia($event)" id="dcorte" type="number" name="dcorte" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
-                    <p *ngIf="valDcorte">Este campo es obligatorio</p>
-                </div>
-            </div>
-
-        </div>
-        
-        <div class="flex items-center justify-end gap-x-6 border-gray-900/10 relative">
-          <!--
-          <div class="flex-grow flex justify-start space-x-4">
-            <button *ngIf="tarjeta.id && !tarjeta.transacciones" (click)="showConfirmModalEliminarTarjeta()" type="button" class="btn-danger">
-              <div class="flex items-center space-x-2">
-                <app-trash-icon></app-trash-icon>
-                <div>Eliminar tarjeta</div>
-              </div>
-            </button>
-            
-            <button *ngIf="tarjeta.id" (click)="activaDesactivaTarjeta()" type="button" class="btn-danger">{{tarjeta.activa ? "Desactivar" : "Activar"}} TDC</button>
-          </div>
-          -->
-            
-            <button *ngIf="editar && tarjeta.id" (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
-            <button *ngIf="editar || !tarjeta.id" type="submit" class="btn-primary">Guardar</button>
-            <!--
-            <button *ngIf="!editar && tarjeta.id && tarjeta.activa" (click)="editar=true" type="button" class="btn-primary">Editar</button>
-            -->
-          </div>
-          
-    </form>
+    <div class="flex items-center justify-end gap-x-3">
+      @if (editar && tarjeta.id) {
+        <button (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
+      }
+      @if (editar || !tarjeta.id) {
+        <button type="submit" class="btn-primary">Guardar</button>
+      }
+    </div>
+  </form>
 </div>
 
-<div *ngIf="tarjeta.id">
-  
-  <nav class="bg-white shadow-sm mt-4 py-4">
-    <h1 class="text-lg font-medium leading-6 text-gray-900 w-full text-center mb-4">Pagar tarjeta</h1>
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-12 justify-center space-x-20">
+@if (tarjeta.id) {
 
-        <div class="text-center">
-          <div class="input-form-radio">
-            <input [(ngModel)]="pagoSeleccionado" [value]="'saldoTotal'" id="saldoTotal" type="radio" name="pagoTDC"/>
-            <label for="saldoTotal" class="mx-3 block text-sm/6 font-medium text-gray-900">Saldo total: </label>
-          </div>
-          <div>
-            <span class="text-sm/6 font-semibold text-green-600 text-center">{{ tarjeta.saldo | currency:'USD':'symbol-narrow' }}</span>
-          </div>
+  <!-- Pagar tarjeta -->
+  <div class="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-4 mb-4">
+    <p class="text-sm font-medium text-gray-500 mb-4">Pagar tarjeta</p>
+    <div class="flex flex-wrap items-center gap-6">
+
+      <div class="flex items-center gap-3">
+        <div class="input-form-radio">
+          <input [(ngModel)]="pagoSeleccionado" [value]="'saldoTotal'" id="saldoTotal" type="radio" name="pagoTDC"/>
+          <label for="saldoTotal" class="ml-2 text-sm font-medium text-gray-700">Saldo total</label>
         </div>
+        <span class="text-sm font-semibold text-green-600">{{ tarjeta.saldo | currency:'USD':'symbol-narrow' }}</span>
+      </div>
 
-        <div class="text-center">
-          <div class="input-form-radio">
-            <input [(ngModel)]="pagoSeleccionado" [value]="'pagoPendiente'" id="pagoPendiente" checked type="radio" name="pagoTDC"/>
-            <label for="pagoPendiente" class="mx-3 block text-sm/6 font-medium text-gray-900">Pago pendiente: </label>
-          </div>
-          <div>
-            <span class="text-sm/6 font-semibold text-red-600 text-center">{{ tarjeta.pagoPendiente | currency:'USD':'symbol-narrow' }}</span>
-          </div>
+      <div class="flex items-center gap-3">
+        <div class="input-form-radio">
+          <input [(ngModel)]="pagoSeleccionado" [value]="'pagoPendiente'" id="pagoPendiente" checked type="radio" name="pagoTDC"/>
+          <label for="pagoPendiente" class="ml-2 text-sm font-medium text-gray-700">Pago pendiente</label>
         </div>
+        <span class="text-sm font-semibold text-red-500">{{ tarjeta.pagoPendiente | currency:'USD':'symbol-narrow' }}</span>
+      </div>
 
-
-        <div class="flex items-center">
-          <div class="input-form-radio">
-            <input [(ngModel)]="pagoSeleccionado" [value]="'otro'" id="otro" type="radio" name="pagoTDC" />
-            <label for="otro" class="mx-3 block text-sm/6 font-medium text-gray-900">Otro: </label>
-          </div>
-          <div>
-            <div class="input-form-currency w-30">
-              <div>$</div>
-              <input [(ngModel)]="otroSaldo" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" />
-              <p *ngIf="valOtroSaldo">Este campo es obligatorio</p>
-            </div>
-          </div>
+      <div class="flex items-center gap-3">
+        <div class="input-form-radio">
+          <input [(ngModel)]="pagoSeleccionado" [value]="'otro'" id="otro" type="radio" name="pagoTDC" />
+          <label for="otro" class="ml-2 text-sm font-medium text-gray-700">Otro</label>
         </div>
-
-
-
-        <div class="flex items-center">
-          <button type="submit" class="btn-primary h-auto" (click)="pagar()">Pagar</button>
+        <div class="input-form-currency w-30">
+          <div>$</div>
+          <input [(ngModel)]="otroSaldo" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" />
+          @if (valOtroSaldo) { <p>Este campo es obligatorio</p> }
         </div>
       </div>
-    </div>
-  </nav>
 
-  <nav class="bg-white shadow-sm mt-2 pt-4">
-    <h1 class="text-lg font-medium text-gray-900 w-full text-center">Movimientos</h1>
-
-    <div class="flex justify-center my-3 text-md">
-      <div class="flex items-center space-x-4">
-        <app-left-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(-1)"></app-left-icon>
-        <h1 class="text-md font-medium leading-6 text-gray-900 w-full text-center">
-          <span>{{ getRangoFechaCorte()[0] | date: 'dd LLLL yyyy' | mesEs }}</span>
-          <span class="mx-5">-</span>
-          <span>{{ getRangoFechaCorte()[1] | date: 'dd LLLL yyyy' | mesEs }}</span>
-        </h1>
-        <app-right-icon class="h-6 w-6 text-gray-500 hover:text-gray-700 cursor-pointer" (click)="cambiaMes(1)"></app-right-icon>
-      </div>
-    </div>
-
-
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-12 justify-between">
-        <div class="flex justify-center w-full">
-            <div (click)="cmabiaTipoMovimiento('General')" [ngClass]="{'!border-blue-400 text-gray-900': tipoMovimiento == 'General'}" class="inline-flex items-center border-b-2 border-transparent px-10 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 cursor-pointer">General</div>
-            <div (click)="cmabiaTipoMovimiento('Ingresos')" [ngClass]="{'!border-green-600 text-gray-900': tipoMovimiento == 'Ingresos'}" class="inline-flex items-center border-b-2 border-transparent px-10 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 cursor-pointer">Ingresos</div>
-            <div (click)="cmabiaTipoMovimiento('Egresos')" [ngClass]="{'!border-red-400 text-gray-900': tipoMovimiento == 'Egresos'}" class="inline-flex items-center border-b-2 border-transparent px-10 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 cursor-pointer">Egresos</div>
-        </div>
-      </div>
-    </div>
-  </nav>
-  
-
-  <div *ngIf="transacciones.length > 0" class="p-4 bg-white shadow-sm mt-2">
-    <div class="px-4 sm:px-6 lg:px-8">
-      <div class="mt-1 flow-root">
-        <div class="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
-          <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <table class="relative min-w-full divide-y divide-gray-300">
-              <thead>
-                <tr>
-                  <th scope="col" class="px-3 py-2 text-center text-sm font-semibold text-gray-900 w-100">Concepto</th>
-                  <th scope="col" class="px-3 py-2 text-center text-sm font-semibold text-gray-900 w-50">Categoría</th>
-                  <th scope="col" class="px-3 py-2 text-center text-sm font-semibold text-gray-900 w-100">Descripción</th>
-                  <th scope="col" class="px-3 py-2 pr-5 text-right text-sm font-semibold text-gray-900">Importe</th>
-                </tr>
-              </thead>
-            </table>
-            
-            <div *ngFor="let fecha of getFechas()">
-              <!-- Encabezado con la fecha -->
-               <div class="flex justify-between items-center">
-                <h2 class="text-sm font-medium text-gray-900 mt-1">{{ fecha  | date: 'dd LLLL' | mesEs }}</h2>
-                <h2 *ngIf="tipoMovimiento !== 'General'" class="text-sm text-right pr-5" [ngClass]="{'text-green-600': tipoMovimiento =='Ingresos', 'text-red-400': tipoMovimiento =='Egresos'} "  >{{ getSumaImportes(fecha) | currency:'USD':'symbol-narrow' }}</h2>
-               </div>
-              <hr class="border-gray-300 mb-2">
-  
-              <!-- Movimientos de esa fecha -->
-              <table class="relative min-w-full divide-y divide-gray-300">
-                <tbody class="divide-y divide-gray-200">
-                  <tr *ngFor="let trans of agrupadosPorFecha[fecha] | filterTipoTransaccion : tipoMovimiento" class="hover:bg-gray-50" (click)="editarTransaccion(trans)" [ngClass]="{'cursor-pointer': tarjeta.activa}">
-                    <td class="px-3 py-2 text-sm whitespace-nowrap text-gray-500 text-center w-100">{{ trans.concepto }}</td>
-                    <td class="px-3 py-2 text-sm whitespace-nowrap text-gray-500 text-center w-50">{{ getDescripcionCategoria(trans) }}</td>
-                    <td class="px-3 py-2 text-sm whitespace-nowrap text-gray-500 text-center w-100">{{ trans.descripcion }}</td>
-                    <td class="px-3 py-2 pr-5 text-sm whitespace-nowrap text-gray-500 text-right" [ngClass]="{'text-green-600': trans.tipo == 'Ingreso' && tipoMovimiento == 'General', 'text-red-400': trans.tipo == 'Egreso' && tipoMovimiento == 'General'}">{{ trans.importe | currency:'USD':'symbol-narrow' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      <button type="button" class="btn-primary" (click)="pagar()">Pagar</button>
     </div>
   </div>
-  
-  <p *ngIf="transacciones.length === 0 && !cargandoMovimientos" class="text-center text-gray-500 mt-10">No hay movimientos para este mes</p>
-  <p *ngIf="cargandoMovimientos" class="text-center text-gray-500 mt-10">Cargando...</p>
-    
-</div>
+
+  <!-- Movimientos -->
+  <div class="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-4">
+
+    <div class="flex items-center justify-between mb-3">
+      <p class="text-sm font-medium text-gray-500">Movimientos</p>
+      <div class="flex items-center gap-2">
+        <app-left-icon class="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer" (click)="cambiaMes(-1)"></app-left-icon>
+        <span class="text-sm font-semibold text-gray-700 text-center">
+          {{ getRangoFechaCorte()[0] | date: 'dd MMM yyyy' | mesEs }} — {{ getRangoFechaCorte()[1] | date: 'dd MMM yyyy' | mesEs }}
+        </span>
+        <app-right-icon class="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer" (click)="cambiaMes(1)"></app-right-icon>
+      </div>
+    </div>
+
+    <!-- Filter pills -->
+    <div class="flex items-center bg-gray-100 rounded-full p-1 gap-0.5 mb-4 w-fit">
+      <button (click)="cmabiaTipoMovimiento('General')"
+        class="px-4 py-1.5 text-sm font-medium rounded-full transition-all cursor-pointer"
+        [ngClass]="tipoMovimiento === 'General' ? 'bg-indigo-500 shadow-sm text-white' : 'text-gray-500 hover:text-gray-700'">
+        General
+      </button>
+      <button (click)="cmabiaTipoMovimiento('Ingresos')"
+        class="px-4 py-1.5 text-sm font-medium rounded-full transition-all cursor-pointer"
+        [ngClass]="tipoMovimiento === 'Ingresos' ? 'bg-green-500 shadow-sm text-white' : 'text-gray-500 hover:text-gray-700'">
+        Ingresos
+      </button>
+      <button (click)="cmabiaTipoMovimiento('Egresos')"
+        class="px-4 py-1.5 text-sm font-medium rounded-full transition-all cursor-pointer"
+        [ngClass]="tipoMovimiento === 'Egresos' ? 'bg-red-400 shadow-sm text-white' : 'text-gray-500 hover:text-gray-700'">
+        Egresos
+      </button>
+    </div>
+
+    <!-- Lista de movimientos agrupados por fecha -->
+    @if (transacciones.length > 0) {
+      <div class="space-y-4">
+        @for (fecha of getFechas(); track fecha) {
+          <div>
+            <div class="flex justify-between items-center mb-1.5">
+              <span class="text-xs font-medium text-gray-400 uppercase tracking-wide">{{ fecha | date: 'dd LLLL' | mesEs }}</span>
+              @if (tipoMovimiento !== 'General') {
+                <span class="text-xs font-semibold"
+                  [ngClass]="{'text-green-600': tipoMovimiento === 'Ingresos', 'text-red-400': tipoMovimiento === 'Egresos'}">
+                  {{ getSumaImportes(fecha) | currency:'USD':'symbol-narrow' }}
+                </span>
+              }
+            </div>
+            <div class="space-y-0.5">
+              @for (trans of agrupadosPorFecha[fecha] | filterTipoTransaccion : tipoMovimiento; track trans.id) {
+                <div class="flex items-center gap-3 px-3 py-1 rounded-lg hover:bg-gray-50 transition-colors"
+                  [ngClass]="{'cursor-pointer': tarjeta.activa}"
+                  (click)="editarTransaccion(trans)">
+                  <div class="flex-shrink-0 w-2 h-2 rounded-full"
+                    [ngClass]="{'bg-green-500': trans.tipo === 'Ingreso', 'bg-red-400': trans.tipo === 'Egreso'}">
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ trans.concepto }}</p>
+                    <p class="text-xs text-gray-400 truncate">{{ getDescripcionCategoria(trans) }}{{ trans.descripcion ? ' · ' + trans.descripcion : '' }}</p>
+                  </div>
+                  <p class="text-sm font-semibold flex-shrink-0"
+                    [ngClass]="{'text-green-600': trans.tipo === 'Ingreso' && tipoMovimiento === 'General', 'text-red-500': trans.tipo === 'Egreso' && tipoMovimiento === 'General', 'text-gray-700': tipoMovimiento !== 'General'}">
+                    {{ trans.importe | currency:'USD':'symbol-narrow' }}
+                  </p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (transacciones.length === 0 && !cargandoMovimientos) {
+      <p class="text-center text-gray-400 py-8 text-sm">No hay movimientos para este periodo</p>
+    }
+    @if (cargandoMovimientos) {
+      <p class="text-center text-gray-400 py-8 text-sm">Cargando...</p>
+    }
+
+  </div>
+
+}

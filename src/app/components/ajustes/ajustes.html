@@ -1,31 +1,35 @@
 <app-toast></app-toast>
 
-<nav class="relative bg-white shadow-sm">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="flex h-16 justify-between">
-      <div class="flex">
-        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-          <a [routerLink]="'/dashboard/ajustes/categorias'"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-            [ngClass]="{'!border-orange-400 text-gray-900': isCategorias()}">Categorías</a>
-          <!--
-          <a [routerLink]="'/dashboard/ajustes/tiempo'"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-            [ngClass]="{'!border-orange-400 text-gray-900': isPresupuestos()}">Periodo de tiempo</a>
-        -->
-        </div>
-      </div>
+<div class="px-6 py-1 flex items-center justify-between">
 
-      <div class="flex items-center">
+  <!-- Label pill -->
+  <div class="flex items-center bg-gray-100 rounded-full p-1">
+    <span class="px-4 py-1.5 text-sm font-medium rounded-full bg-white shadow-sm text-gray-900">
+      Categorías
+    </span>
+  </div>
 
-        <div class="hidden sm:ml-6 sm:flex sm:items-center">
-          <button *ngIf="isCategorias()" type="button" (click)="abrirCategoriasModal()" class="btn-orange">Nueva
-            categoría</button>
-        </div>
-      </div>
+  <!-- Toggle desactivadas -->
+  <div class="input-form-check">
+    <span class="span-label">
+      <label>Mostrar categorías desactivadas</label>
+    </span>
+    <div class="check-switch check-default group bg-gray-200 has-checked:bg-orange-400">
+      <span class="span-border"></span>
+      <input type="checkbox" [(ngModel)]="mostrarCatDesactivadas" (change)="onToggleCatDesactivadas()"/>
     </div>
   </div>
-</nav>
+
+  <!-- Add button -->
+  @if (isCategorias()) {
+    <button (click)="abrirCategoriasModal()"
+      class="flex bg-white items-center gap-1.5 px-4 py-2 text-sm font-medium text-green-800 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors cursor-pointer">
+      <span class="text-base leading-none font-semibold">+</span>
+      Nueva categoría
+    </button>
+  }
+
+</div>
 
 <div class="my-4">
   <router-outlet></router-outlet>

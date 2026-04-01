@@ -1,5 +1,44 @@
-.item-selected{
-    /*color: rgb(148,186,138)*/
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+  overflow: hidden;
+}
 
-    color:rgb(39,70,91)
+.nav-item-active {
+  background-color: #eef2ff;
+}
+
+.nav-item-inactive:hover {
+  background-color: #f9fafb;
+}
+
+.nav-indicator {
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 3px;
+  background-color: #6366f1;
+  border-radius: 0 2px 2px 0;
+  transition: opacity 0.15s ease;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.nav-label {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  transition: color 0.15s ease;
+  white-space: nowrap;
 }

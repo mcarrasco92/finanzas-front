@@ -9,6 +9,8 @@ import { Subscription } from 'rxjs';
 import { TarjetasService } from '../tarjetas/tarjetas';
 import { CuentasService } from '../cuentas/cuentas';
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -84,6 +86,13 @@ export class TransaccionesService {
   }
 
   
+
+  private transaccionesListData = new BehaviorSubject<Transaccion[]>([]);
+  transaccionesList$ = this.transaccionesListData.asObservable();
+
+  setTransaccionesList(transacciones: Transaccion[]): void {
+    this.transaccionesListData.next(transacciones);
+  }
 
   private cargaTransaccion = new BehaviorSubject<Transaccion>(new Transaccion());
   transaccion$ = this.cargaTransaccion.asObservable();

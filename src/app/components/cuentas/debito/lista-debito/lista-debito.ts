@@ -34,6 +34,7 @@ export class ListaDebito {
 
   porcentajeInvertido: number = 0;
   cuentasDesactivadas: boolean = false;
+  desactivadasSubscription: Subscription | null = null;
 
   cuentasSubscription: Subscription | null = null;
   saldoDisponibleSubscription: Subscription | null = null;
@@ -67,7 +68,15 @@ export class ListaDebito {
       this.porcentajeInvertido = this.saldoTotal > 0 ? (this.saldoInvertido / this.saldoTotal) * 100 : 0;
       this.cdr.detectChanges();
     });
-    
+
+    this.desactivadasSubscription = this.generalService.mostrarDesactivadas$.subscribe(value => {
+      this.cuentasDesactivadas = value;
+      this.cdr.detectChanges();
+    });
+  }
+
+  toggleDesactivadas(): void {
+    this.generalService.setMostrarDesactivadas(this.cuentasDesactivadas);
   }
 
   consultaCuenta(id: String) {
@@ -123,9 +132,29 @@ export class ListaDebito {
   onMouseDown(): void {
     this.isDraggable = true;
   }
-  
+
   onMouseUp(): void {
     this.isDraggable = false;
+  }
+
+  getInitials(cuenta: Cuenta): string {
+    const firstWord = cuenta.nombre.split(' ')[0];
+    return firstWord.length <= 2 ? firstWord.toUpperCase() : firstWord[0].toUpperCase();
+  }
+
+  getAvatarClass(cuenta: Cuenta): string {
+    const classes = [
+      'bg-blue-100 text-blue-700',
+      'bg-purple-100 text-purple-700',
+      'bg-red-100 text-red-700',
+      'bg-green-100 text-green-700',
+      'bg-amber-100 text-amber-700',
+      'bg-indigo-100 text-indigo-700',
+      'bg-pink-100 text-pink-700',
+      'bg-teal-100 text-teal-700',
+    ];
+    const hash = cuenta.nombre.charCodeAt(0) + (cuenta.nombre.charCodeAt(1) || 0);
+    return classes[hash % classes.length];
   }
 
 
@@ -134,6 +163,7 @@ export class ListaDebito {
     this.saldoDisponibleSubscription?.unsubscribe();
     this.saldoInvertidoSubscription?.unsubscribe();
     this.saldoTotalSubscription?.unsubscribe();
+    this.desactivadasSubscription?.unsubscribe();
     this.toast.clear();
   }
   

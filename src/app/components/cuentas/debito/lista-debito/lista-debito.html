@@ -64,65 +64,72 @@
       </dd>
     </div>
   </dl>
-</div>
 
-
-<div class="flex justify-end mb-2 mr-4 text-sm">
-  <div class="input-form-check">
+  <div class="input-form-check mt-4 justify-end">
     <span class="span-label">
-        <label id="inversion-label">Mostrar cuentas desactivadas</label>
+      <label>Mostrar cuentas desactivadas</label>
     </span>
-    <div class="check-switch check-default group has-checked:bg-blue-500 bg-gray-200 ">
-        <span class="span-border"></span>
-        <input type="checkbox" [(ngModel)]="cuentasDesactivadas"/>
+    <div class="check-switch check-default group bg-gray-200 has-checked:bg-blue-500">
+      <span class="span-border"></span>
+      <input type="checkbox" [(ngModel)]="cuentasDesactivadas" (change)="toggleDesactivadas()"/>
     </div>
   </div>
 </div>
 
-<div class="p-4 bg-white shadow-sm">
 
-  <div class="px-4 sm:px-6 lg:px-8">
-    <div class="mt-1 flow-root">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <table class="general-table">
-            <thead>
-              <tr>
-                <th scope="col" class="text-left font-semibold">Nombre</th>
-                <th scope="col" class="text-left">Institución</th>
-                <th scope="col" class="text-center">Inversión</th>
-                <th scope="col" class="text-center">A la vista</th>
-                <th scope="col" class="text-center">Saldo actual</th>
+<div class="space-y-3">
+  @for (cuenta of cuentas; track cuenta.id; let i = $index) {
+    @if (cuentasDesactivadas || cuenta.activa) {
+      <div
+        class="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-3 flex items-center gap-4 cursor-pointer transition-shadow hover:shadow-md"
+        [class.opacity-50]="!cuenta.activa"
+        (click)="consultaCuenta(cuenta.id)"
+        (dragstart)="onDragStart($event, i)"
+        (dragover)="onDragOver($event)"
+        (drop)="onDrop($event, i)"
+        [draggable]="isDraggable">
 
-              </tr>
-            </thead>
-            <tbody>
-              <ng-container *ngFor="let cuenta of cuentas; let i = index" >
-                <tr *ngIf="cuentasDesactivadas || cuenta.activa" 
-                  (dragstart)="onDragStart($event, i)"
-                  (dragover)="onDragOver($event)" 
-                  (drop)="onDrop($event, i)" 
-                  [draggable]="isDraggable"
-                  [ngClass]="{ 'hover:bg-gray-200': isDraggable, 'opacity-50': !cuenta.activa }"
-                  (click)="consultaCuenta(cuenta.id)">
+        <!-- Drag handle -->
+        <button
+          class="flex-shrink-0 p-2 rounded-full hover:bg-gray-100 text-gray-300 cursor-grab active:cursor-grabbing"
+          (click)="$event.stopPropagation()"
+          (mousedown)="onMouseDown()"
+          (mouseleave)="onMouseUp()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" class="w-4 h-4">
+            <circle cx="5" cy="4" r="1.5"/>
+            <circle cx="11" cy="4" r="1.5"/>
+            <circle cx="5" cy="10" r="1.5"/>
+            <circle cx="11" cy="10" r="1.5"/>
+          </svg>
+        </button>
 
-                  <td class="font-medium text-gray-900">{{cuenta.nombre}}</td>
-                  <td class="text-gray-500">{{cuenta.institucion}}</td>
-                  <td class="text-center text-gray-500">{{ cuenta.inversion ? "Si" : "No" }}</td>
-                  <td class="text-center text-gray-500">{{cuenta.vista ? 'Si' : "No"}}</td>
-                  <td class="text-center text-gray-500">$ {{cuenta.saldo | number:'1.2-2' }}</td>
-                  <td (mousedown)="onMouseDown()" (mouseleave)="onMouseUp()" class="cursor-move text-center" (click)="$event.stopPropagation()">
-                    <app-drag-icon></app-drag-icon>
-                  </td>
-                </tr>
-              </ng-container>
-            </tbody>
-          </table>
+        <!-- Avatar -->
+        <div
+          class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold"
+          [ngClass]="getAvatarClass(cuenta)">
+          {{ getInitials(cuenta) }}
+        </div>
+
+        <!-- Name + badges + description -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-semibold text-gray-900 text-sm">{{ cuenta.nombre }}</span>
+            @if (cuenta.vista) {
+              <span class="badge-vista">A LA VISTA</span>
+            }
+            @if (cuenta.inversion) {
+              <span class="badge-inversion">INVERSIÓN</span>
+            }
+          </div>
+          <p class="text-sm text-gray-400 mt-0.5">{{ cuenta.institucion }}</p>
+        </div>
+
+        <!-- Balance -->
+        <div class="text-right mr-2">
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Saldo actual</p>
+          <p class="text-base font-semibold text-gray-900">$ {{ cuenta.saldo | number:'1.2-2' }}</p>
         </div>
       </div>
-    </div>
-  </div>
-
-
-
+    }
+  }
 </div>

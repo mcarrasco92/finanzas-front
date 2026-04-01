@@ -1,156 +1,164 @@
-<app-confirm-modal *ngIf="confirmModal" [titulo]="'Eliminar movimiento'" [mensaje]="'¿Estás seguro de que deseas eliminar este movimiento?'" [fondoOscuro]="false" (cerrar)="confirmModal=false" (confirmar)="eliminaTransaccion()"></app-confirm-modal>
+@if (confirmModal) {
+  <app-confirm-modal [titulo]="'Eliminar movimiento'" [mensaje]="'¿Estás seguro de que deseas eliminar este movimiento?'" [fondoOscuro]="false" (cerrar)="confirmModal=false" (confirmar)="eliminaTransaccion()"></app-confirm-modal>
+}
 
-<div>
+<div class="fixed inset-0 z-49 bg-black/40 backdrop-blur-sm"></div>
 
-  <div class="fixed inset-0 z-49 flex items-center justify-center backdrop-blur-sm absolute bg-black opacity-50"></div>
-  <div class="fixed inset-0 z-49 flex items-center justify-center backdrop-blur-sm absolute"></div>
-  <div *ngIf="!confirmModal" class="fixed inset-0 z-50 flex items-center justify-center">
+@if (!confirmModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl">
 
-    <div class="bg-white rounded-lg shadow-lg w-220 p-6">
-      <h2 class="relative text-lg font-semibold text-gray-900 mb-4 border-b border-gray-900/10 pb-5"> {{(transaccion.id ? 'Información' : 'Nuevo ') + " " + tipo.toLowerCase()}}
-        <div class="absolute top-0 right-1 cursor-pointer" (click)="cerrarModal()">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="size-6">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+          @if (tipo === 'Ingreso') {
+            <div class="h-9 w-9 rounded-full bg-green-100 text-green-700 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+              </svg>
+            </div>
+          } @else {
+            <div class="h-9 w-9 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" />
+              </svg>
+            </div>
+          }
+          <h2 class="text-base font-semibold text-gray-900">{{ (transaccion.id ? 'Información' : 'Nuevo') + ' ' + tipo.toLowerCase() }}</h2>
+        </div>
+        <button (click)="cerrarModal()" class="p-2 rounded-full hover:bg-gray-100 text-gray-400 cursor-pointer transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
           </svg>
-        </div>
-      </h2>
+        </button>
+      </div>
 
-      <form class="pt-4 space-y-8">
+      <!-- Form -->
+      <form class="px-6 py-5 space-y-5">
 
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
-            <div class="input-form-text">
-                <label for="fecha">Fecha</label>
-                <input [(ngModel)]="transaccion.fecha" id="fecha" type="date" name="fecha" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"
-                  autocomplete="off" />
-                <p *ngIf="valFecha">Este campo es obligatorio</p>
+
+          <div class="input-form-text">
+            <label for="fecha">Fecha</label>
+            <input [(ngModel)]="transaccion.fecha" id="fecha" type="date" name="fecha" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
+            @if (valFecha) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
+          </div>
+
+          <div class="input-form-currency">
+            <div>$</div>
+            <label for="saldo">Importe</label>
+            <input [(ngModel)]="importe" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" (blur)="actualizaSaldo()" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" />
+            @if (valImporte) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
+          </div>
+
+          @if (tipo == 'Ingreso') {
+            <div class="select-form">
+              <label for="categoriaI">Categoría</label>
+              <select [(ngModel)]="transaccion.catIngresoId" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="categoriaI" name="categoriaI" class="pl-10">
+                <option value="" disabled selected>Selecciona una opción</option>
+                @for (cat of catIngresos; track cat.id) {
+                  @if (cat.activa || transaccion.catIngresoId == cat.id) {
+                    <option [value]="cat.id">{{cat.nombre}}</option>
+                  }
+                }
+              </select>
+              @if (valCatIngreso) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
             </div>
 
-            <div class="input-form-currency">
-                <div>$</div>
-  
-                <label for="saldo">Importe</label>
-                <input [(ngModel)]="importe" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" (blur)="actualizaSaldo()" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" />
-                <p *ngIf="valImporte">Este campo es obligatorio</p>
-              </div>
+            <div class="select-form">
+              <label for="cuentaI">Cuenta</label>
+              <select [(ngModel)]="transaccion.cuentaId" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="cuentaI" name="cuentaI" class="pl-10">
+                <option value="" disabled selected>Selecciona una opción</option>
+                @for (cuenta of cuentas; track cuenta.id) {
+                  @if (cuenta.activa) { <option [value]="cuenta.id">{{cuenta.nombre}}</option> }
+                }
+              </select>
+              @if (valCuenta) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
+            </div>
+          }
 
-              <div *ngIf="tipo == 'Ingreso'">
+          @if (tipo == 'Egreso') {
+            <div class="select-form">
+              <label for="categoriaE">Categoría</label>
+              <select [(ngModel)]="transaccion.catEgresoId" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="categoriaE" name="categoriaE" class="pl-10">
+                <option value="" disabled selected>Selecciona una opción</option>
+                @for (cat of catEgresos; track cat.id) {
+                  @if (cat.activa) { <option [value]="cat.id">{{cat.nombre}}</option> }
+                }
+              </select>
+              @if (valCatEgreso) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
+            </div>
 
-                <div class="select-form">
-                  <label for="categoria">Categoria</label>
-                  <select [(ngModel)]="transaccion.catIngresoId" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="categoria" name="categoria" class="pl-10" >
-                    <option value="" disabled selected>Selecciona una opción</option>
-                    <ng-container *ngFor="let cat of catIngresos">
-                      <option *ngIf="cat.activa || transaccion.catIngresoId == cat.id" [value]=cat.id>{{cat.nombre}}</option>
-                    </ng-container>
-                  </select>
-                  <p *ngIf="valCatIngreso">Este campo es obligatorio</p>
-                </div>
-
-              </div>
-
-              <div *ngIf="tipo == 'Ingreso'">
-
-                <div class="select-form">
-                  <label for="cuenta">Cuenta</label>
-                  <select [(ngModel)]="transaccion.cuentaId" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"  id="cuenta" name="cuenta" class="pl-10" >
-                    <option value="" disabled selected>Selecciona una opción</option>
-                    <ng-container *ngFor="let cuenta of cuentas">
-                      <option *ngIf="cuenta.activa" [value]=cuenta.id>{{cuenta.nombre}}</option>
-                    </ng-container>
-                  </select>
-                  <p *ngIf="valCuenta">Este campo es obligatorio</p>
-                </div>
-
-              </div>
-
-
-              <div *ngIf="tipo == 'Egreso'">
-
-                <div class="select-form">
-                  <label for="categoria">Categoria</label>
-                  <select [(ngModel)]="transaccion.catEgresoId"  [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="categoria" name="categoria" class="pl-10" >
-                    <option value="" disabled selected>Selecciona una opción</option>
-                    <ng-container *ngFor="let cat of catEgresos">
-                      <option  *ngIf="cat.activa" [value]=cat.id>{{cat.nombre}}</option>  
-                    </ng-container>
-                    
-                  </select>
-                  <p *ngIf="valCatEgreso">Este campo es obligatorio</p>
-                </div>
-
-              </div>
-
-
-              <div *ngIf="tipo == 'Egreso'">
-
-                <div class="select-form">
-                  <label for="cuenta">Cuenta / Tarjeta</label>
-                  <select [(ngModel)]="cuentasYTarjetas" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"  id="cuenta" name="cuenta" class="pl-10" >
-                    <option value="" disabled selected>Selecciona una opción</option>
-                    <optgroup label="Tarjetas de crédito">
-                      <ng-container *ngFor="let tarjeta of tarjetas">
-                        <option *ngIf="tarjeta.activa" [value]="'T' + tarjeta.id">{{tarjeta.nombre}}</option>
-                      </ng-container>
-                    </optgroup>
-                    <optgroup label="Cuentas de débito">
-                      <ng-container *ngFor="let cuenta of cuentas">
-                        <option *ngIf="cuenta.activa" [value]="'C' + cuenta.id">{{cuenta.nombre}}</option>
-                      </ng-container>
-                    </optgroup>
-                    
-                  </select>
-                  <p *ngIf="valCuentaTarjeta">Este campo es obligatorio</p>
-                </div>
-
-                
-              </div>
+            <div class="select-form">
+              <label for="cuentaE">Cuenta / Tarjeta</label>
+              <select [(ngModel)]="cuentasYTarjetas" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="cuentaE" name="cuentaE" class="pl-10">
+                <option value="" disabled selected>Selecciona una opción</option>
+                <optgroup label="Tarjetas de crédito">
+                  @for (tarjeta of tarjetas; track tarjeta.id) {
+                    @if (tarjeta.activa) { <option [value]="'T' + tarjeta.id">{{tarjeta.nombre}}</option> }
+                  }
+                </optgroup>
+                <optgroup label="Cuentas de débito">
+                  @for (cuenta of cuentas; track cuenta.id) {
+                    @if (cuenta.activa) { <option [value]="'C' + cuenta.id">{{cuenta.nombre}}</option> }
+                  }
+                </optgroup>
+              </select>
+              @if (valCuentaTarjeta) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
+            </div>
+          }
 
         </div>
 
-
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
-            
-            <div class="input-form-text">
-                <label for="concepto">Concepto</label>
-                <input [(ngModel)]="transaccion.concepto"   id="concepto" type="text" name="concepto"  [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"
-                  autocomplete="off" />
-                <p *ngIf="valConcepto">Este campo es obligatorio</p>
-            </div>
 
-            <div class="input-form-text">
-                <label for="descripcion">Descripción</label>
-                <input [(ngModel)]="transaccion.descripcion"   id="descripcion" type="text" name="descripcion"  [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"
-                  autocomplete="off" />
-                <p *ngIf="valDescripcion">Este campo es obligatorio</p>
-            </div>
+          <div class="input-form-text">
+            <label for="concepto">Concepto</label>
+            <input [(ngModel)]="transaccion.concepto" id="concepto" type="text" name="concepto" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
+            @if (valConcepto) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
+          </div>
 
-            <div class="select-form" *ngIf="tipo == 'Egreso'">
+          <div class="input-form-text">
+            <label for="descripcion">Descripción</label>
+            <input [(ngModel)]="transaccion.descripcion" id="descripcion" type="text" name="descripcion" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
+          </div>
+
+          @if (tipo == 'Egreso') {
+            <div class="select-form">
               <label for="necesario">¿Es un gasto necesario?</label>
-              <select [(ngModel)]="transaccion.necesario" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="necesario" name="necesario" class="pl-10" >
+              <select [(ngModel)]="transaccion.necesario" [disabled]="!editar && transaccion.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="necesario" name="necesario" class="pl-10">
                 <option value="" disabled selected>Selecciona una opción</option>
                 <option value="Si">Si</option>
                 <option value="No">No</option>
               </select>
-              <p *ngIf="valNecesario">Este campo es obligatorio</p>
+              @if (valNecesario) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
             </div>
+          }
 
-        </div>
-
-        <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10 mt-7">
-          <div class="flex-grow flex justify-start space-x-4">
-            <button *ngIf="transaccion.id" (click)="confirmModal = true" type="button" class="btn-danger">
-              <div class="flex items-center space-x-2">
-                <div>Eliminar</div>
-              </div>
-            </button>
-          </div>
-          <button *ngIf="editar && transaccion.id" (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
-          <button *ngIf="editar || !transaccion.id" type="submit" class="btn-primary" (click)="enviaDatos()">Guardar</button>
-          <button *ngIf="!editar && transaccion.id" (click)="editar=true" type="button" class="btn-primary">Editar</button>
         </div>
 
       </form>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-between px-6 pb-6 pt-2 border-t border-gray-100">
+        <div class="flex items-center gap-2">
+          @if (transaccion.id) {
+            <button (click)="confirmModal = true" type="button" class="btn-danger">Eliminar</button>
+          }
+        </div>
+        <div class="flex items-center gap-2">
+          @if (editar && transaccion.id) {
+            <button (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
+          }
+          @if (editar || !transaccion.id) {
+            <button type="submit" class="btn-primary" (click)="enviaDatos()">Guardar</button>
+          }
+          @if (!editar && transaccion.id) {
+            <button (click)="editar=true" type="button" class="btn-primary">Editar</button>
+          }
+        </div>
+      </div>
+
     </div>
   </div>
-</div>
+}

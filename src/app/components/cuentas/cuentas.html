@@ -1,33 +1,40 @@
 <app-toast></app-toast>
 
-<nav class="relative bg-white shadow-sm">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="flex h-16 justify-between">
-      <div class="flex">
-        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-          <!-- Current: "border-indigo-600 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
-          <a [routerLink]="'/dashboard/cuentas/debito'"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-            [ngClass]="{'!border-blue-500 text-gray-900': isDebito()}">Cuentas de débito</a>
-          <a [routerLink]="'/dashboard/cuentas/tdc'"
-            class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-            [ngClass]="{'!border-indigo-500 text-gray-900': isTDC()}">Tarjetas de crédito</a>
-        </div>
-      </div>
-      
-      <div class="flex items-center">
+<div class="px-6 py-1 flex items-center justify-between">
 
-        <div class="hidden sm:ml-6 sm:flex sm:items-center">
-          <button *ngIf="isDebito() && btnNuevaCuenta" type="button" (click)="nuevaCuenta()" class="btn-blue">Nueva cuenta</button>
-            <button *ngIf="isTDC() && btnNuevaTDC" type="button" (click)="nuevaTDC()" class="btn-indigo">Nueva tarjeta</button>
-        </div>
-
-        
-      </div>
-
-    </div>
+  <!-- Pill tab switcher -->
+  <div class="flex items-center bg-gray-100 rounded-full p-1 gap-0.5">
+    <button
+      (click)="navegarDebito()"
+      class="px-4 py-1.5 text-sm font-medium rounded-full transition-all cursor-pointer"
+      [ngClass]="isDebito() ? 'bg-blue-500 shadow-sm text-white' : 'text-gray-500 hover:text-gray-700'">
+      Débito
+    </button>
+    <button
+      (click)="navegarTDC()"
+      class="px-4 py-1.5 text-sm font-medium rounded-full transition-all cursor-pointer"
+      [ngClass]="isTDC() ? 'bg-indigo-500 shadow-sm text-white' : 'text-gray-500 hover:text-gray-700'">
+      Crédito
+    </button>
   </div>
-</nav>
+
+  <!-- Add button -->
+  @if (isDebito() && btnNuevaCuenta) {
+    <button (click)="nuevaCuenta()"
+      class="flex bg-white items-center gap-1.5 px-4 py-2 text-sm font-medium text-green-800 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors cursor-pointer">
+      <span class="text-base leading-none font-semibold">+</span>
+      Añadir Nueva Cuenta
+    </button>
+  }
+  @if (isTDC() && btnNuevaTDC) {
+    <button (click)="nuevaTDC()"
+      class="flex bg-white items-center gap-1.5 px-4 py-2 text-sm font-medium text-green-800 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors cursor-pointer">
+      <span class="text-base leading-none font-semibold">+</span>
+      Añadir Nueva Tarjeta
+    </button>
+  }
+
+</div>
 
 <div class="my-4">
   <router-outlet></router-outlet>

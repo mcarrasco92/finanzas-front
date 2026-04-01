@@ -87,4 +87,24 @@ export class TransaccionesRecurrentes {
     this.modalAbierto = false;
     this.consultaTransacciones();
   }
+
+  getInitials(trans: TransaccionRecurrenteModel): string {
+    const firstWord = trans.concepto.split(' ')[0];
+    return firstWord.length <= 2 ? firstWord.toUpperCase() : firstWord[0].toUpperCase();
+  }
+
+  getAvatarClass(trans: TransaccionRecurrenteModel): string {
+    const classes = [
+      'bg-blue-100 text-blue-700',
+      'bg-purple-100 text-purple-700',
+      'bg-red-100 text-red-700',
+      'bg-green-100 text-green-700',
+      'bg-amber-100 text-amber-700',
+      'bg-indigo-100 text-indigo-700',
+      'bg-pink-100 text-pink-700',
+      'bg-teal-100 text-teal-700',
+    ];
+    const hash = trans.concepto.charCodeAt(0) + (trans.concepto.charCodeAt(1) || 0);
+    return classes[hash % classes.length];
+  }
 }

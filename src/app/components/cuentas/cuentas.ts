@@ -1,66 +1,68 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CuentasService } from '../../services/cuentas/cuentas';
 import { TarjetasService } from '../../services/tarjetas/tarjetas';
 import { CommonModule } from '@angular/common';
 import { Toast } from '../../shared/toast/toast';
-import { ToastService, TypeToast, typToast } from '../../shared/toast/service/toast-service';
+import { ToastService } from '../../shared/toast/service/toast-service';
 import { Loading } from '../../shared/loading/loading';
 import { FormsModule } from '@angular/forms';
-import { ChangeDetectorRef } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { RouterLink, Router ,RouterModule } from '@angular/router';
+import { RouterOutlet, Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GeneralService } from '../../services/general-service';
 
 @Component({
   selector: 'app-cuentas',
-  imports: [CommonModule, Toast, Loading, FormsModule, RouterOutlet, RouterLink, RouterModule],
+  imports: [CommonModule, Toast, Loading, FormsModule, RouterOutlet, RouterModule],
   templateUrl: './cuentas.html',
   styleUrl: './cuentas.css'
 })
 export class Cuentas {
 
-  constructor(private cuentasService: CuentasService, 
+  constructor(
+    private cuentasService: CuentasService,
     private tarjetaService: TarjetasService,
-    private toast: ToastService, 
+    private toast: ToastService,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private generalService: GeneralService
-) { }
+  ) { }
 
   btnNuevaCuenta: boolean = true;
   btnNuevaTDC: boolean = true;
 
   private screenSubscription!: Subscription;
 
-
   ngOnInit(): void {
-
     this.screenSubscription = this.generalService.screen$.subscribe(screen => {
       this.btnNuevaTDC = false;
       this.btnNuevaCuenta = false;
-      if(screen === 'lista-debito' || screen === 'form-debito-id'){
+      if (screen === 'lista-debito' || screen === 'form-debito-id') {
         this.btnNuevaCuenta = true;
-      }else if(screen === 'lista-tdc' || screen === 'form-tdc-id'){
+      } else if (screen === 'lista-tdc' || screen === 'form-tdc-id') {
         this.btnNuevaTDC = true;
       }
       this.cdr.detectChanges();
     });
-    
-    this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {
     this.screenSubscription?.unsubscribe();
   }
 
+  navegarDebito(): void {
+    this.router.navigate(['/dashboard/cuentas/debito']);
+  }
 
-  nuevaCuenta() {
+  navegarTDC(): void {
+    this.router.navigate(['/dashboard/cuentas/tdc']);
+  }
+
+  nuevaCuenta(): void {
     this.btnNuevaCuenta = false;
     this.router.navigate(['/dashboard/cuentas/debitof']);
   }
 
-  nuevaTDC() {
+  nuevaTDC(): void {
     this.btnNuevaTDC = false;
     this.router.navigate(['/dashboard/cuentas/tdcf']);
   }
@@ -72,8 +74,4 @@ export class Cuentas {
   isTDC(): boolean {
     return this.router.url.includes('/dashboard/cuentas/tdc');
   }
-
-
-
-
 }

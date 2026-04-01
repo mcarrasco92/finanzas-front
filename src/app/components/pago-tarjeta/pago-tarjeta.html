@@ -1,90 +1,108 @@
-<app-confirm-modal *ngIf="confirmModal" [titulo]="'Eliminar el pago de la tarjeta'" [mensaje]="'¿Estás seguro de que deseas eliminar el pago de la tarjeta?'" [fondoOscuro]="false" (cerrar)="confirmModal=false" (confirmar)="eliminaTransferencia()"></app-confirm-modal>
+@if (confirmModal) {
+  <app-confirm-modal [titulo]="'Eliminar el pago de la tarjeta'" [mensaje]="'¿Estás seguro de que deseas eliminar el pago de la tarjeta?'" [fondoOscuro]="false" (cerrar)="confirmModal=false" (confirmar)="eliminaTransferencia()"></app-confirm-modal>
+}
 
-<div>
+<div class="fixed inset-0 z-49 bg-black/40 backdrop-blur-sm"></div>
 
-  <div class="fixed inset-0 z-49 flex items-center justify-center backdrop-blur-sm absolute bg-black opacity-50"></div>
-  <div class="fixed inset-0 z-49 flex items-center justify-center backdrop-blur-sm absolute"></div>
-  <div *ngIf="!confirmModal" class="fixed inset-0 z-50 flex items-center justify-center">
+@if (!confirmModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl">
 
-    <div class="bg-white rounded-lg shadow-lg w-220 p-6">
-      <h2 class="relative text-lg font-semibold text-gray-900 mb-4 border-b border-gray-900/10 pb-5"> {{transferencia.id ? 'Información ': 'Nuevo '}} pago de tarjeta
-        <div class="absolute top-0 right-1 cursor-pointer" (click)="cerrarModal()">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="size-6">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+            </svg>
+          </div>
+          <h2 class="text-base font-semibold text-gray-900">{{ (transferencia.id ? 'Información' : 'Nuevo') + ' pago de tarjeta' }}</h2>
+        </div>
+        <button (click)="cerrarModal()" class="p-2 rounded-full hover:bg-gray-100 text-gray-400 cursor-pointer transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
           </svg>
-        </div>
-      </h2>
+        </button>
+      </div>
 
-      <form class="pt-4 space-y-8">
+      <!-- Form -->
+      <form class="px-6 py-5 space-y-5">
 
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
-            <div class="input-form-text">
-                <label for="fecha">Fecha</label>
-                <input [(ngModel)]="transferencia.fecha" id="fecha" type="date" name="fecha" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"
-                  autocomplete="off" />
-                <p *ngIf="valFecha">Este campo es obligatorio</p>
-            </div>
 
-            
+          <div class="input-form-text">
+            <label for="fecha">Fecha</label>
+            <input [(ngModel)]="transferencia.fecha" id="fecha" type="date" name="fecha" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
+            @if (valFecha) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
+          </div>
 
-            <div class="select-form">
-                <label for="cuentaOrigen">Cuenta origen</label>
-                <select [(ngModel)]="transferencia.cuentaOrigenId" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"  id="cuentaOrigen" name="cuentaOrigen" class="pl-10" >
-                  <option value="" disabled selected>Selecciona una opción</option>
-                  <ng-container *ngFor="let cuenta of cuentas">
-                    <option *ngIf="cuenta.activa && transferencia.cuentaDestinoId != cuenta.id" [value]=cuenta.id>{{cuenta.nombre}}</option>
-                  </ng-container>
-                </select>
-                <p *ngIf="valCuentaOrigen">Este campo es obligatorio</p>
-            </div>
+          <div class="select-form">
+            <label for="cuentaOrigen">Cuenta origen</label>
+            <select [(ngModel)]="transferencia.cuentaOrigenId" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="cuentaOrigen" name="cuentaOrigen" class="pl-10">
+              <option value="" disabled selected>Selecciona una opción</option>
+              @for (cuenta of cuentas; track cuenta.id) {
+                @if (cuenta.activa && transferencia.cuentaDestinoId != cuenta.id) {
+                  <option [value]="cuenta.id">{{cuenta.nombre}}</option>
+                }
+              }
+            </select>
+            @if (valCuentaOrigen) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
+          </div>
 
-            <div class="select-form">
-              <label for="cuentaDestino">Tarjeta destino</label>
-              <select [(ngModel)]="transferencia.cuentaDestinoId" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"  id="cuentaDestino" name="cuentaDestino" class="pl-10" >
-                <option value="" disabled selected>Selecciona una opción</option>
-                <ng-container *ngFor="let tarjeta of tarjetas">
-                  <option *ngIf="tarjeta.activa && transferencia.cuentaOrigenId != tarjeta.id" [value]=tarjeta.id>{{tarjeta.nombre}}</option>
-                </ng-container>
-              </select>
-              <p *ngIf="valCuentaDestino">Este campo es obligatorio</p>
+          <div class="select-form">
+            <label for="cuentaDestino">Tarjeta destino</label>
+            <select [(ngModel)]="transferencia.cuentaDestinoId" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" id="cuentaDestino" name="cuentaDestino" class="pl-10">
+              <option value="" disabled selected>Selecciona una opción</option>
+              @for (tarjeta of tarjetas; track tarjeta.id) {
+                @if (tarjeta.activa && transferencia.cuentaOrigenId != tarjeta.id) {
+                  <option [value]="tarjeta.id">{{tarjeta.nombre}}</option>
+                }
+              }
+            </select>
+            @if (valCuentaDestino) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
           </div>
 
           <div class="input-form-currency">
             <div>$</div>
-
             <label for="saldo">Importe</label>
             <input [(ngModel)]="importe" (keydown)="detectarTecla($event)" (input)="formatearSaldo($event)" (blur)="actualizaSaldo()" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" placeholder="0.00" id="saldo" type="text" name="saldo" autocomplete="off" />
-            <p *ngIf="valImporte">Este campo es obligatorio</p>
+            @if (valImporte) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
           </div>
-
 
         </div>
 
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
+
           <div class="input-form-text">
             <label for="concepto">Concepto</label>
-            <input [(ngModel)]="transferencia.concepto"   id="concepto" type="text" name="concepto"  [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"
-              autocomplete="off" />
-            <p *ngIf="valConcepto">Este campo es obligatorio</p>
+            <input [(ngModel)]="transferencia.concepto" id="concepto" type="text" name="concepto" [disabled]="!editar && transferencia.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
+            @if (valConcepto) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
           </div>
 
-        </div>
-
-        <div class="pt-6 flex items-center justify-end gap-x-6 border-t border-gray-900/10 relative h-10 mt-7">
-          <div class="flex-grow flex justify-start space-x-4">
-            <button *ngIf="transferencia.id" (click)="confirmModal = true" type="button" class="btn-danger">
-              <div class="flex items-center space-x-2">
-                <div>Eliminar</div>
-              </div>
-            </button>
-          </div>
-          <button *ngIf="editar && transferencia.id" (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
-          <button *ngIf="editar || !transferencia.id" type="submit" class="btn-primary" (click)="enviaDatos()">Guardar</button>
-          <button *ngIf="!editar && transferencia.id" (click)="editar=true" type="button" class="btn-primary">Editar</button>
         </div>
 
       </form>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-between px-6 pb-6 pt-2 border-t border-gray-100">
+        <div class="flex items-center gap-2">
+          @if (transferencia.id) {
+            <button (click)="confirmModal = true" type="button" class="btn-danger">Eliminar</button>
+          }
+        </div>
+        <div class="flex items-center gap-2">
+          @if (editar && transferencia.id) {
+            <button (click)="cancelaEdicion()" type="button" class="btn-secondary">Cancelar</button>
+          }
+          @if (editar || !transferencia.id) {
+            <button type="submit" class="btn-primary" (click)="enviaDatos()">Guardar</button>
+          }
+          @if (!editar && transferencia.id) {
+            <button (click)="editar=true" type="button" class="btn-primary">Editar</button>
+          }
+        </div>
+      </div>
+
     </div>
   </div>
-</div>
+}

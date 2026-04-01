@@ -54,67 +54,72 @@
       </dd>
     </div>
   </dl>
-</div>
 
-
-<div class="flex justify-end mb-2 mr-4 text-sm">
-  <div class="input-form-check">
+  <div class="input-form-check mt-4 justify-end">
     <span class="span-label">
-        <label id="inversion-label">Mostrar tarjetas desactivadas</label>
+      <label>Mostrar tarjetas desactivadas</label>
     </span>
-    <div class="check-switch check-default group has-checked:bg-indigo-500 bg-gray-200 outline-indigo-500">
-        <span class="span-border"></span>
-        <input type="checkbox" [(ngModel)]="tarjetasDesactivadas"/>
+    <div class="check-switch check-default group bg-gray-200 has-checked:bg-indigo-500">
+      <span class="span-border"></span>
+      <input type="checkbox" [(ngModel)]="tarjetasDesactivadas" (change)="toggleDesactivadas()"/>
     </div>
   </div>
 </div>
 
-<div class="p-4 bg-white shadow-sm">
 
-  <div class="px-4 sm:px-6 lg:px-8">
-    <div class="mt-1 flow-root">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <table class="general-table">
-            <thead>
-              <tr>
-                <th scope="col" class="text-left font-semibold">Nombre</th>
-                <th scope="col" class="text-left">Institución</th>
-                <th scope="col" class="text-center">Día de corte</th>
-                <th scope="col" class="text-center">Día de pago</th>
-                <th scope="col" class="text-center">Saldo a pagar</th>
-                <th scope="col" class="text-center">Periodo actual</th>
-                <th scope="col" class="text-center">Saldo total</th>
-              </tr>
-            </thead>
-            <tbody>
-                
-              <ng-container *ngFor="let tarjeta of tarjetas; let i = index" >
-                <tr *ngIf="tarjetasDesactivadas || tarjeta.activa" 
-                  (dragstart)="onDragStart($event, i)"
-                  (dragover)="onDragOver($event)" 
-                  (drop)="onDrop($event, i)" 
-                  [draggable]="isDraggable"
-                  [ngClass]="{ 'hover:bg-gray-200': isDraggable, 'opacity-50': !tarjeta.activa }"
-                  (click)="consultaTarjeta(tarjeta.id)">
+<div class="space-y-3">
+  @for (tarjeta of tarjetas; track tarjeta.id; let i = $index) {
+    @if (tarjetasDesactivadas || tarjeta.activa) {
+      <div
+        class="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-3 flex items-center gap-4 cursor-pointer transition-shadow hover:shadow-md"
+        [class.opacity-50]="!tarjeta.activa"
+        (click)="consultaTarjeta(tarjeta.id)"
+        (dragstart)="onDragStart($event, i)"
+        (dragover)="onDragOver($event)"
+        (drop)="onDrop($event, i)"
+        [draggable]="isDraggable">
 
-                  <td class="font-medium text-gray-900">{{tarjeta.nombre}}</td>
-                  <td class="text-gray-500">{{tarjeta.institucion}}</td>
-                  <td class="text-center text-gray-500">{{ tarjeta.dcorte }}</td>
-                  <td class="text-center text-gray-500">{{tarjeta.dpago}}</td>
-                  <td class="text-center text-gray-500">$ {{tarjeta.pagoPendiente| number:'1.2-2' }}</td>
-                  <td class="text-center text-gray-500">$ {{tarjeta.saldoPeriodoActual| number:'1.2-2' }}</td>
-                  <td class="text-center text-gray-500">{{tarjeta.saldo | currency}}</td>
-                  <td (mousedown)="onMouseDown()" (mouseleave)="onMouseUp()" class="cursor-move text-center" (click)="$event.stopPropagation()">
-                    <app-drag-icon></app-drag-icon>
-                  </td>
-                </tr>
-              </ng-container>
-              
-            </tbody>
-          </table>
+        <!-- Drag handle -->
+        <button
+          class="flex-shrink-0 p-2 rounded-full hover:bg-gray-100 text-gray-300 cursor-grab active:cursor-grabbing"
+          (click)="$event.stopPropagation()"
+          (mousedown)="onMouseDown()"
+          (mouseleave)="onMouseUp()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" class="w-4 h-4">
+            <circle cx="5" cy="4" r="1.5"/>
+            <circle cx="11" cy="4" r="1.5"/>
+            <circle cx="5" cy="10" r="1.5"/>
+            <circle cx="11" cy="10" r="1.5"/>
+          </svg>
+        </button>
+
+        <!-- Avatar -->
+        <div
+          class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold"
+          [ngClass]="getAvatarClass(tarjeta)">
+          {{ getInitials(tarjeta) }}
+        </div>
+
+        <!-- Name + institution + cut/payment days -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-semibold text-gray-900 text-sm">{{ tarjeta.nombre }}</span>
+          </div>
+          <p class="text-sm text-gray-400 mt-0.5">{{ tarjeta.institucion }}</p>
+        </div>
+
+        <!-- Cut / payment days -->
+        <div class="hidden sm:flex flex-col items-center text-center mr-4">
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Corte / Pago</p>
+          <p class="text-sm font-semibold text-gray-700">{{ tarjeta.dcorte }} / {{ tarjeta.dpago }}</p>
+        </div>
+
+        <!-- Saldo a pagar -->
+        <div class="text-right mr-2">
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Saldo a pagar</p>
+          <p class="text-base font-semibold text-gray-900">$ {{ tarjeta.pagoPendiente | number:'1.2-2' }}</p>
         </div>
       </div>
-    </div>
-  </div>
+    }
+  }
 </div>

@@ -1,64 +1,69 @@
 <app-toast></app-toast>
 
+<div class="px-6 py-1 flex items-center justify-between">
 
-<nav class="relative bg-white shadow-sm">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="flex h-16 justify-between">
-      <div class="flex">
-        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-          <a class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 cursor-pointer" [ngClass]="{'!border-green-500 text-gray-900': tipoMovimiento == 'Egreso'} " (click)="tipoMovimiento = 'Egreso'" >Cargos recurrentes</a>
-        </div>
-
-        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-            <a class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 cursor-pointer" [ngClass]="{'!border-green-500 text-gray-900': tipoMovimiento == 'Ingreso'} " (click)="tipoMovimiento = 'Ingreso'">Ingresos recurrentes</a>
-        </div>
-      </div>
-
-      <div class="flex items-center">
-
-        <div class="hidden sm:ml-6 sm:flex sm:items-center">
-          <button type="button" (click)="abrirModal()" class="btn-green">Nuevo {{tipoMovimiento == "Egreso" ? "cargo" : "ingreso"}} recurrente</button>
-        </div>
-      </div>
-    </div>
+  <!-- Pill tab switcher -->
+  <div class="flex items-center bg-gray-100 rounded-full p-1 gap-0.5">
+    <button
+      (click)="tipoMovimiento = 'Egreso'"
+      class="px-4 py-1.5 text-sm font-medium rounded-full transition-all cursor-pointer"
+      [ngClass]="tipoMovimiento == 'Egreso' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+      Cargos recurrentes
+    </button>
+    <button
+      (click)="tipoMovimiento = 'Ingreso'"
+      class="px-4 py-1.5 text-sm font-medium rounded-full transition-all cursor-pointer"
+      [ngClass]="tipoMovimiento == 'Ingreso' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+      Ingresos recurrentes
+    </button>
   </div>
-</nav>
 
+  <!-- Add button -->
+  <button (click)="abrirModal()"
+    class="flex bg-white items-center gap-1.5 px-4 py-2 text-sm font-medium text-green-800 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors cursor-pointer">
+    <span class="text-base leading-none font-semibold">+</span>
+    Nuevo {{ tipoMovimiento == 'Egreso' ? 'cargo' : 'ingreso' }} recurrente
+  </button>
 
-<div class="p-4 bg-white shadow-sm mt-4">
-
-  <div class="px-4 sm:px-6 lg:px-8">
-    <div class="mt-1 flow-root">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <table class="general-table">
-            <thead>
-              <tr>
-                <th scope="col" class="text-center">Fecha</th>
-                <th scope="col" class="text-center">Concepto</th>
-                <th scope="col" class="text-center">Cuenta / Tarjeta</th>
-                <th scope="col" class="text-center">Importe</th>
-                <th scope="col" class="text-center">Periodicidad</th>
-              </tr>
-            </thead>
-            <tbody>
-                
-              <ng-container *ngFor="let trans of transacciones" >
-                <tr *ngIf="tipoMovimiento == trans.tipo" (click)="consultaTransaccion(trans)" class="hover:bg-gray-200 cursor-pointer">
-                  <td class="text-center text-gray-900">{{trans.fecha}}</td>
-                  <td class="text-center text-gray-900">{{trans.concepto}}</td>
-                  <td class="text-center text-gray-500">{{consultaCuentaTarjeta(trans)}}</td>
-                  <td class="text-center text-gray-500">$ {{ trans.importe | number:'1.2-2' }}</td>
-                  <td class="text-center text-gray-500">{{ trans.periodicidad }}</td>
-                </tr>
-              </ng-container>
-              
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
-<app-transacciones-recurrentes-modal *ngIf="modalAbierto" (cerrar)="cerrarModal()" [tipoMovimiento]="tipoMovimiento"></app-transacciones-recurrentes-modal>  
+<div class="space-y-3 mt-4">
+  @for (trans of transacciones; track trans.id) {
+    @if (tipoMovimiento == trans.tipo) {
+      <div
+        class="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-3 flex items-center gap-4 cursor-pointer transition-shadow hover:shadow-md"
+        (click)="consultaTransaccion(trans)">
+
+        <!-- Avatar -->
+        <div
+          class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold"
+          [ngClass]="getAvatarClass(trans)">
+          {{ getInitials(trans) }}
+        </div>
+
+        <!-- Concepto + cuenta/tarjeta + periodicidad -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-semibold text-gray-900 text-sm">{{ trans.concepto }}</span>
+            <span class="badge-periodicidad">{{ trans.periodicidad }}</span>
+          </div>
+          <p class="text-sm text-gray-400 mt-0.5">{{ consultaCuentaTarjeta(trans) }}</p>
+        </div>
+
+        <!-- Importe -->
+        <div class="text-right mr-2">
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Importe</p>
+          <p class="text-base font-semibold text-gray-900">$ {{ trans.importe | number:'1.2-2' }}</p>
+        </div>
+
+        <!-- Chevron -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+          class="flex-shrink-0 w-4 h-4 text-gray-300">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </div>
+    }
+  }
+</div>
+
+<app-transacciones-recurrentes-modal *ngIf="modalAbierto" (cerrar)="cerrarModal()" [tipoMovimiento]="tipoMovimiento"></app-transacciones-recurrentes-modal>

@@ -1,0 +1,81 @@
+<div class="search-dropdown">
+  @if (hasResults) {
+
+    <!-- Cuentas -->
+    @if (results.cuentas.length > 0) {
+      <div class="search-section">
+        <p class="search-section-header">Cuentas</p>
+        @for (item of results.cuentas; track item.id) {
+          <button class="search-item" (click)="select(item)">
+            <span class="search-item-label">{{ item.label }}</span>
+            <span class="search-item-sublabel">{{ item.sublabel }}</span>
+          </button>
+        }
+        @if (results.totalCuentas > results.cuentas.length) {
+          <button class="search-ver-todos" (click)="seeAll('cuentas')">
+            Ver todos ({{ results.totalCuentas }})
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Tarjetas -->
+    @if (results.tarjetas.length > 0) {
+      <div class="search-section">
+        <p class="search-section-header">Tarjetas</p>
+        @for (item of results.tarjetas; track item.id) {
+          <button class="search-item" (click)="select(item)">
+            <span class="search-item-label">{{ item.label }}</span>
+            <span class="search-item-sublabel">{{ item.sublabel }}</span>
+          </button>
+        }
+        @if (results.totalTarjetas > results.tarjetas.length) {
+          <button class="search-ver-todos" (click)="seeAll('tarjetas')">
+            Ver todos ({{ results.totalTarjetas }})
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Movimientos -->
+    @if (results.transacciones.length > 0) {
+      <div class="search-section">
+        <p class="search-section-header">Movimientos</p>
+        @for (item of results.transacciones; track item.id) {
+          <button class="search-item" (click)="select(item)">
+            <span class="search-item-label">{{ item.label }}</span>
+            <span class="search-item-sublabel">{{ item.sublabel }}</span>
+          </button>
+        }
+        @if (results.totalTransacciones > results.transacciones.length) {
+          <button class="search-ver-todos" (click)="seeAll('transacciones')">
+            Ver todos ({{ results.totalTransacciones }})
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Categorías -->
+    @if (results.categorias.length > 0) {
+      <div class="search-section">
+        <p class="search-section-header">Categorías</p>
+        @for (item of results.categorias; track item.id) {
+          <button class="search-item" (click)="select(item)">
+            <span class="search-item-label">{{ item.label }}</span>
+            <span class="search-item-sublabel">{{ item.sublabel }}</span>
+          </button>
+        }
+        @if (results.totalCategorias > results.categorias.length) {
+          <button class="search-ver-todos" (click)="seeAll('categorias')">
+            Ver todos ({{ results.totalCategorias }})
+          </button>
+        }
+      </div>
+    }
+
+  } @else {
+    <div class="search-no-results">
+      Sin resultados para "{{ query }}"
+    </div>
+  }
+</div>
