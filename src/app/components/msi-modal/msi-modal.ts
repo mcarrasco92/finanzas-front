@@ -113,11 +113,10 @@ export class MsiModal {
     this.valFecha = this.msi.fecha.trim() === '';
     this.valImporte = this.importe.trim() === '';
     this.valConcepto = this.msi.concepto.trim() === '';
-    this.valDescripcion = this.msi.descripcion.trim() === '';
     this.valCatEgreso = this.msi.catEgresoId.trim() === '';
     this.valTarjeta = this.msi.tarjetaId.trim() === '';
     this.valMeses = this.msi.meses <= 0;
-    if (this.valFecha || this.valImporte || this.valConcepto || this.valDescripcion || this.valCatEgreso || this.valTarjeta || this.valMeses) {
+    if (this.valFecha || this.valImporte || this.valConcepto || this.valCatEgreso || this.valTarjeta || this.valMeses) {
       this.toast.show('Por favor, complete todos los campos obligatorios.','', TypeToast.danger);
       return;
     }
@@ -217,6 +216,17 @@ export class MsiModal {
   esBorrado: boolean = false;
   detectarTecla(event: KeyboardEvent): void {
     this.esBorrado = event.key === 'Backspace' || event.key === 'Delete';
+  }
+
+  validarMeses(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const valor = parseInt(input.value, 10);
+    if (isNaN(valor) || valor < 1) {
+      input.value = '';
+      this.msi.meses = 0;
+    } else {
+      this.msi.meses = valor;
+    }
   }
 
   actualizaSaldo(): void {

@@ -82,8 +82,8 @@
 
           <div class="input-form-text">
             <label for="meses">Meses</label>
-            <input [(ngModel)]="msi.meses" id="meses" type="number" name="meses" [disabled]="!editar && msi.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
-            @if (valMeses) { <p class="text-xs text-red-500 mt-1">Este campo es obligatorio</p> }
+            <input [(ngModel)]="msi.meses" (input)="validarMeses($event)" id="meses" type="number" name="meses" min="1" [disabled]="!editar && msi.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}" autocomplete="off" />
+            @if (valMeses) { <p class="text-xs text-red-500 mt-1">Ingresa un número de meses válido</p> }
           </div>
 
 

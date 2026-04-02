@@ -367,7 +367,7 @@ export class FormTDC {
           return;
         }
 
-        this.toast.show('Tarejta creada exitosamente', "", TypeToast.success);
+        this.toast.show('Tarjeta creada exitosamente', "", TypeToast.success);
 
 
 
