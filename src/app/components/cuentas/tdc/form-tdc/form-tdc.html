@@ -46,12 +46,12 @@
       <div class="grid grid-cols-2 gap-x-4">
         <div class="input-form-text">
           <label for="dpago">Día de pago</label>
-          <input [(ngModel)]="tarjeta.dpago" (input)="validarDia($event)" id="dpago" type="number" name="dpago" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
+          <input [(ngModel)]="tarjeta.dpago" (input)="validarDia($event)" id="dpago" type="number" name="dpago" min="1" max="28" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
           @if (valDpago) { <p>Este campo es obligatorio</p> }
         </div>
         <div class="input-form-text">
           <label for="dcorte">Día de corte</label>
-          <input [(ngModel)]="tarjeta.dcorte" (input)="validarDia($event)" id="dcorte" type="number" name="dcorte" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
+          <input [(ngModel)]="tarjeta.dcorte" (input)="validarDia($event)" id="dcorte" type="number" name="dcorte" min="1" max="28" autocomplete="off" [disabled]="!editar && tarjeta.id" [ngClass]="{'text-gray-400 cursor-not-allowed': !editar, 'bg-white': editar}"/>
           @if (valDcorte) { <p>Este campo es obligatorio</p> }
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environment/environment';
 import { catchError, Observable } from 'rxjs';
@@ -18,13 +18,15 @@ export class MsiService {
 
   private MsiSubscription: Subscription | null = null;
 
+  private msiActualizado = new Subject<void>();
+  msiActualizado$ = this.msiActualizado.asObservable();
+
   
 
   addMsi(msi: any): Observable<any> {
-  
-  
       return this.http.post(this.baseUrl + '/api/msi/registrar', msi).pipe(
         tap(() => {
+          this.msiActualizado.next();
           this.MsiSubscription?.unsubscribe();
           this.MsiSubscription = this.tarjetasService.getTarjetas().subscribe();
         }),
@@ -56,6 +58,7 @@ export class MsiService {
   deleteMsi(msiId: string): Observable<any> {
     return this.http.delete(this.baseUrl + `/api/msi/eliminar/${msiId}`).pipe(
       tap(() => {
+        this.msiActualizado.next();
         this.MsiSubscription?.unsubscribe();
         this.MsiSubscription = this.tarjetasService.getTarjetas().subscribe();
       }),
@@ -67,6 +70,7 @@ export class MsiService {
   updateMsi(msiId: string, msi: any): Observable<any> {
     return this.http.put(this.baseUrl + `/api/msi/actualizar/${msiId}`, msi).pipe(
       tap(() => {
+        this.msiActualizado.next();
         this.MsiSubscription?.unsubscribe();
         this.MsiSubscription = this.tarjetasService.getTarjetas().subscribe();
       }),

@@ -101,7 +101,6 @@ export class MsiModal {
   }
 
   ngOnDestroy(): void {
-    this.generalService.setActualizaPantalla(true);
     this.catEgresosSuscription?.unsubscribe();
     this.TarejtasSuscription?.unsubscribe();
     this.MsiSuscription?.unsubscribe();
@@ -166,6 +165,7 @@ export class MsiModal {
   }
 
   cerrarModal() {
+    this.generalService.setActualizaPantalla(true);
     this.cerrar.emit();
   }
 
@@ -224,6 +224,9 @@ export class MsiModal {
     if (isNaN(valor) || valor < 1) {
       input.value = '';
       this.msi.meses = 0;
+    } else if (valor > 48) {
+      input.value = '48';
+      this.msi.meses = 48;
     } else {
       this.msi.meses = valor;
     }

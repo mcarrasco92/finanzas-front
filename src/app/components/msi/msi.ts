@@ -30,6 +30,7 @@ export class Msi {
   mostrarVencidos = false;
   tarejtasSuscription: Subscription | null = null;
   generalSubscription: Subscription | null = null;
+  msiActualizadoSubscription: Subscription | null = null;
 
   ngOnInit(): void {
     this.tarejtasSuscription = this.tarjetasService.tarjetasList$.subscribe(tarjetas => {
@@ -41,6 +42,10 @@ export class Msi {
 
     this.generalSubscription = this.generalService.actualizaPantalla$.subscribe(actualiza => {
       actualiza ? this.consultaMsis() : null;
+    });
+
+    this.msiActualizadoSubscription = this.msiService.msiActualizado$.subscribe(() => {
+      this.consultaMsis();
     });
   }
 
@@ -122,6 +127,7 @@ export class Msi {
   ngOnDestroy(): void {
     this.tarejtasSuscription?.unsubscribe();
     this.generalSubscription?.unsubscribe();
+    this.msiActualizadoSubscription?.unsubscribe();
   }
 
   abrirMsiModal() {

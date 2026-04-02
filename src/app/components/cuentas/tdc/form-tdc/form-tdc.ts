@@ -455,8 +455,8 @@ export class FormTDC {
 
     if (isNaN(valor) || valor < 1) {
       input.value = '';
-    } else if (valor > 31) {
-      input.value = valor.toString().slice(0, -1);
+    } else if (valor > 28) {
+      input.value = '28';
     }
   }
 
