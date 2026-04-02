@@ -11,8 +11,9 @@ import { CategoriasService } from '../../services/categorias/categorias';
 import { CuentasService } from '../../services/cuentas/cuentas';
 import { TarjetasService } from '../../services/tarjetas/tarjetas';
 import { TransaccionesService } from '../../services/transacciones/transacciones';
-import { CategoriasModal } from '../ajustes/categorias-modal/categorias-modal';
+import { CategoriasModal } from '../categorias-modal/categorias-modal';
 import { GeneralService } from '../../services/general-service';
+import { ToastService } from '../../shared/toast/service/toast-service';
 import { PerfilService } from '../../services/perfil/perfil-service';
 import { Perfil } from '../../models/perfil';
 import { Transferencias } from '../transferencias/transferencias';
@@ -25,6 +26,8 @@ import { Tag } from '../../shared/icons/tag/tag';
 import { MsiModal } from '../msi-modal/msi-modal';
 import { MsiService } from '../../services/msi/msi';
 import { SearchResults, SearchGroup, SearchResultItem } from '../../shared/search-results/search-results';
+import { SpaceService } from '../../services/space/space.service';
+import { Space } from '../../models/space';
 
 const SEARCH_LIMIT = 5;
 
@@ -56,12 +59,15 @@ export class Dashboard {
     private perfilService: PerfilService,
     private transferenciaService: TransferenciasService,
     private msiService: MsiService,
+    private toastService: ToastService,
+    private spaceService: SpaceService,
     private cdr: ChangeDetectorRef
   ) {}
 
   @ViewChild('searchWrapper') searchWrapper!: ElementRef;
   @ViewChild('perfilWrapper') perfilWrapper!: ElementRef;
   @ViewChild('menuWrapper') menuWrapper!: ElementRef;
+  @ViewChild('spaceWrapper') spaceWrapper!: ElementRef;
 
   perfil: Perfil = new Perfil();
 
@@ -90,6 +96,11 @@ export class Dashboard {
   tabActivo: string = 'Dashboard';
   rutaActual: string = '';
   menuAbierto: boolean = false;
+
+  activeSpace: Space | null = null;
+  spaces: Space[] = [];
+  spaceSwitcherAbierto: boolean = false;
+  private spaceSub: Subscription | null = null;
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
@@ -120,12 +131,29 @@ export class Dashboard {
         this.cdr.detectChanges();
       }
     }
+    if (this.spaceWrapper && !this.spaceWrapper.nativeElement.contains(event.target as Node)) {
+      if (this.spaceSwitcherAbierto) {
+        this.spaceSwitcherAbierto = false;
+        this.cdr.detectChanges();
+      }
+    }
   }
 
   ngOnInit() {
     this.categoriasSuscription = this.categoriasService.getCategorias().subscribe();
     this.cuentasSuscription = this.cuentasServices.getCuentas().subscribe();
     this.tarjetasSuscription = this.tarjetasService.getTarjetas().subscribe();
+
+    this.spaceService.getSpaces().subscribe(response => {
+      if (response.coderr === '0000') {
+        this.spaces = response.data;
+        this.cdr.detectChanges();
+      }
+    });
+    this.spaceSub = this.spaceService.activeSpace$.subscribe(space => {
+      this.activeSpace = space;
+      this.cdr.detectChanges();
+    });
 
     this.perfilService.getInfoPerfil().subscribe(response => {
       if (response.coderr === '0000') {
@@ -253,6 +281,7 @@ export class Dashboard {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.tabActivo = this.resolveTab(event.urlAfterRedirects);
+        this.toastService.clear();
         this.cdr.detectChanges();
       });
   }
@@ -265,6 +294,7 @@ export class Dashboard {
     this.categoriasModalSuscription?.unsubscribe();
     this.searchSubscription?.unsubscribe();
     this.transaccionesSearchSub?.unsubscribe();
+    this.spaceSub?.unsubscribe();
   }
 
   onSearchFocus(): void {
@@ -285,7 +315,7 @@ export class Dashboard {
         this.router.navigate(['/dashboard/cuentas/tdcf', item.id]);
         break;
       case 'categoria':
-        this.router.navigate(['/dashboard/ajustes/categorias']);
+        this.router.navigate(['/dashboard/categorias']);
         break;
       case 'transaccion':
         this.router.navigate(['/dashboard/home']);
@@ -304,7 +334,7 @@ export class Dashboard {
         this.router.navigate(['/dashboard/cuentas/tdc']);
         break;
       case 'categorias':
-        this.router.navigate(['/dashboard/ajustes/categorias']);
+        this.router.navigate(['/dashboard/categorias']);
         break;
       case 'transacciones':
         this.router.navigate(['/dashboard/home']);
@@ -313,7 +343,8 @@ export class Dashboard {
   }
 
   resolveTab(url: string): string {
-    if (url.includes('ajustes')) return 'Ajustes';
+    if (url.includes('categorias')) return 'Categorías';
+    if (url.includes('perfil')) return 'Perfil';
     if (url.includes('cuentas')) return 'Cuentas';
     if (url.includes('msi')) return 'Meses sin intereses';
     if (url.includes('transacciones-recurrentes')) return 'Mov. recurrentes';
@@ -329,7 +360,22 @@ export class Dashboard {
   cerrarSesion() {
     this.openPerfil = false;
     this.authService.cerrarSesion();
-    this.router.navigate(['/login']);
+    this.spaceService.clearActiveSpace();
+    this.router.navigate(['/']);
+  }
+
+  toggleSpaceSwitcher(): void {
+    this.spaceSwitcherAbierto = !this.spaceSwitcherAbierto;
+  }
+
+  cambiarEspacio(space: Space): void {
+    this.spaceService.setActiveSpace(space);
+    this.spaceSwitcherAbierto = false;
+    // Recarga datos del espacio seleccionado
+    this.categoriasService.getCategorias().subscribe();
+    this.cuentasServices.getCuentas().subscribe();
+    this.tarjetasService.getTarjetas().subscribe();
+    this.router.navigate(['/dashboard/home']);
   }
 
   toggleMenu(): void {

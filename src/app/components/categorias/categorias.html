@@ -1,5 +1,30 @@
 <app-toast></app-toast>
 
+<!-- Header -->
+<div class="px-6 py-2 flex items-center justify-between">
+  <div>
+    <h1 class="text-xl font-bold text-gray-900 tracking-tight">Categorías</h1>
+    <p class="text-sm text-gray-500 mt-0.5 font-medium">Gestiona tus categorías de ingresos y egresos</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="input-form-check">
+      <span class="span-label">
+        <label>Mostrar desactivadas</label>
+      </span>
+      <div class="check-switch check-default group bg-gray-200 has-checked:bg-orange-400">
+        <span class="span-border"></span>
+        <input type="checkbox" [(ngModel)]="categoriasDesactivadas" (change)="onToggleCatDesactivadas()"/>
+      </div>
+    </div>
+    <button (click)="abrirCategoriasModal()"
+      class="flex bg-white items-center gap-1.5 px-4 py-2 text-sm font-medium text-green-800 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors cursor-pointer">
+      <span class="text-base leading-none font-semibold">+</span>
+      Nueva categoría
+    </button>
+  </div>
+</div>
+
+<div class="my-4">
 <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
 
   <!-- Ingresos -->
@@ -108,4 +133,5 @@
     </div>
   </div>
 
+</div>
 </div>

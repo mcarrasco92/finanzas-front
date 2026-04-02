@@ -4,20 +4,26 @@ import { Registro } from './components/registro/registro';
 import { Dashboard } from './components/dashboard/dashboard';
 import { Cuentas } from './components/cuentas/cuentas';
 import { authGuard } from './guards/auth-guard';
+import { spaceGuard } from './guards/space-guard';
+import { SelectSpace } from './components/select-space/select-space';
 import { ListaDebito } from './components/cuentas/debito/lista-debito/lista-debito';
 import { FormDebito } from './components/cuentas/debito/form-debito/form-debito';
 import { ListaTDC } from './components/cuentas/tdc/lista-tdc/lista-tdc';
 import { FormTDC } from './components/cuentas/tdc/form-tdc/form-tdc';
-import { Categorias } from './components/ajustes/categorias/categorias';
-import { Ajustes } from './components/ajustes/ajustes';
+import { Categorias } from './components/categorias/categorias';
 import { Msi } from './components/msi/msi';
 import { TransaccionesRecurrentes } from './components/transacciones-recurrentes/transacciones-recurrentes';
 import { Home } from './components/home/home';
 import { Movimientos } from './components/movimientos/movimientos';
+import { CreateSpace } from './components/create-space/create-space';
+import { Perfil } from './components/perfil/perfil';
+import { Espacios } from './components/perfil/espacios/espacios';
 
 export const routes: Routes = [
-  {path: 'registro', component: Registro}, // Ruta para el componente de registro
-  {path: 'dashboard', component: Dashboard, canActivate:[authGuard], children: [
+  {path: 'registro', component: Registro},
+  {path: 'select-space', component: SelectSpace, canActivate: [authGuard]},
+  {path: 'create-space', component: CreateSpace, canActivate: [authGuard]},
+  {path: 'dashboard', component: Dashboard, canActivate: [authGuard, spaceGuard], children: [
     {path: 'cuentas', component: Cuentas, children: [
       {path: 'debito', component: ListaDebito},
       {path: 'debitof', component: FormDebito},
@@ -27,12 +33,14 @@ export const routes: Routes = [
       {path: 'tdcf/:id', component: FormTDC},
     ]},
     {path: 'msi', component: Msi},
-    {path: 'ajustes', component: Ajustes, children: [
-      {path: 'categorias', component: Categorias}
-    ] },
+    {path: 'categorias', component: Categorias},
     {path: 'transacciones-recurrentes', component: TransaccionesRecurrentes},
     {path: 'movimientos', component: Movimientos},
-    {path: 'home', component: Home}
+    {path: 'home', component: Home},
+    {path: 'perfil', component: Perfil, children: [
+      {path: 'espacios', component: Espacios},
+      {path: '', redirectTo: 'espacios', pathMatch: 'full'}
+    ]}
   ]}, // Ruta para el componente de dashboard
   {path: '', component: Login}, // Ruta por defecto que carga el componente de login 
   { path: '**', redirectTo: '' } // Redirige cualquier ruta no encontrada al login

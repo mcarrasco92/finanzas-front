@@ -4,7 +4,45 @@
       <div class="relative flex h-20 shrink-0 items-center justify-center mt-4">
         <img src="assets/Color-nombre.png" alt="Your Company" class="h-23 w-auto" />
       </div>
-      <div class="mt-2 mb-4 mx-1 border-b border-gray-100"></div>
+      <div class="mt-2 mb-3 mx-1 border-b border-gray-100"></div>
+
+      <!-- Space switcher -->
+      <div class="relative mx-1 mb-3" #spaceWrapper>
+        <button (click)="toggleSpaceSwitcher()"
+          class="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+          <div class="h-6 w-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
+            [ngClass]="activeSpace?.type === 'personal' ? 'bg-indigo-100 text-indigo-700' : 'bg-purple-100 text-purple-700'">
+            {{ (activeSpace?.name || 'E').slice(0, 1).toUpperCase() }}
+          </div>
+          <span class="flex-1 text-left text-xs font-medium text-gray-700 truncate">
+            {{ activeSpace?.name || 'Espacio' }}
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+          </svg>
+        </button>
+
+        @if (spaceSwitcherAbierto && spaces.length > 1) {
+          <div class="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-gray-100 shadow-lg z-50 py-1 overflow-hidden">
+            @for (space of spaces; track space.spaceId) {
+              <button (click)="cambiarEspacio(space)"
+                class="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+                <div class="h-5 w-5 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
+                  [ngClass]="space.type === 'personal' ? 'bg-indigo-100 text-indigo-700' : 'bg-purple-100 text-purple-700'">
+                  {{ space.name.slice(0, 1).toUpperCase() }}
+                </div>
+                <span class="flex-1 text-left truncate">{{ space.name }}</span>
+                @if (activeSpace?.spaceId === space.spaceId) {
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 text-indigo-600 flex-shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                }
+              </button>
+            }
+          </div>
+        }
+      </div>
+
       <nav class="relative flex flex-1 flex-col">
         <ul role="list" class="flex flex-1 flex-col">
           <li>
@@ -20,7 +58,8 @@
           <li class="mt-6">
             <p class="px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Configuración</p>
             <ul role="list" class="space-y-0.5">
-              <app-item-menu nombre="Ajustes" link="/dashboard/ajustes/categorias" activo={{tabActivo}}></app-item-menu>
+              <app-item-menu nombre="Categorías" link="/dashboard/categorias" activo={{tabActivo}}></app-item-menu>
+              <app-item-menu nombre="Perfil" link="/dashboard/perfil" activo={{tabActivo}}></app-item-menu>
             </ul>
           </li>
         </ul>
@@ -73,7 +112,7 @@
           class="flex items-center space-x-3 cursor-pointer rounded-full px-2 py-1 hover:bg-gray-50 transition-colors">
           <p class="text-sm font-medium text-gray-900">{{perfil.displayName}}</p>
           <div class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 border border-gray-300 text-sm font-medium text-gray-600">
-            {{ perfil.displayName?.slice(0, 1)?.toUpperCase() }}
+            {{ (perfil.displayName || '').slice(0, 1).toUpperCase() }}
           </div>
         </button>
 

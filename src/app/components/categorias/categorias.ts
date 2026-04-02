@@ -1,12 +1,12 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Toast } from '../../../shared/toast/toast';
-import { DragIcon } from '../../../shared/icons/drag-icon/drag-icon';
-import { ToastService, TypeToast } from '../../../shared/toast/service/toast-service';
-import { Categoria } from '../../../models/categoria';
-import { CategoriasService } from '../../../services/categorias/categorias';
-import { GeneralService } from '../../../services/general-service';
+import { Toast } from '../../shared/toast/toast';
+import { DragIcon } from '../../shared/icons/drag-icon/drag-icon';
+import { ToastService, TypeToast } from '../../shared/toast/service/toast-service';
+import { Categoria } from '../../models/categoria';
+import { CategoriasService } from '../../services/categorias/categorias';
+import { GeneralService } from '../../services/general-service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -140,6 +140,15 @@ export class Categorias {
 
   onMouseUp(): void {
     this.isDraggable = false;
+  }
+
+  abrirCategoriasModal(): void {
+    this.categoriasService.setData(null);
+    this.categoriasService.setAbrirCategoriasModal(true);
+  }
+
+  onToggleCatDesactivadas(): void {
+    this.generalService.setMostrarCategoriasDesactivadas(this.categoriasDesactivadas);
   }
 
   get sinCategoriasIngresos(): boolean {

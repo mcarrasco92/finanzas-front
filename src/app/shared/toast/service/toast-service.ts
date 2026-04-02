@@ -34,8 +34,8 @@ export class ToastService {
   }
 
   clear(){
-    this.toasts.splice(0,this.toasts.length)
-    //this.toasts = []
+    this.toasts.splice(0, this.toasts.length);
+    this.toastsSubject.next([]);
   }
 
   show(title: string, text: string, type: TypeToast){

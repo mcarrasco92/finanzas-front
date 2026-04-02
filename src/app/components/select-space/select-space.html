@@ -1,0 +1,38 @@
+<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+  <div class="w-full max-w-md">
+
+    <div class="text-center mb-8">
+      <img src="assets/Color-nombre.png" alt="Logo" class="h-20 w-auto mx-auto mb-6" />
+      <h1 class="text-xl font-semibold text-gray-900">Selecciona un espacio</h1>
+      <p class="text-sm text-gray-500 mt-1">Elige el espacio en el que quieres trabajar</p>
+    </div>
+
+    @if (cargando) {
+      <div class="flex justify-center py-10">
+        <div class="animate-spin rounded-full h-7 w-7 border-b-2 border-indigo-600"></div>
+      </div>
+    } @else {
+      <div class="space-y-3">
+        @for (space of spaces; track space.spaceId) {
+          <button (click)="seleccionar(space)"
+            class="w-full bg-white rounded-xl border border-gray-200 px-5 py-4 flex items-center gap-4 hover:border-indigo-400 hover:shadow-sm transition-all cursor-pointer text-left">
+            <div class="h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0"
+              [ngClass]="space.type === 'personal' ? 'bg-indigo-100 text-indigo-700' : 'bg-purple-100 text-purple-700'">
+              {{ space.name.slice(0, 1).toUpperCase() }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-gray-900">{{ space.name }}</p>
+              <p class="text-xs text-gray-400">
+                {{ space.type === 'personal' ? 'Personal' : 'Compartido' }} &middot; {{ space.role }}
+              </p>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-300 flex-shrink-0">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        }
+      </div>
+    }
+
+  </div>
+</div>
