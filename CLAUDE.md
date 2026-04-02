@@ -32,18 +32,30 @@ src/app/
 
 ## Routing
 
-Protected by `authGuard`. All feature routes nest under `/dashboard`:
+Two guards protect routes:
+- `authGuard` — checks `localStorage.getItem('jwtToken')`
+- `spaceGuard` — checks that an active space is selected (redirects to `/select-space` if not)
+
+All feature routes require both guards and nest under `/dashboard`:
 
 | Path | Component |
 |------|-----------|
 | `/` | Login |
 | `/registro` | Registration |
+| `/select-space` | Space selector (after login with multiple spaces) |
+| `/create-space` | Create a new shared space |
 | `/dashboard/home` | Home |
+| `/dashboard/movimientos` | Transaction list/filter view |
 | `/dashboard/cuentas/debito` | Debit accounts list |
+| `/dashboard/cuentas/debitof` | Debit account form (create) |
+| `/dashboard/cuentas/debitof/:id` | Debit account form (edit) |
 | `/dashboard/cuentas/tdc` | Credit cards list |
+| `/dashboard/cuentas/tdcf` | Credit card form (create) |
+| `/dashboard/cuentas/tdcf/:id` | Credit card form (edit) |
 | `/dashboard/msi` | Multi-installment transactions |
-| `/dashboard/ajustes/categorias` | Category management |
+| `/dashboard/categorias` | Category management |
 | `/dashboard/transacciones-recurrentes` | Recurring transactions |
+| `/dashboard/perfil/espacios` | Profile — spaces management (default perfil child) |
 
 ## State Management
 
@@ -81,12 +93,20 @@ mostrarModal = false;
 
 **Subscription management** — components subscribe in `ngOnInit()` and unsubscribe in `ngOnDestroy()` manually (no async pipe pattern used here).
 
-## Authentication Flow
+## Authentication & Space Selection Flow
 
 1. Firebase Auth (email/password or Google) → get ID token
-2. `POST /api/users/validate-token` with Firebase token → backend returns JWT
+2. `POST /api/users/create-token` with Firebase token → backend returns JWT
 3. JWT stored in `localStorage` as `jwtToken`
-4. `authGuard` checks `localStorage.getItem('jwtToken')` to protect routes
+4. Load user spaces via `GET /api/spaces`:
+   - If 1 space → auto-select it, navigate to `/dashboard/home`
+   - If multiple spaces → navigate to `/select-space`
+5. Selected space ID stored in `localStorage` as `selectedSpaceId` via `SpaceService`
+6. `spaceGuard` checks that a space is selected before allowing dashboard access
+
+### Interceptors (ordered)
+1. `auth.interceptor` — adds `Authorization: Bearer {jwtToken}` to all requests
+2. `space.interceptor` — adds `X-Space-Id: {selectedSpaceId}` to all requests (required by all feature endpoints)
 
 ## Models
 

@@ -1,0 +1,69 @@
+<div class="px-6 py-2">
+  <div class="max-w-sm">
+    <h3 class="text-sm font-semibold text-gray-700 mb-1">Cambiar contraseña</h3>
+    <p class="text-xs text-gray-400 mb-5">Ingresa tu contraseña actual y después la nueva contraseña</p>
+
+    <!-- Contraseña actual -->
+    <div class="mb-4">
+      <label class="block text-xs font-medium text-gray-500 mb-1">Contraseña actual</label>
+      <input
+        [(ngModel)]="contrasenaActual"
+        name="contrasenaActual"
+        type="password"
+        placeholder="••••••••"
+        class="input-form-text w-full"
+        [class.ring-2]="valActual"
+        [class.ring-red-400]="valActual"
+        (input)="valActual = false"
+      />
+      @if (valActual) {
+        <p class="mt-1 text-xs text-red-500">Ingresa tu contraseña actual</p>
+      }
+    </div>
+
+    <!-- Nueva contraseña -->
+    <div class="mb-4">
+      <label class="block text-xs font-medium text-gray-500 mb-1">Nueva contraseña</label>
+      <input
+        [(ngModel)]="contrasenaNueva"
+        name="contrasenaNueva"
+        type="password"
+        placeholder="••••••••"
+        class="input-form-text w-full"
+        [class.ring-2]="valNueva || valCoinciden"
+        [class.ring-red-400]="valNueva || valCoinciden"
+        (input)="valNueva = false; valCoinciden = false"
+      />
+      @if (valNueva) {
+        <p class="mt-1 text-xs text-red-500">La contraseña debe tener al menos 6 caracteres</p>
+      }
+    </div>
+
+    <!-- Confirmar contraseña -->
+    <div class="mb-6">
+      <label class="block text-xs font-medium text-gray-500 mb-1">Confirmar nueva contraseña</label>
+      <input
+        [(ngModel)]="confirmarContrasena"
+        name="confirmarContrasena"
+        type="password"
+        placeholder="••••••••"
+        class="input-form-text w-full"
+        [class.ring-2]="valConfirmar || valCoinciden"
+        [class.ring-red-400]="valConfirmar || valCoinciden"
+        (input)="valConfirmar = false; valCoinciden = false"
+        (keydown.enter)="guardar()"
+      />
+      @if (valConfirmar) {
+        <p class="mt-1 text-xs text-red-500">Confirma tu nueva contraseña</p>
+      }
+      @if (valCoinciden) {
+        <p class="mt-1 text-xs text-red-500">Las contraseñas no coinciden</p>
+      }
+    </div>
+
+    <button (click)="guardar()" [disabled]="guardando"
+      class="px-5 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-60 transition-colors cursor-pointer">
+      {{ guardando ? 'Guardando...' : 'Actualizar contraseña' }}
+    </button>
+  </div>
+</div>

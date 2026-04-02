@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 import { environment, app } from '../environment/environment';
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
 import { log } from 'console';
 
 
@@ -134,6 +134,28 @@ export class Auth {
       return resp
 
     }));
+  }
+
+  isEmailProvider(): boolean {
+    return this.auth.currentUser?.providerData.some(p => p.providerId === 'password') ?? false;
+  }
+
+  cambiarContrasena(contrasenaActual: string, contrasenaNueva: string): Observable<any> {
+    return from(
+      (async () => {
+        const user = this.auth.currentUser;
+        if (!user || !user.email) throw new Error('No hay usuario autenticado');
+        const credential = EmailAuthProvider.credential(user.email, contrasenaActual);
+        await reauthenticateWithCredential(user, credential);
+        await updatePassword(user, contrasenaNueva);
+        return { coderr: '0000', message: 'Contraseña actualizada correctamente' };
+      })().catch(error => {
+        if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+          return { coderr: '1001', message: 'La contraseña actual es incorrecta' };
+        }
+        return { coderr: '1001', message: 'No se pudo actualizar la contraseña' };
+      })
+    );
   }
 
   isAuthenticated(): boolean {

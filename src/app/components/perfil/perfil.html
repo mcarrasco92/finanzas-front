@@ -7,6 +7,13 @@
       class="px-4 py-1.5 text-sm font-medium rounded-full text-gray-500 transition-colors cursor-pointer">
       Espacios
     </a>
+    @if (esEmailProvider) {
+      <a routerLink="/dashboard/perfil/cambiar-contrasena"
+        routerLinkActive="bg-white shadow-sm text-gray-900"
+        class="px-4 py-1.5 text-sm font-medium rounded-full text-gray-500 transition-colors cursor-pointer">
+        Seguridad
+      </a>
+    }
   </div>
 </div>
 

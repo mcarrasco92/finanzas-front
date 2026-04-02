@@ -18,6 +18,7 @@ import { Movimientos } from './components/movimientos/movimientos';
 import { CreateSpace } from './components/create-space/create-space';
 import { Perfil } from './components/perfil/perfil';
 import { Espacios } from './components/perfil/espacios/espacios';
+import { CambiarContrasena } from './components/perfil/cambiar-contrasena/cambiar-contrasena';
 
 export const routes: Routes = [
   {path: 'registro', component: Registro},
@@ -39,6 +40,7 @@ export const routes: Routes = [
     {path: 'home', component: Home},
     {path: 'perfil', component: Perfil, children: [
       {path: 'espacios', component: Espacios},
+      {path: 'cambiar-contrasena', component: CambiarContrasena},
       {path: '', redirectTo: 'espacios', pathMatch: 'full'}
     ]}
   ]}, // Ruta para el componente de dashboard
