@@ -1,7 +1,6 @@
 import { Component, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Toast } from '../../shared/toast/toast';
 import { MsiService } from '../../services/msi/msi';
 import { ToastService, TypeToast } from '../../shared/toast/service/toast-service';
 import { Subscription } from 'rxjs';
@@ -15,7 +14,7 @@ import { GeneralService } from '../../services/general-service';
 
 @Component({
   selector: 'app-msi-modal',
-  imports: [CommonModule, FormsModule, Toast, ConfirmModal],
+  imports: [CommonModule, FormsModule, ConfirmModal],
   templateUrl: './msi-modal.html',
   styleUrl: './msi-modal.css'
 })

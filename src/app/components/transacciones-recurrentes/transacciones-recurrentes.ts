@@ -5,7 +5,6 @@ import { TransaccionesRecurrentesService } from '../../services/transacciones-re
 import { TransaccionRecurrenteModel } from '../../models/transaccion-recurrente';
 import { TransaccionesRecurrentesModal } from '../transacciones-recurrentes-modal/transacciones-recurrentes-modal';
 import { Toast } from '../../shared/toast/toast';
-import { Transacciones } from "../transacciones/transacciones";
 import { Subscription } from 'rxjs';
 import { Tarjeta } from '../../models/tarjeta';
 import { Cuenta } from '../../models/cuenta';
@@ -14,7 +13,7 @@ import { CuentasService } from '../../services/cuentas/cuentas';
 
 @Component({
   selector: 'app-transacciones-recurrentes',
-  imports: [CommonModule, FormsModule, TransaccionesRecurrentesModal, Toast, Transacciones],
+  imports: [CommonModule, FormsModule, TransaccionesRecurrentesModal, Toast],
   templateUrl: './transacciones-recurrentes.html',
   styleUrl: './transacciones-recurrentes.css'
 })

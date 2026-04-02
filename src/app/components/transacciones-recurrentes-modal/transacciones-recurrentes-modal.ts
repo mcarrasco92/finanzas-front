@@ -1,7 +1,6 @@
 import { Component, Output, EventEmitter, ChangeDetectorRef, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Toast } from '../../shared/toast/toast';
 import { ToastService, TypeToast } from '../../shared/toast/service/toast-service';
 import { Subscription } from 'rxjs';
 import { ConfirmModal } from '../../shared/confirm-modal/confirm-modal';
@@ -17,7 +16,7 @@ import { Cuenta } from '../../models/cuenta';
 
 @Component({
   selector: 'app-transacciones-recurrentes-modal',
-  imports: [CommonModule, FormsModule, ConfirmModal, Toast],
+  imports: [CommonModule, FormsModule, ConfirmModal],
   templateUrl: './transacciones-recurrentes-modal.html',
   styleUrl: './transacciones-recurrentes-modal.css'
 })

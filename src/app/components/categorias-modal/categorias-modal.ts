@@ -2,17 +2,15 @@ import { Component, EventEmitter, Output, ChangeDetectorRef } from '@angular/cor
 import { CategoriasService } from '../../services/categorias/categorias';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Toast } from '../../shared/toast/toast';
 import { ToastService, TypeToast } from '../../shared/toast/service/toast-service';
 import { Categoria } from '../../models/categoria';
 import { Subscription } from 'rxjs';
-import { TrashIcon } from '../../shared/icons/trash-icon/trash-icon';
 import { ConfirmModal } from '../../shared/confirm-modal/confirm-modal';
 
 
 @Component({
   selector: 'app-categorias-modal',
-  imports: [CommonModule, FormsModule, Toast, TrashIcon, ConfirmModal],
+  imports: [CommonModule, FormsModule, ConfirmModal],
   templateUrl: './categorias-modal.html',
   styleUrl: './categorias-modal.css'
 })

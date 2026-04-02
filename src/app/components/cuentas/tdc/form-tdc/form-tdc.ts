@@ -16,7 +16,6 @@ import { FilterTipoTransaccionPipe } from '../../../../pipes/filter-tipo-transac
 import { ConfirmModal } from '../../../../shared/confirm-modal/confirm-modal';
 import { OptionsMenu } from '../../../../shared/options-menu/options-menu';
 import { Subscription } from 'rxjs';
-import { TrashIcon } from '../../../../shared/icons/trash-icon/trash-icon';
 import { Router } from '@angular/router';
 import { Transferencia } from '../../../../models/transferencia';
 import { TransferenciasService } from '../../../../services/transferencias/transferencias';
@@ -27,7 +26,7 @@ import { MsiService } from '../../../../services/msi/msi';
 
 @Component({
   selector: 'app-form-tdc',
-  imports: [Toast, CommonModule, FormsModule, LeftIcon, RightIcon, MesEsPipe, FilterTipoTransaccionPipe, ConfirmModal, OptionsMenu, TrashIcon],
+  imports: [Toast, CommonModule, FormsModule, LeftIcon, RightIcon, MesEsPipe, FilterTipoTransaccionPipe, ConfirmModal, OptionsMenu],
   templateUrl: './form-tdc.html',
   styleUrl: './form-tdc.css'
 })

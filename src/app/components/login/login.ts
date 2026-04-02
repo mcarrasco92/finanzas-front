@@ -10,13 +10,11 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SpaceService } from '../../services/space/space.service';
 import { Space } from '../../models/space';
-import { Loading } from '../../shared/loading/loading';
-
 
 
 @Component({
   selector: 'app-login',
-  imports: [MatCardModule, MatDividerModule, RouterLink, FormsModule, Toast, CommonModule, Loading],
+  imports: [MatCardModule, MatDividerModule, RouterLink, FormsModule, Toast, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })

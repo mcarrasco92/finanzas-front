@@ -4,7 +4,6 @@ import { TarjetasService } from '../../services/tarjetas/tarjetas';
 import { CommonModule } from '@angular/common';
 import { Toast } from '../../shared/toast/toast';
 import { ToastService } from '../../shared/toast/service/toast-service';
-import { Loading } from '../../shared/loading/loading';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -12,7 +11,7 @@ import { GeneralService } from '../../services/general-service';
 
 @Component({
   selector: 'app-cuentas',
-  imports: [CommonModule, Toast, Loading, FormsModule, RouterOutlet, RouterModule],
+  imports: [CommonModule, Toast, FormsModule, RouterOutlet, RouterModule],
   templateUrl: './cuentas.html',
   styleUrl: './cuentas.css'
 })

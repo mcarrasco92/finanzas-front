@@ -6,7 +6,7 @@ import {
   ApexStroke, ApexMarkers, ApexDataLabels, ApexGrid, ApexTooltip,
   ApexPlotOptions, ApexLegend
 } from 'ng-apexcharts';
-import { forkJoin, Subscription } from 'rxjs';
+import { forkJoin, Observable, of, Subscription } from 'rxjs';
 import { TransaccionesRecurrentesService } from '../../services/transacciones-recurrentes/transacciones-recurrentes';
 import { TarjetasService } from '../../services/tarjetas/tarjetas';
 import { CuentasService } from '../../services/cuentas/cuentas';
@@ -201,10 +201,8 @@ export class Home {
   ngOnInit(): void {
     this.tarjetasSub = this.tarjetasService.tarjetasList$.subscribe(t => { this.tarjetas = t; });
     this.cuentasSub = this.cuentasService.cuentasList$.subscribe(c => { this.cuentas = c; });
-    this.cargarAnalisis();
     this.cargarDatos();
     this.cargarMsi();
-    this.cargarResumen();
     this.cargarResumenAnual();
   }
 
@@ -214,30 +212,6 @@ export class Home {
   }
 
   // ── Análisis comparativo ─────────────────────────────────────────────────────
-
-  cargarAnalisis(): void {
-    const hoy = new Date();
-    // getMonth() (0-indexed) coincide con el número de mes anterior en 1-indexed
-    // Ej: abril → getMonth()=3 → mes previo completo = marzo = 3
-    let mesPrevio = hoy.getMonth();
-    let anioPrevio = hoy.getFullYear();
-    if (mesPrevio === 0) { mesPrevio = 12; anioPrevio--; }
-
-    let mesAnterior = mesPrevio - 1;
-    let anioAnterior = anioPrevio;
-    if (mesAnterior === 0) { mesAnterior = 12; anioAnterior--; }
-
-    this.cargandoAnalisis = true;
-    forkJoin([
-      this.resumenService.getResumenMensual(mesPrevio, anioPrevio),
-      this.resumenService.getResumenMensual(mesAnterior, anioAnterior)
-    ]).subscribe(([resPrevio, resAnterior]) => {
-      this.cargandoAnalisis = false;
-      if (resPrevio.coderr === '0000') this.analisisPrevio = this.calcularAnalisis(resPrevio.data);
-      if (resAnterior.coderr === '0000') this.analisisAnterior = this.calcularAnalisis(resAnterior.data);
-      this.cdr.detectChanges();
-    });
-  }
 
   private calcularAnalisis(data: ResumenMensual): AnalisisMes {
     const all = [
@@ -375,12 +349,14 @@ export class Home {
 
   cargarResumenAnual(): void {
     this.cargandoAnual = true;
+    this.cargandoAnalisis = true;
+    this.cargandoBar = true;
     this.anualChartOptions = {};
-    const requests = Array.from({ length: 12 }, (_, i) =>
-      this.resumenService.getResumenMensual(i + 1, this.anioAnual)
-    );
-    forkJoin(requests).subscribe(results => {
+
+    this.resumenService.getResumenAnual(this.anioAnual).subscribe(results => {
       this.cargandoAnual = false;
+
+      // Annual chart
       const ingresos: number[] = [];
       const egresos: number[] = [];
       for (const res of results) {
@@ -409,7 +385,56 @@ export class Home {
         tooltip: { y: { formatter: (v: number) => `$${v.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` } },
         grid: { borderColor: '#f1f1f1' }
       };
+
+      // Análisis comparativo — derived from annual results when same year, otherwise uses cache
+      this.derivarAnalisis(results);
+
+      // Bar chart — derived from annual results when same year, otherwise uses cache
+      this.derivarBarChart(results);
+
       this.cdr.detectChanges();
+    });
+  }
+
+  private derivarAnalisis(anualResults: any[]): void {
+    const hoy = new Date();
+    let mesPrevio = hoy.getMonth(); // getMonth() 0-indexed = mes anterior en 1-indexed
+    let anioPrevio = hoy.getFullYear();
+    if (mesPrevio === 0) { mesPrevio = 12; anioPrevio--; }
+    let mesAnterior = mesPrevio - 1;
+    let anioAnterior = anioPrevio;
+    if (mesAnterior === 0) { mesAnterior = 12; anioAnterior--; }
+
+    // Use annual results when same year; otherwise use cache (or fetch if not cached)
+    const obsPrevio: Observable<any> = (anioPrevio === this.anioAnual)
+      ? of(anualResults[mesPrevio - 1])
+      : this.resumenService.getResumenMensual(mesPrevio, anioPrevio);
+    const obsAnterior: Observable<any> = (anioAnterior === this.anioAnual)
+      ? of(anualResults[mesAnterior - 1])
+      : this.resumenService.getResumenMensual(mesAnterior, anioAnterior);
+
+    forkJoin([obsPrevio, obsAnterior]).subscribe(([resPrevio, resAnterior]) => {
+      this.cargandoAnalisis = false;
+      if (resPrevio?.coderr === '0000') this.analisisPrevio = this.calcularAnalisis(resPrevio.data);
+      if (resAnterior?.coderr === '0000') this.analisisAnterior = this.calcularAnalisis(resAnterior.data);
+      this.cdr.detectChanges();
+    });
+  }
+
+  private derivarBarChart(anualResults: any[]): void {
+    if (this.anioGrafica === this.anioAnual) {
+      this.cargandoBar = false;
+      const res = anualResults[this.mesGrafica - 1];
+      if (res?.coderr === '0000') this.calcularGraficaCategorias(res.data);
+      return;
+    }
+    // Different year selected for bar chart: fetch (will hit cache if available)
+    this.resumenService.getResumenMensual(this.mesGrafica, this.anioGrafica).subscribe(response => {
+      this.cargandoBar = false;
+      if (response.coderr === '0000') {
+        this.calcularGraficaCategorias(response.data);
+        this.cdr.detectChanges();
+      }
     });
   }
 

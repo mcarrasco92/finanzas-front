@@ -6,12 +6,10 @@ import { Auth } from '../../services/auth';
 import { ToastService, TypeToast } from '../../shared/toast/service/toast-service';
 import { Toast } from '../../shared/toast/toast';
 import { Router } from '@angular/router';
-import { Loading } from '../../shared/loading/loading';
-
 
 @Component({
   selector: 'app-registro',
-  imports: [RouterLink, CommonModule, FormsModule, Toast, Loading],
+  imports: [RouterLink, CommonModule, FormsModule, Toast],
   templateUrl: './registro.html',
   styleUrl: './registro.css'
 })

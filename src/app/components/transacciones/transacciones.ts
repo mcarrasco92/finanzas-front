@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Output, Input, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Loading } from '../../shared/loading/loading';
-import { Toast } from '../../shared/toast/toast';
 import { ToastService, TypeToast } from '../../shared/toast/service/toast-service';
 import { Subscription } from 'rxjs';
 import { CuentasService } from '../../../app/services/cuentas/cuentas';
@@ -13,14 +11,13 @@ import { Cuenta } from '../../models/cuenta';
 import { Tarjeta } from '../../models/tarjeta';
 import { Transaccion } from '../../models/transaccion';
 import { TransaccionesService } from '../../services/transacciones/transacciones';
-import { TrashIcon } from '../../shared/icons/trash-icon/trash-icon';
 import { ConfirmModal } from '../../shared/confirm-modal/confirm-modal';
 import { GeneralService } from '../../services/general-service';
 import { time } from 'console';
 
 @Component({
   selector: 'app-transacciones',
-  imports: [CommonModule, FormsModule, Loading, Toast, TrashIcon, ConfirmModal],
+  imports: [CommonModule, FormsModule, ConfirmModal],
   templateUrl: './transacciones.html',
   styleUrl: './transacciones.css'
 })

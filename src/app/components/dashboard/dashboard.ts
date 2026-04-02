@@ -28,6 +28,7 @@ import { MsiService } from '../../services/msi/msi';
 import { SearchResults, SearchGroup, SearchResultItem } from '../../shared/search-results/search-results';
 import { SpaceService } from '../../services/space/space.service';
 import { Space } from '../../models/space';
+import { ResumenService } from '../../services/resumen/resumen';
 
 const SEARCH_LIMIT = 5;
 
@@ -61,6 +62,7 @@ export class Dashboard {
     private msiService: MsiService,
     private toastService: ToastService,
     private spaceService: SpaceService,
+    private resumenService: ResumenService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -371,6 +373,7 @@ export class Dashboard {
   cambiarEspacio(space: Space): void {
     this.spaceService.setActiveSpace(space);
     this.spaceSwitcherAbierto = false;
+    this.resumenService.clearCache();
     // Recarga datos del espacio seleccionado
     this.categoriasService.getCategorias().subscribe();
     this.cuentasServices.getCuentas().subscribe();

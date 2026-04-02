@@ -8,6 +8,7 @@ import { tap } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { TarjetasService } from '../tarjetas/tarjetas';
 import { CuentasService } from '../cuentas/cuentas';
+import { ResumenService } from '../resumen/resumen';
 
 
 
@@ -18,7 +19,8 @@ export class TransaccionesService {
   baseUrl = environment.apiUrl; // Usa la URL del entorno
   constructor(private http: HttpClient,
     private tarjetasService: TarjetasService,
-    private cuentasService: CuentasService
+    private cuentasService: CuentasService,
+    private resumenService: ResumenService
   ) { }
 
   private getTransaccionesSubscription: Subscription | null = null;
@@ -40,6 +42,7 @@ export class TransaccionesService {
 
     return this.http.post(this.baseUrl + '/api/transacciones/registrar', transaccion).pipe(
       tap(() => {
+        this.resumenService.clearCache();
         this.getTransaccionesSubscription?.unsubscribe();
         this.getTransaccionesSubscription = this.tarjetasService.getTarjetas().subscribe();
         this.getTransaccionesSubscription = this.cuentasService.getCuentas().subscribe();
@@ -53,6 +56,7 @@ export class TransaccionesService {
   updateTransaccion(transaccionId: string, transaccion: any): Observable<any> {
     return this.http.put(this.baseUrl + `/api/transacciones/actualizar/${transaccionId}`, transaccion).pipe(
       tap(() => {
+        this.resumenService.clearCache();
         this.getTransaccionesSubscription?.unsubscribe();
         this.getTransaccionesSubscription = this.tarjetasService.getTarjetas().subscribe();
         this.getTransaccionesSubscription = this.cuentasService.getCuentas().subscribe();
@@ -76,6 +80,7 @@ export class TransaccionesService {
   deleteTransaccion(transaccionId: string): Observable<any> {
     return this.http.delete(this.baseUrl + `/api/transacciones/eliminar/${transaccionId}`).pipe(
       tap(() => {
+        this.resumenService.clearCache();
         this.getTransaccionesSubscription?.unsubscribe();
         this.getTransaccionesSubscription = this.tarjetasService.getTarjetas().subscribe();
         this.getTransaccionesSubscription = this.cuentasService.getCuentas().subscribe();

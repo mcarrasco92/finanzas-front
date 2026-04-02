@@ -3,19 +3,17 @@ import { CuentasService } from '../../../../services/cuentas/cuentas';
 import { CommonModule } from '@angular/common';
 import { Toast } from '../../../../shared/toast/toast';
 import { ToastService, TypeToast, typToast } from '../../../../shared/toast/service/toast-service';
-import { Loading } from '../../../../shared/loading/loading';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Cuenta } from '../../../../models/cuenta';
-import { DragIcon } from '../../../../shared/icons/drag-icon/drag-icon';
 import { Subscription } from 'rxjs';
 import { GeneralService } from '../../../../services/general-service';
 
 
 @Component({
   selector: 'app-lista-debito',
-  imports: [CommonModule, Toast, Loading, FormsModule, DragIcon],
+  imports: [CommonModule, Toast, FormsModule],
   templateUrl: './lista-debito.html',
   styleUrl: './lista-debito.css'
 })

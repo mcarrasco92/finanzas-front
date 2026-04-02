@@ -1,6 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { ToastService, TypeToast, typToast } from '../../../../shared/toast/service/toast-service';
-import { Loading } from '../../../../shared/loading/loading';
 import { Toast } from '../../../../shared/toast/toast';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +11,7 @@ import { GeneralService } from '../../../../services/general-service';
 
 @Component({
   selector: 'app-lista-tdc',
-  imports: [Toast, Loading, CommonModule, FormsModule],
+  imports: [Toast, CommonModule, FormsModule],
   templateUrl: './lista-tdc.html',
   styleUrl: './lista-tdc.css'
 })

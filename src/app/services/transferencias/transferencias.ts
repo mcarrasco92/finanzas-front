@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { TarjetasService } from '../tarjetas/tarjetas';
 import { CuentasService } from '../cuentas/cuentas';
 import { Transferencia } from '../../models/transferencia';
+import { ResumenService } from '../resumen/resumen';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,8 @@ export class TransferenciasService {
   baseUrl = environment.apiUrl; // Usa la URL del entorno
   constructor(private http: HttpClient,
     private tarjetasService: TarjetasService,
-    private cuentasService: CuentasService
+    private cuentasService: CuentasService,
+    private resumenService: ResumenService
   ) { }
 
   private getTransferenciasSubscription: Subscription | null = null;
@@ -29,6 +31,7 @@ export class TransferenciasService {
   
       return this.http.post(this.baseUrl + '/api/transferencias/registrar', transferencia).pipe(
         tap(() => {
+          this.resumenService.clearCache();
           this.getTransferenciasSubscription?.unsubscribe();
           this.getTransferenciasSubscription = this.tarjetasService.getTarjetas().subscribe();
           this.getTransferenciasSubscription = this.cuentasService.getCuentas().subscribe();
@@ -52,6 +55,7 @@ export class TransferenciasService {
     deleteTransferencia(transferenciaId: string): Observable<any> {
       return this.http.delete(this.baseUrl + `/api/transferencias/eliminar/${transferenciaId}`).pipe(
         tap(() => {
+          this.resumenService.clearCache();
           this.getTransferenciasSubscription?.unsubscribe();
           this.getTransferenciasSubscription = this.tarjetasService.getTarjetas().subscribe();
           this.getTransferenciasSubscription = this.cuentasService.getCuentas().subscribe();
@@ -64,6 +68,7 @@ export class TransferenciasService {
     actualizaTransferencia(transferenciaId: string, transferencia: any): Observable<any> {
       return this.http.put(this.baseUrl + `/api/transferencias/actualizar/${transferenciaId}`, transferencia).pipe(
         tap(() => {
+          this.resumenService.clearCache();
           this.getTransferenciasSubscription?.unsubscribe();
           this.getTransferenciasSubscription = this.tarjetasService.getTarjetas().subscribe();
           this.getTransferenciasSubscription = this.cuentasService.getCuentas().subscribe();

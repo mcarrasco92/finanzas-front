@@ -16,7 +16,6 @@ import { MesEsPipe } from '../../../../pipes/mes-es-pipe';
 import { FilterTipoTransaccionPipe } from '../../../../pipes/filter-tipo-transaccion-pipe';
 import { ConfirmModal } from '../../../../shared/confirm-modal/confirm-modal';
 import { OptionsMenu } from '../../../../shared/options-menu/options-menu';
-import { TrashIcon } from '../../../../shared/icons/trash-icon/trash-icon';
 import { Router } from '@angular/router';
 import { TransferenciasService } from '../../../../services/transferencias/transferencias';
 import { Transferencia } from '../../../../models/transferencia';
@@ -26,7 +25,7 @@ import { Categoria } from '../../../../models/categoria';
 
 @Component({
   selector: 'app-form-debito',
-  imports: [CommonModule, FormsModule, Toast, LeftIcon, RightIcon, MesEsPipe, FilterTipoTransaccionPipe, ConfirmModal, OptionsMenu, TrashIcon],
+  imports: [CommonModule, FormsModule, Toast, LeftIcon, RightIcon, MesEsPipe, FilterTipoTransaccionPipe, ConfirmModal, OptionsMenu],
   templateUrl: './form-debito.html',
   styleUrl: './form-debito.css'
 })
