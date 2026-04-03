@@ -1,12 +1,12 @@
 import { initializeApp } from "firebase/app";
 
 export const environment = {
-    production: false,
+    production: true,
     apiUrl: 'http://localhost:8080' // URL para desarrollo
   };
 
 
-  const firebaseConfig = {
+  export const firebaseConfig = {
     apiKey: "AIzaSyCum4h1x8KW2Fse63QY8p2Mj00Tb8r2u4A",
     authDomain: "finanzas-pro-b27fd.firebaseapp.com",
     projectId: "finanzas-pro-b27fd",
