@@ -33,7 +33,7 @@ export class TransaccionesRecurrentesModal {
       private transaccionesRecurrentesService: TransaccionesRecurrentesService,
       private cuentasService: CuentasService
     ) {}
-  
+
     editar: boolean = true;
     confirmModal: boolean = false;
   

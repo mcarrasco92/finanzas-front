@@ -28,6 +28,7 @@ import { MsiService } from '../../services/msi/msi';
 import { SearchResults, SearchGroup, SearchResultItem } from '../../shared/search-results/search-results';
 import { SpaceService } from '../../services/space/space.service';
 import { Space } from '../../models/space';
+import { Transaccion } from '../../models/transaccion';
 import { ResumenService } from '../../services/resumen/resumen';
 
 const SEARCH_LIMIT = 5;
@@ -164,13 +165,12 @@ export class Dashboard {
       }
     });
 
-    // Pre-cargar transacciones del mes actual para búsqueda
-    const currentYearMonth = new Date().toISOString().slice(0, 7);
+    // Pre-cargar transacciones del último año para búsqueda
     this.transaccionesSearchSub = this.transaccionService
-      .getTransaccionesByMonth({ yearMonth: currentYearMonth })
+      .getTransaccionesParaBusqueda()
       .subscribe(response => {
         if (response.coderr === '0000') {
-          this.transaccionService.setTransaccionesList(response.data?.transacciones ?? []);
+          this.transaccionService.setTransaccionesList(response.data ?? []);
         }
       });
 
@@ -320,7 +320,11 @@ export class Dashboard {
         this.router.navigate(['/dashboard/categorias']);
         break;
       case 'transaccion':
-        this.router.navigate(['/dashboard/home']);
+        this.transaccionService.getTransaccionById(item.id).subscribe(response => {
+          if (response.coderr !== '0000') return;
+          const trans = Object.assign(new Transaccion(), response.data);
+          this.transaccionService.setTransaccion(trans);
+        });
         break;
     }
   }

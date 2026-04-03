@@ -19,9 +19,11 @@ import { CreateSpace } from './components/create-space/create-space';
 import { Perfil } from './components/perfil/perfil';
 import { Espacios } from './components/perfil/espacios/espacios';
 import { CambiarContrasena } from './components/perfil/cambiar-contrasena/cambiar-contrasena';
+import { RecuperarContrasena } from './components/recuperar-contrasena/recuperar-contrasena';
 
 export const routes: Routes = [
   {path: 'registro', component: Registro},
+  {path: 'recuperar-contrasena', component: RecuperarContrasena},
   {path: 'select-space', component: SelectSpace, canActivate: [authGuard]},
   {path: 'create-space', component: CreateSpace, canActivate: [authGuard]},
   {path: 'dashboard', component: Dashboard, canActivate: [authGuard, spaceGuard], children: [

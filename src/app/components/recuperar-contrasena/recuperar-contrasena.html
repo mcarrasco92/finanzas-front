@@ -1,0 +1,52 @@
+<div class="flex flex-col justify-center items-center fondo min-h-screen px-4 py-8">
+  <div class="w-full max-w-sm">
+    <div class="bg-white px-8 py-8 rounded-2xl shadow-xl">
+
+      <div class="mb-7">
+        <img src="assets/Color-nombre.png" alt="logo" class="mx-auto h-28 w-auto" />
+      </div>
+
+      @if (!enviado) {
+
+        <p class="text-sm text-gray-500 mb-6 text-center">
+          Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.
+        </p>
+
+        <form (ngSubmit)="enviaDatos()" class="flex flex-col gap-6">
+
+          <div class="input-form-text">
+            <label for="email">Correo electrónico</label>
+            <input [(ngModel)]="email" id="email" type="email" name="email" required autocomplete="email" />
+            @if (valEmail) { <p class="text-xs text-red-500 mt-1">Ingresa un correo válido</p> }
+            @if (errorMsg) { <p class="text-xs text-red-500 mt-1">{{ errorMsg }}</p> }
+          </div>
+
+          <button type="submit" class="btn-primary w-full flex justify-center" [disabled]="cargando">
+            @if (cargando) { Enviando... } @else { Enviar enlace }
+          </button>
+
+        </form>
+
+      } @else {
+
+        <div class="flex flex-col items-center gap-4 py-4">
+          <div class="h-12 w-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+          </div>
+          <p class="text-sm text-gray-600 text-center">
+            Revisa tu bandeja de entrada. Si existe una cuenta con ese correo, recibirás el enlace en breve.
+          </p>
+        </div>
+
+      }
+
+      <div class="border-t border-gray-200 mt-6"></div>
+      <p class="mt-4 text-center text-sm text-gray-400">
+        <a routerLink="/" class="font-semibold hover:text-gray-600">Regresar al inicio</a>
+      </p>
+
+    </div>
+  </div>
+</div>

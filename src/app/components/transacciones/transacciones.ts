@@ -50,6 +50,9 @@ export class Transacciones {
   valCuentaTarjeta: boolean = false;
   valDescripcion: boolean = false;
   valConcepto: boolean = false;
+  conceptosSugeridos: string[] = [];
+  conceptosFiltrados: string[] = [];
+  mostrarSugerencias: boolean = false;
   transaccion: Transaccion = new Transaccion();
   transaccionOriginal: Transaccion = new Transaccion();
 
@@ -67,6 +70,7 @@ export class Transacciones {
   ngOnInit() {
 
     this.generalService.setActualizaPantalla(false);
+    this.conceptosSugeridos = this.transaccionesService.getConceptosSugeridos();
 
     const fechaLocal = new Date();
     this.transaccion.fecha = fechaLocal.getFullYear() + '-' +
@@ -271,6 +275,29 @@ export class Transacciones {
       }
     }
     this.editar = false;
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
+  }
+
+  filtrarConceptos(valor: string): void {
+    const q = (valor ?? '').trim().toLowerCase();
+    if (!q) {
+      this.mostrarSugerencias = false;
+      this.conceptosFiltrados = [];
+      return;
+    }
+    this.conceptosFiltrados = this.conceptosSugeridos
+      .filter(c => c.toLowerCase().includes(q))
+      .slice(0, 8);
+    this.mostrarSugerencias = this.conceptosFiltrados.length > 0;
+  }
+
+  seleccionarConcepto(concepto: string): void {
+    this.transaccion.concepto = concepto;
+    this.mostrarSugerencias = false;
+    this.conceptosFiltrados = [];
+  }
+
+  ocultarSugerencias(): void {
+    setTimeout(() => { this.mostrarSugerencias = false; }, 150);
   }
 }

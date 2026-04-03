@@ -78,21 +78,16 @@ export class MsiModal {
           this.editar = true;
           this.cdr.detectChanges();
         }else{ // Editar
-          this.msiService.getMsi().subscribe(response =>{
+          this.msiService.getMsiById(msiId as string).subscribe(response =>{
             if(response.coderr === "0000"){
-              const msiData = response.data.find((m: MsiModel) => m.id === msiId);
-              if(msiData){
-                this.msi = Object.assign(new MsiModel(), msiData);
-                this.importe = this.msi.getImporte();
-                this.msiOriginal = Object.assign(new MsiModel(), msiData);
-                this.editar = false;
-                this.cdr.detectChanges();
-              }else{
-                this.toast.show("No se encontró el MSI",'', TypeToast.danger);
-              }
+              this.msi = Object.assign(new MsiModel(), response.data);
+              this.importe = this.msi.getImporte();
+              this.msiOriginal = Object.assign(new MsiModel(), response.data);
+              this.editar = false;
+              this.cdr.detectChanges();
             }else{
               this.toast.show("Ocurrio un error al consultar MSI",'', response.message);
-            } 
+            }
           });
         }
       }

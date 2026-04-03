@@ -45,6 +45,11 @@ export class MsiService {
 
   }
 
+  getMsiById(msiId: string): Observable<any> {
+    return this.http.get(this.baseUrl + `/api/msi/${msiId}`).pipe(
+      catchError((error) => { throw error; }));
+  }
+
   getMsi(): Observable<any> {
     return this.http.get(this.baseUrl + `/api/msi`).pipe(
       tap(() => {

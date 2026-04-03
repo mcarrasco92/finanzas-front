@@ -36,6 +36,12 @@ export class TransaccionesService {
 
   }
 
+  getTransaccionesParaBusqueda(): Observable<any> {
+    return this.http.get(this.baseUrl + '/api/transacciones/busqueda').pipe(
+      catchError((error) => { throw error; })
+    );
+  }
+
   //Agregar Transaccion
   addTransaccion(transaccion: any): Observable<any> {
 
@@ -97,6 +103,14 @@ export class TransaccionesService {
 
   setTransaccionesList(transacciones: Transaccion[]): void {
     this.transaccionesListData.next(transacciones);
+  }
+
+  getConceptosSugeridos(): string[] {
+    const transacciones = this.transaccionesListData.getValue();
+    const conceptos = transacciones
+      .map(t => t.concepto)
+      .filter((c): c is string => !!c && c.trim().length > 0);
+    return [...new Set(conceptos)].sort((a, b) => a.localeCompare(b));
   }
 
   private cargaTransaccion = new BehaviorSubject<Transaccion>(new Transaccion());

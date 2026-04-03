@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 import { environment, app } from '../environment/environment';
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, EmailAuthProvider, reauthenticateWithCredential, updatePassword, sendPasswordResetEmail } from "firebase/auth";
 import { log } from 'console';
 
 
@@ -156,6 +156,18 @@ export class Auth {
         return { coderr: '1001', message: 'No se pudo actualizar la contraseña' };
       })
     );
+  }
+
+  async recuperarContrasena(email: string): Promise<{ coderr: string; message: string }> {
+    try {
+      await sendPasswordResetEmail(this.auth, email);
+      return { coderr: '0000', message: 'Correo enviado' };
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found') {
+        return { coderr: '1001', message: 'No existe una cuenta con ese correo.' };
+      }
+      return { coderr: '9999', message: 'Error al enviar el correo de recuperación.' };
+    }
   }
 
   isAuthenticated(): boolean {
